@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package minidfs;
+
+/// \brief Block information
+message Block {
+    int32 blockID = 1;
+    int64 blockLen = 2;
+} 
+
+/// \brief Chunkserver info
+message ChunkserverInfo {
+    string chunkserverIP = 1;
+    int32 chunkserverPort = 2;
+}
+
+/// \brief Associate each block with several chunkservers
+message LocatedBlock {
+    Block block = 1;
+    repeated ChunkserverInfo chunkserverInfo = 2;
+}
+

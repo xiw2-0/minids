@@ -8,10 +8,11 @@
 #define CLIENT_PROTOCOL_H_
 
 #include <string>
+#include <proto/minidfs.pb.h>
 
 using std::string;
 
-namespace rpc {
+namespace minidfs {
 
 /// \brief ClientProtocol is the communicate protocol between DFSClient with Master.
 ///
@@ -22,17 +23,21 @@ class ClientProtocol {
     /// \brief Get a file's block location information from Master.
     ///
     /// \param file the file name stored in minidfs.
-    /// \return void
-    virtual void getBlockLocations(string file) = 0;
+    /// \param locatedBlks a list of locatedBlocks which maps from a block ID to chunkservers.
+    ///        It is the returning parameter. 
+    /// \return returning status. 0: success; 1: fail.
+    virtual int getBlockLocations(const string& file, LocatedBlocks* locatedBlks) = 0;
 
     /// \brief Create a file.
     ///
     /// This operation informs Master to create the meta info for the first block
     /// \param file the file name stored in minidfs.
-    /// \return void
-    virtual void create(string file) = 0;
+    /// \param locatedBlk contains chunkservers' information.
+    ///        It is the returning parameter. 
+    /// \return returning status. 0 for success; 1 for fail.
+    virtual int create(const string& file, LocatedBlock* locatedBlk) = 0;
 };
 
-} // namespace rpc
+} // namespace minidfs
     
 #endif

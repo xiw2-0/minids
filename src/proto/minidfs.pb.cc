@@ -17,6 +17,7 @@
 #include <google/protobuf/port_def.inc>
 extern PROTOBUF_INTERNAL_EXPORT_minidfs_2eproto ::PROTOBUF_NAMESPACE_ID::internal::SCCInfo<0> scc_info_Block_minidfs_2eproto;
 extern PROTOBUF_INTERNAL_EXPORT_minidfs_2eproto ::PROTOBUF_NAMESPACE_ID::internal::SCCInfo<0> scc_info_ChunkserverInfo_minidfs_2eproto;
+extern PROTOBUF_INTERNAL_EXPORT_minidfs_2eproto ::PROTOBUF_NAMESPACE_ID::internal::SCCInfo<2> scc_info_LocatedBlock_minidfs_2eproto;
 namespace minidfs {
 class BlockDefaultTypeInternal {
  public:
@@ -30,6 +31,14 @@ class LocatedBlockDefaultTypeInternal {
  public:
   ::PROTOBUF_NAMESPACE_ID::internal::ExplicitlyConstructed<LocatedBlock> _instance;
 } _LocatedBlock_default_instance_;
+class LocatedBlocksDefaultTypeInternal {
+ public:
+  ::PROTOBUF_NAMESPACE_ID::internal::ExplicitlyConstructed<LocatedBlocks> _instance;
+} _LocatedBlocks_default_instance_;
+class FileStorageInfoDefaultTypeInternal {
+ public:
+  ::PROTOBUF_NAMESPACE_ID::internal::ExplicitlyConstructed<FileStorageInfo> _instance;
+} _FileStorageInfo_default_instance_;
 }  // namespace minidfs
 static void InitDefaultsscc_info_Block_minidfs_2eproto() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
@@ -59,6 +68,21 @@ static void InitDefaultsscc_info_ChunkserverInfo_minidfs_2eproto() {
 ::PROTOBUF_NAMESPACE_ID::internal::SCCInfo<0> scc_info_ChunkserverInfo_minidfs_2eproto =
     {{ATOMIC_VAR_INIT(::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase::kUninitialized), 0, InitDefaultsscc_info_ChunkserverInfo_minidfs_2eproto}, {}};
 
+static void InitDefaultsscc_info_FileStorageInfo_minidfs_2eproto() {
+  GOOGLE_PROTOBUF_VERIFY_VERSION;
+
+  {
+    void* ptr = &::minidfs::_FileStorageInfo_default_instance_;
+    new (ptr) ::minidfs::FileStorageInfo();
+    ::PROTOBUF_NAMESPACE_ID::internal::OnShutdownDestroyMessage(ptr);
+  }
+  ::minidfs::FileStorageInfo::InitAsDefaultInstance();
+}
+
+::PROTOBUF_NAMESPACE_ID::internal::SCCInfo<1> scc_info_FileStorageInfo_minidfs_2eproto =
+    {{ATOMIC_VAR_INIT(::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase::kUninitialized), 1, InitDefaultsscc_info_FileStorageInfo_minidfs_2eproto}, {
+      &scc_info_LocatedBlock_minidfs_2eproto.base,}};
+
 static void InitDefaultsscc_info_LocatedBlock_minidfs_2eproto() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
@@ -75,7 +99,22 @@ static void InitDefaultsscc_info_LocatedBlock_minidfs_2eproto() {
       &scc_info_Block_minidfs_2eproto.base,
       &scc_info_ChunkserverInfo_minidfs_2eproto.base,}};
 
-static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_minidfs_2eproto[3];
+static void InitDefaultsscc_info_LocatedBlocks_minidfs_2eproto() {
+  GOOGLE_PROTOBUF_VERIFY_VERSION;
+
+  {
+    void* ptr = &::minidfs::_LocatedBlocks_default_instance_;
+    new (ptr) ::minidfs::LocatedBlocks();
+    ::PROTOBUF_NAMESPACE_ID::internal::OnShutdownDestroyMessage(ptr);
+  }
+  ::minidfs::LocatedBlocks::InitAsDefaultInstance();
+}
+
+::PROTOBUF_NAMESPACE_ID::internal::SCCInfo<1> scc_info_LocatedBlocks_minidfs_2eproto =
+    {{ATOMIC_VAR_INIT(::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase::kUninitialized), 1, InitDefaultsscc_info_LocatedBlocks_minidfs_2eproto}, {
+      &scc_info_LocatedBlock_minidfs_2eproto.base,}};
+
+static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_minidfs_2eproto[5];
 static constexpr ::PROTOBUF_NAMESPACE_ID::EnumDescriptor const** file_level_enum_descriptors_minidfs_2eproto = nullptr;
 static constexpr ::PROTOBUF_NAMESPACE_ID::ServiceDescriptor const** file_level_service_descriptors_minidfs_2eproto = nullptr;
 
@@ -100,43 +139,65 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_minidfs_2eproto::offsets[] PRO
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
   PROTOBUF_FIELD_OFFSET(::minidfs::LocatedBlock, block_),
-  PROTOBUF_FIELD_OFFSET(::minidfs::LocatedBlock, chunkserverinfo_),
+  PROTOBUF_FIELD_OFFSET(::minidfs::LocatedBlock, chunkserverinfos_),
+  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::minidfs::LocatedBlocks, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  PROTOBUF_FIELD_OFFSET(::minidfs::LocatedBlocks, locatedblks_),
+  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::minidfs::FileStorageInfo, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  PROTOBUF_FIELD_OFFSET(::minidfs::FileStorageInfo, file_),
+  PROTOBUF_FIELD_OFFSET(::minidfs::FileStorageInfo, locatedblks_),
 };
 static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   { 0, -1, sizeof(::minidfs::Block)},
   { 7, -1, sizeof(::minidfs::ChunkserverInfo)},
   { 14, -1, sizeof(::minidfs::LocatedBlock)},
+  { 21, -1, sizeof(::minidfs::LocatedBlocks)},
+  { 27, -1, sizeof(::minidfs::FileStorageInfo)},
 };
 
 static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::minidfs::_Block_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::minidfs::_ChunkserverInfo_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::minidfs::_LocatedBlock_default_instance_),
+  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::minidfs::_LocatedBlocks_default_instance_),
+  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::minidfs::_FileStorageInfo_default_instance_),
 };
 
 const char descriptor_table_protodef_minidfs_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
   "\n\rminidfs.proto\022\007minidfs\"*\n\005Block\022\017\n\007blo"
   "ckID\030\001 \001(\005\022\020\n\010blockLen\030\002 \001(\003\"A\n\017Chunkser"
   "verInfo\022\025\n\rchunkserverIP\030\001 \001(\t\022\027\n\017chunks"
-  "erverPort\030\002 \001(\005\"`\n\014LocatedBlock\022\035\n\005block"
-  "\030\001 \001(\0132\016.minidfs.Block\0221\n\017chunkserverInf"
-  "o\030\002 \003(\0132\030.minidfs.ChunkserverInfob\006proto"
-  "3"
+  "erverPort\030\002 \001(\005\"a\n\014LocatedBlock\022\035\n\005block"
+  "\030\001 \001(\0132\016.minidfs.Block\0222\n\020chunkserverInf"
+  "os\030\002 \003(\0132\030.minidfs.ChunkserverInfo\";\n\rLo"
+  "catedBlocks\022*\n\013locatedBlks\030\001 \003(\0132\025.minid"
+  "fs.LocatedBlock\"K\n\017FileStorageInfo\022\014\n\004fi"
+  "le\030\001 \001(\t\022*\n\013locatedblks\030\002 \003(\0132\025.minidfs."
+  "LocatedBlockb\006proto3"
   ;
 static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_minidfs_2eproto_deps[1] = {
 };
-static ::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase*const descriptor_table_minidfs_2eproto_sccs[3] = {
+static ::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase*const descriptor_table_minidfs_2eproto_sccs[5] = {
   &scc_info_Block_minidfs_2eproto.base,
   &scc_info_ChunkserverInfo_minidfs_2eproto.base,
+  &scc_info_FileStorageInfo_minidfs_2eproto.base,
   &scc_info_LocatedBlock_minidfs_2eproto.base,
+  &scc_info_LocatedBlocks_minidfs_2eproto.base,
 };
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_minidfs_2eproto_once;
 static bool descriptor_table_minidfs_2eproto_initialized = false;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_minidfs_2eproto = {
-  &descriptor_table_minidfs_2eproto_initialized, descriptor_table_protodef_minidfs_2eproto, "minidfs.proto", 241,
-  &descriptor_table_minidfs_2eproto_once, descriptor_table_minidfs_2eproto_sccs, descriptor_table_minidfs_2eproto_deps, 3, 0,
+  &descriptor_table_minidfs_2eproto_initialized, descriptor_table_protodef_minidfs_2eproto, "minidfs.proto", 380,
+  &descriptor_table_minidfs_2eproto_once, descriptor_table_minidfs_2eproto_sccs, descriptor_table_minidfs_2eproto_deps, 5, 0,
   schemas, file_default_instances, TableStruct_minidfs_2eproto::offsets,
-  file_level_metadata_minidfs_2eproto, 3, file_level_enum_descriptors_minidfs_2eproto, file_level_service_descriptors_minidfs_2eproto,
+  file_level_metadata_minidfs_2eproto, 5, file_level_enum_descriptors_minidfs_2eproto, file_level_service_descriptors_minidfs_2eproto,
 };
 
 // Force running AddDescriptors() at dynamic initialization time.
@@ -775,7 +836,7 @@ LocatedBlock::LocatedBlock()
 LocatedBlock::LocatedBlock(const LocatedBlock& from)
   : ::PROTOBUF_NAMESPACE_ID::Message(),
       _internal_metadata_(nullptr),
-      chunkserverinfo_(from.chunkserverinfo_) {
+      chunkserverinfos_(from.chunkserverinfos_) {
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   if (from.has_block()) {
     block_ = new ::minidfs::Block(*from.block_);
@@ -814,7 +875,7 @@ void LocatedBlock::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  chunkserverinfo_.Clear();
+  chunkserverinfos_.Clear();
   if (GetArenaNoVirtual() == nullptr && block_ != nullptr) {
     delete block_;
   }
@@ -837,13 +898,13 @@ const char* LocatedBlock::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_I
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
-      // repeated .minidfs.ChunkserverInfo chunkserverInfo = 2;
+      // repeated .minidfs.ChunkserverInfo chunkserverInfos = 2;
       case 2:
         if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 18)) {
           ptr -= 1;
           do {
             ptr += 1;
-            ptr = ctx->ParseMessage(add_chunkserverinfo(), ptr);
+            ptr = ctx->ParseMessage(add_chunkserverinfos(), ptr);
             CHK_(ptr);
             if (!ctx->DataAvailable(ptr)) break;
           } while (::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<::PROTOBUF_NAMESPACE_ID::uint8>(ptr) == 18);
@@ -890,11 +951,11 @@ bool LocatedBlock::MergePartialFromCodedStream(
         break;
       }
 
-      // repeated .minidfs.ChunkserverInfo chunkserverInfo = 2;
+      // repeated .minidfs.ChunkserverInfo chunkserverInfos = 2;
       case 2: {
         if (static_cast< ::PROTOBUF_NAMESPACE_ID::uint8>(tag) == (18 & 0xFF)) {
           DO_(::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::ReadMessage(
-                input, add_chunkserverinfo()));
+                input, add_chunkserverinfos()));
         } else {
           goto handle_unusual;
         }
@@ -934,12 +995,12 @@ void LocatedBlock::SerializeWithCachedSizes(
       1, _Internal::block(this), output);
   }
 
-  // repeated .minidfs.ChunkserverInfo chunkserverInfo = 2;
+  // repeated .minidfs.ChunkserverInfo chunkserverInfos = 2;
   for (unsigned int i = 0,
-      n = static_cast<unsigned int>(this->chunkserverinfo_size()); i < n; i++) {
+      n = static_cast<unsigned int>(this->chunkserverinfos_size()); i < n; i++) {
     ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteMessageMaybeToArray(
       2,
-      this->chunkserverinfo(static_cast<int>(i)),
+      this->chunkserverinfos(static_cast<int>(i)),
       output);
   }
 
@@ -963,12 +1024,12 @@ void LocatedBlock::SerializeWithCachedSizes(
         1, _Internal::block(this), target);
   }
 
-  // repeated .minidfs.ChunkserverInfo chunkserverInfo = 2;
+  // repeated .minidfs.ChunkserverInfo chunkserverInfos = 2;
   for (unsigned int i = 0,
-      n = static_cast<unsigned int>(this->chunkserverinfo_size()); i < n; i++) {
+      n = static_cast<unsigned int>(this->chunkserverinfos_size()); i < n; i++) {
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
       InternalWriteMessageToArray(
-        2, this->chunkserverinfo(static_cast<int>(i)), target);
+        2, this->chunkserverinfos(static_cast<int>(i)), target);
   }
 
   if (_internal_metadata_.have_unknown_fields()) {
@@ -992,14 +1053,14 @@ size_t LocatedBlock::ByteSizeLong() const {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  // repeated .minidfs.ChunkserverInfo chunkserverInfo = 2;
+  // repeated .minidfs.ChunkserverInfo chunkserverInfos = 2;
   {
-    unsigned int count = static_cast<unsigned int>(this->chunkserverinfo_size());
+    unsigned int count = static_cast<unsigned int>(this->chunkserverinfos_size());
     total_size += 1UL * count;
     for (unsigned int i = 0; i < count; i++) {
       total_size +=
         ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
-          this->chunkserverinfo(static_cast<int>(i)));
+          this->chunkserverinfos(static_cast<int>(i)));
     }
   }
 
@@ -1037,7 +1098,7 @@ void LocatedBlock::MergeFrom(const LocatedBlock& from) {
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  chunkserverinfo_.MergeFrom(from.chunkserverinfo_);
+  chunkserverinfos_.MergeFrom(from.chunkserverinfos_);
   if (from.has_block()) {
     mutable_block()->::minidfs::Block::MergeFrom(from.block());
   }
@@ -1064,11 +1125,596 @@ bool LocatedBlock::IsInitialized() const {
 void LocatedBlock::InternalSwap(LocatedBlock* other) {
   using std::swap;
   _internal_metadata_.Swap(&other->_internal_metadata_);
-  CastToBase(&chunkserverinfo_)->InternalSwap(CastToBase(&other->chunkserverinfo_));
+  CastToBase(&chunkserverinfos_)->InternalSwap(CastToBase(&other->chunkserverinfos_));
   swap(block_, other->block_);
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata LocatedBlock::GetMetadata() const {
+  return GetMetadataStatic();
+}
+
+
+// ===================================================================
+
+void LocatedBlocks::InitAsDefaultInstance() {
+}
+class LocatedBlocks::_Internal {
+ public:
+};
+
+LocatedBlocks::LocatedBlocks()
+  : ::PROTOBUF_NAMESPACE_ID::Message(), _internal_metadata_(nullptr) {
+  SharedCtor();
+  // @@protoc_insertion_point(constructor:minidfs.LocatedBlocks)
+}
+LocatedBlocks::LocatedBlocks(const LocatedBlocks& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message(),
+      _internal_metadata_(nullptr),
+      locatedblks_(from.locatedblks_) {
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  // @@protoc_insertion_point(copy_constructor:minidfs.LocatedBlocks)
+}
+
+void LocatedBlocks::SharedCtor() {
+  ::PROTOBUF_NAMESPACE_ID::internal::InitSCC(&scc_info_LocatedBlocks_minidfs_2eproto.base);
+}
+
+LocatedBlocks::~LocatedBlocks() {
+  // @@protoc_insertion_point(destructor:minidfs.LocatedBlocks)
+  SharedDtor();
+}
+
+void LocatedBlocks::SharedDtor() {
+}
+
+void LocatedBlocks::SetCachedSize(int size) const {
+  _cached_size_.Set(size);
+}
+const LocatedBlocks& LocatedBlocks::default_instance() {
+  ::PROTOBUF_NAMESPACE_ID::internal::InitSCC(&::scc_info_LocatedBlocks_minidfs_2eproto.base);
+  return *internal_default_instance();
+}
+
+
+void LocatedBlocks::Clear() {
+// @@protoc_insertion_point(message_clear_start:minidfs.LocatedBlocks)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  locatedblks_.Clear();
+  _internal_metadata_.Clear();
+}
+
+#if GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
+const char* LocatedBlocks::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  while (!ctx->Done(&ptr)) {
+    ::PROTOBUF_NAMESPACE_ID::uint32 tag;
+    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    CHK_(ptr);
+    switch (tag >> 3) {
+      // repeated .minidfs.LocatedBlock locatedBlks = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 10)) {
+          ptr -= 1;
+          do {
+            ptr += 1;
+            ptr = ctx->ParseMessage(add_locatedblks(), ptr);
+            CHK_(ptr);
+            if (!ctx->DataAvailable(ptr)) break;
+          } while (::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<::PROTOBUF_NAMESPACE_ID::uint8>(ptr) == 10);
+        } else goto handle_unusual;
+        continue;
+      default: {
+      handle_unusual:
+        if ((tag & 7) == 4 || tag == 0) {
+          ctx->SetLastTag(tag);
+          goto success;
+        }
+        ptr = UnknownFieldParse(tag, &_internal_metadata_, ptr, ctx);
+        CHK_(ptr != nullptr);
+        continue;
+      }
+    }  // switch
+  }  // while
+success:
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto success;
+#undef CHK_
+}
+#else  // GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
+bool LocatedBlocks::MergePartialFromCodedStream(
+    ::PROTOBUF_NAMESPACE_ID::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!PROTOBUF_PREDICT_TRUE(EXPRESSION)) goto failure
+  ::PROTOBUF_NAMESPACE_ID::uint32 tag;
+  // @@protoc_insertion_point(parse_start:minidfs.LocatedBlocks)
+  for (;;) {
+    ::std::pair<::PROTOBUF_NAMESPACE_ID::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
+    tag = p.first;
+    if (!p.second) goto handle_unusual;
+    switch (::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // repeated .minidfs.LocatedBlock locatedBlks = 1;
+      case 1: {
+        if (static_cast< ::PROTOBUF_NAMESPACE_ID::uint8>(tag) == (10 & 0xFF)) {
+          DO_(::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::ReadMessage(
+                input, add_locatedblks()));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      default: {
+      handle_unusual:
+        if (tag == 0) {
+          goto success;
+        }
+        DO_(::PROTOBUF_NAMESPACE_ID::internal::WireFormat::SkipField(
+              input, tag, _internal_metadata_.mutable_unknown_fields()));
+        break;
+      }
+    }
+  }
+success:
+  // @@protoc_insertion_point(parse_success:minidfs.LocatedBlocks)
+  return true;
+failure:
+  // @@protoc_insertion_point(parse_failure:minidfs.LocatedBlocks)
+  return false;
+#undef DO_
+}
+#endif  // GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
+
+void LocatedBlocks::SerializeWithCachedSizes(
+    ::PROTOBUF_NAMESPACE_ID::io::CodedOutputStream* output) const {
+  // @@protoc_insertion_point(serialize_start:minidfs.LocatedBlocks)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // repeated .minidfs.LocatedBlock locatedBlks = 1;
+  for (unsigned int i = 0,
+      n = static_cast<unsigned int>(this->locatedblks_size()); i < n; i++) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteMessageMaybeToArray(
+      1,
+      this->locatedblks(static_cast<int>(i)),
+      output);
+  }
+
+  if (_internal_metadata_.have_unknown_fields()) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::SerializeUnknownFields(
+        _internal_metadata_.unknown_fields(), output);
+  }
+  // @@protoc_insertion_point(serialize_end:minidfs.LocatedBlocks)
+}
+
+::PROTOBUF_NAMESPACE_ID::uint8* LocatedBlocks::InternalSerializeWithCachedSizesToArray(
+    ::PROTOBUF_NAMESPACE_ID::uint8* target) const {
+  // @@protoc_insertion_point(serialize_to_array_start:minidfs.LocatedBlocks)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // repeated .minidfs.LocatedBlock locatedBlks = 1;
+  for (unsigned int i = 0,
+      n = static_cast<unsigned int>(this->locatedblks_size()); i < n; i++) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+      InternalWriteMessageToArray(
+        1, this->locatedblks(static_cast<int>(i)), target);
+  }
+
+  if (_internal_metadata_.have_unknown_fields()) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::SerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields(), target);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:minidfs.LocatedBlocks)
+  return target;
+}
+
+size_t LocatedBlocks::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:minidfs.LocatedBlocks)
+  size_t total_size = 0;
+
+  if (_internal_metadata_.have_unknown_fields()) {
+    total_size +=
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::ComputeUnknownFieldsSize(
+        _internal_metadata_.unknown_fields());
+  }
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // repeated .minidfs.LocatedBlock locatedBlks = 1;
+  {
+    unsigned int count = static_cast<unsigned int>(this->locatedblks_size());
+    total_size += 1UL * count;
+    for (unsigned int i = 0; i < count; i++) {
+      total_size +=
+        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
+          this->locatedblks(static_cast<int>(i)));
+    }
+  }
+
+  int cached_size = ::PROTOBUF_NAMESPACE_ID::internal::ToCachedSize(total_size);
+  SetCachedSize(cached_size);
+  return total_size;
+}
+
+void LocatedBlocks::MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+// @@protoc_insertion_point(generalized_merge_from_start:minidfs.LocatedBlocks)
+  GOOGLE_DCHECK_NE(&from, this);
+  const LocatedBlocks* source =
+      ::PROTOBUF_NAMESPACE_ID::DynamicCastToGenerated<LocatedBlocks>(
+          &from);
+  if (source == nullptr) {
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:minidfs.LocatedBlocks)
+    ::PROTOBUF_NAMESPACE_ID::internal::ReflectionOps::Merge(from, this);
+  } else {
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:minidfs.LocatedBlocks)
+    MergeFrom(*source);
+  }
+}
+
+void LocatedBlocks::MergeFrom(const LocatedBlocks& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:minidfs.LocatedBlocks)
+  GOOGLE_DCHECK_NE(&from, this);
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  locatedblks_.MergeFrom(from.locatedblks_);
+}
+
+void LocatedBlocks::CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:minidfs.LocatedBlocks)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void LocatedBlocks::CopyFrom(const LocatedBlocks& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:minidfs.LocatedBlocks)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool LocatedBlocks::IsInitialized() const {
+  return true;
+}
+
+void LocatedBlocks::InternalSwap(LocatedBlocks* other) {
+  using std::swap;
+  _internal_metadata_.Swap(&other->_internal_metadata_);
+  CastToBase(&locatedblks_)->InternalSwap(CastToBase(&other->locatedblks_));
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata LocatedBlocks::GetMetadata() const {
+  return GetMetadataStatic();
+}
+
+
+// ===================================================================
+
+void FileStorageInfo::InitAsDefaultInstance() {
+}
+class FileStorageInfo::_Internal {
+ public:
+};
+
+FileStorageInfo::FileStorageInfo()
+  : ::PROTOBUF_NAMESPACE_ID::Message(), _internal_metadata_(nullptr) {
+  SharedCtor();
+  // @@protoc_insertion_point(constructor:minidfs.FileStorageInfo)
+}
+FileStorageInfo::FileStorageInfo(const FileStorageInfo& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message(),
+      _internal_metadata_(nullptr),
+      locatedblks_(from.locatedblks_) {
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  file_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  if (!from.file().empty()) {
+    file_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.file_);
+  }
+  // @@protoc_insertion_point(copy_constructor:minidfs.FileStorageInfo)
+}
+
+void FileStorageInfo::SharedCtor() {
+  ::PROTOBUF_NAMESPACE_ID::internal::InitSCC(&scc_info_FileStorageInfo_minidfs_2eproto.base);
+  file_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+
+FileStorageInfo::~FileStorageInfo() {
+  // @@protoc_insertion_point(destructor:minidfs.FileStorageInfo)
+  SharedDtor();
+}
+
+void FileStorageInfo::SharedDtor() {
+  file_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+
+void FileStorageInfo::SetCachedSize(int size) const {
+  _cached_size_.Set(size);
+}
+const FileStorageInfo& FileStorageInfo::default_instance() {
+  ::PROTOBUF_NAMESPACE_ID::internal::InitSCC(&::scc_info_FileStorageInfo_minidfs_2eproto.base);
+  return *internal_default_instance();
+}
+
+
+void FileStorageInfo::Clear() {
+// @@protoc_insertion_point(message_clear_start:minidfs.FileStorageInfo)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  locatedblks_.Clear();
+  file_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  _internal_metadata_.Clear();
+}
+
+#if GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
+const char* FileStorageInfo::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  while (!ctx->Done(&ptr)) {
+    ::PROTOBUF_NAMESPACE_ID::uint32 tag;
+    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    CHK_(ptr);
+    switch (tag >> 3) {
+      // string file = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 10)) {
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParserUTF8(mutable_file(), ptr, ctx, "minidfs.FileStorageInfo.file");
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      // repeated .minidfs.LocatedBlock locatedblks = 2;
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 18)) {
+          ptr -= 1;
+          do {
+            ptr += 1;
+            ptr = ctx->ParseMessage(add_locatedblks(), ptr);
+            CHK_(ptr);
+            if (!ctx->DataAvailable(ptr)) break;
+          } while (::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<::PROTOBUF_NAMESPACE_ID::uint8>(ptr) == 18);
+        } else goto handle_unusual;
+        continue;
+      default: {
+      handle_unusual:
+        if ((tag & 7) == 4 || tag == 0) {
+          ctx->SetLastTag(tag);
+          goto success;
+        }
+        ptr = UnknownFieldParse(tag, &_internal_metadata_, ptr, ctx);
+        CHK_(ptr != nullptr);
+        continue;
+      }
+    }  // switch
+  }  // while
+success:
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto success;
+#undef CHK_
+}
+#else  // GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
+bool FileStorageInfo::MergePartialFromCodedStream(
+    ::PROTOBUF_NAMESPACE_ID::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!PROTOBUF_PREDICT_TRUE(EXPRESSION)) goto failure
+  ::PROTOBUF_NAMESPACE_ID::uint32 tag;
+  // @@protoc_insertion_point(parse_start:minidfs.FileStorageInfo)
+  for (;;) {
+    ::std::pair<::PROTOBUF_NAMESPACE_ID::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
+    tag = p.first;
+    if (!p.second) goto handle_unusual;
+    switch (::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // string file = 1;
+      case 1: {
+        if (static_cast< ::PROTOBUF_NAMESPACE_ID::uint8>(tag) == (10 & 0xFF)) {
+          DO_(::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::ReadString(
+                input, this->mutable_file()));
+          DO_(::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+            this->file().data(), static_cast<int>(this->file().length()),
+            ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::PARSE,
+            "minidfs.FileStorageInfo.file"));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // repeated .minidfs.LocatedBlock locatedblks = 2;
+      case 2: {
+        if (static_cast< ::PROTOBUF_NAMESPACE_ID::uint8>(tag) == (18 & 0xFF)) {
+          DO_(::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::ReadMessage(
+                input, add_locatedblks()));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      default: {
+      handle_unusual:
+        if (tag == 0) {
+          goto success;
+        }
+        DO_(::PROTOBUF_NAMESPACE_ID::internal::WireFormat::SkipField(
+              input, tag, _internal_metadata_.mutable_unknown_fields()));
+        break;
+      }
+    }
+  }
+success:
+  // @@protoc_insertion_point(parse_success:minidfs.FileStorageInfo)
+  return true;
+failure:
+  // @@protoc_insertion_point(parse_failure:minidfs.FileStorageInfo)
+  return false;
+#undef DO_
+}
+#endif  // GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
+
+void FileStorageInfo::SerializeWithCachedSizes(
+    ::PROTOBUF_NAMESPACE_ID::io::CodedOutputStream* output) const {
+  // @@protoc_insertion_point(serialize_start:minidfs.FileStorageInfo)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // string file = 1;
+  if (this->file().size() > 0) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->file().data(), static_cast<int>(this->file().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "minidfs.FileStorageInfo.file");
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteStringMaybeAliased(
+      1, this->file(), output);
+  }
+
+  // repeated .minidfs.LocatedBlock locatedblks = 2;
+  for (unsigned int i = 0,
+      n = static_cast<unsigned int>(this->locatedblks_size()); i < n; i++) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteMessageMaybeToArray(
+      2,
+      this->locatedblks(static_cast<int>(i)),
+      output);
+  }
+
+  if (_internal_metadata_.have_unknown_fields()) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::SerializeUnknownFields(
+        _internal_metadata_.unknown_fields(), output);
+  }
+  // @@protoc_insertion_point(serialize_end:minidfs.FileStorageInfo)
+}
+
+::PROTOBUF_NAMESPACE_ID::uint8* FileStorageInfo::InternalSerializeWithCachedSizesToArray(
+    ::PROTOBUF_NAMESPACE_ID::uint8* target) const {
+  // @@protoc_insertion_point(serialize_to_array_start:minidfs.FileStorageInfo)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // string file = 1;
+  if (this->file().size() > 0) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->file().data(), static_cast<int>(this->file().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "minidfs.FileStorageInfo.file");
+    target =
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteStringToArray(
+        1, this->file(), target);
+  }
+
+  // repeated .minidfs.LocatedBlock locatedblks = 2;
+  for (unsigned int i = 0,
+      n = static_cast<unsigned int>(this->locatedblks_size()); i < n; i++) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+      InternalWriteMessageToArray(
+        2, this->locatedblks(static_cast<int>(i)), target);
+  }
+
+  if (_internal_metadata_.have_unknown_fields()) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::SerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields(), target);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:minidfs.FileStorageInfo)
+  return target;
+}
+
+size_t FileStorageInfo::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:minidfs.FileStorageInfo)
+  size_t total_size = 0;
+
+  if (_internal_metadata_.have_unknown_fields()) {
+    total_size +=
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::ComputeUnknownFieldsSize(
+        _internal_metadata_.unknown_fields());
+  }
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // repeated .minidfs.LocatedBlock locatedblks = 2;
+  {
+    unsigned int count = static_cast<unsigned int>(this->locatedblks_size());
+    total_size += 1UL * count;
+    for (unsigned int i = 0; i < count; i++) {
+      total_size +=
+        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
+          this->locatedblks(static_cast<int>(i)));
+    }
+  }
+
+  // string file = 1;
+  if (this->file().size() > 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->file());
+  }
+
+  int cached_size = ::PROTOBUF_NAMESPACE_ID::internal::ToCachedSize(total_size);
+  SetCachedSize(cached_size);
+  return total_size;
+}
+
+void FileStorageInfo::MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+// @@protoc_insertion_point(generalized_merge_from_start:minidfs.FileStorageInfo)
+  GOOGLE_DCHECK_NE(&from, this);
+  const FileStorageInfo* source =
+      ::PROTOBUF_NAMESPACE_ID::DynamicCastToGenerated<FileStorageInfo>(
+          &from);
+  if (source == nullptr) {
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:minidfs.FileStorageInfo)
+    ::PROTOBUF_NAMESPACE_ID::internal::ReflectionOps::Merge(from, this);
+  } else {
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:minidfs.FileStorageInfo)
+    MergeFrom(*source);
+  }
+}
+
+void FileStorageInfo::MergeFrom(const FileStorageInfo& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:minidfs.FileStorageInfo)
+  GOOGLE_DCHECK_NE(&from, this);
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  locatedblks_.MergeFrom(from.locatedblks_);
+  if (from.file().size() > 0) {
+
+    file_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.file_);
+  }
+}
+
+void FileStorageInfo::CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:minidfs.FileStorageInfo)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void FileStorageInfo::CopyFrom(const FileStorageInfo& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:minidfs.FileStorageInfo)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool FileStorageInfo::IsInitialized() const {
+  return true;
+}
+
+void FileStorageInfo::InternalSwap(FileStorageInfo* other) {
+  using std::swap;
+  _internal_metadata_.Swap(&other->_internal_metadata_);
+  CastToBase(&locatedblks_)->InternalSwap(CastToBase(&other->locatedblks_));
+  file_.Swap(&other->file_, &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+    GetArenaNoVirtual());
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata FileStorageInfo::GetMetadata() const {
   return GetMetadataStatic();
 }
 
@@ -1084,6 +1730,12 @@ template<> PROTOBUF_NOINLINE ::minidfs::ChunkserverInfo* Arena::CreateMaybeMessa
 }
 template<> PROTOBUF_NOINLINE ::minidfs::LocatedBlock* Arena::CreateMaybeMessage< ::minidfs::LocatedBlock >(Arena* arena) {
   return Arena::CreateInternal< ::minidfs::LocatedBlock >(arena);
+}
+template<> PROTOBUF_NOINLINE ::minidfs::LocatedBlocks* Arena::CreateMaybeMessage< ::minidfs::LocatedBlocks >(Arena* arena) {
+  return Arena::CreateInternal< ::minidfs::LocatedBlocks >(arena);
+}
+template<> PROTOBUF_NOINLINE ::minidfs::FileStorageInfo* Arena::CreateMaybeMessage< ::minidfs::FileStorageInfo >(Arena* arena) {
+  return Arena::CreateInternal< ::minidfs::FileStorageInfo >(arena);
 }
 PROTOBUF_NAMESPACE_CLOSE
 

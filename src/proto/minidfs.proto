@@ -17,6 +17,16 @@ message ChunkserverInfo {
 /// \brief Associate each block with several chunkservers
 message LocatedBlock {
     Block block = 1;
-    repeated ChunkserverInfo chunkserverInfo = 2;
+    repeated ChunkserverInfo chunkserverInfos = 2;
 }
 
+///
+message LocatedBlocks {
+    repeated LocatedBlock locatedBlks = 1;
+}
+
+/// \brief Associate each file with several locatedblocks
+message FileStorageInfo {
+    string file = 1;
+    repeated LocatedBlock locatedblks = 2;
+}

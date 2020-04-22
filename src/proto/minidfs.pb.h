@@ -47,7 +47,7 @@ struct TableStruct_minidfs_2eproto {
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::AuxillaryParseTableField aux[]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
-  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[3]
+  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[5]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::FieldMetadata field_metadata[];
   static const ::PROTOBUF_NAMESPACE_ID::internal::SerializationTable serialization_table[];
@@ -61,14 +61,22 @@ extern BlockDefaultTypeInternal _Block_default_instance_;
 class ChunkserverInfo;
 class ChunkserverInfoDefaultTypeInternal;
 extern ChunkserverInfoDefaultTypeInternal _ChunkserverInfo_default_instance_;
+class FileStorageInfo;
+class FileStorageInfoDefaultTypeInternal;
+extern FileStorageInfoDefaultTypeInternal _FileStorageInfo_default_instance_;
 class LocatedBlock;
 class LocatedBlockDefaultTypeInternal;
 extern LocatedBlockDefaultTypeInternal _LocatedBlock_default_instance_;
+class LocatedBlocks;
+class LocatedBlocksDefaultTypeInternal;
+extern LocatedBlocksDefaultTypeInternal _LocatedBlocks_default_instance_;
 }  // namespace minidfs
 PROTOBUF_NAMESPACE_OPEN
 template<> ::minidfs::Block* Arena::CreateMaybeMessage<::minidfs::Block>(Arena*);
 template<> ::minidfs::ChunkserverInfo* Arena::CreateMaybeMessage<::minidfs::ChunkserverInfo>(Arena*);
+template<> ::minidfs::FileStorageInfo* Arena::CreateMaybeMessage<::minidfs::FileStorageInfo>(Arena*);
 template<> ::minidfs::LocatedBlock* Arena::CreateMaybeMessage<::minidfs::LocatedBlock>(Arena*);
+template<> ::minidfs::LocatedBlocks* Arena::CreateMaybeMessage<::minidfs::LocatedBlocks>(Arena*);
 PROTOBUF_NAMESPACE_CLOSE
 namespace minidfs {
 
@@ -469,19 +477,19 @@ class LocatedBlock :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kChunkserverInfoFieldNumber = 2,
+    kChunkserverInfosFieldNumber = 2,
     kBlockFieldNumber = 1,
   };
-  // repeated .minidfs.ChunkserverInfo chunkserverInfo = 2;
-  int chunkserverinfo_size() const;
-  void clear_chunkserverinfo();
-  ::minidfs::ChunkserverInfo* mutable_chunkserverinfo(int index);
+  // repeated .minidfs.ChunkserverInfo chunkserverInfos = 2;
+  int chunkserverinfos_size() const;
+  void clear_chunkserverinfos();
+  ::minidfs::ChunkserverInfo* mutable_chunkserverinfos(int index);
   ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::minidfs::ChunkserverInfo >*
-      mutable_chunkserverinfo();
-  const ::minidfs::ChunkserverInfo& chunkserverinfo(int index) const;
-  ::minidfs::ChunkserverInfo* add_chunkserverinfo();
+      mutable_chunkserverinfos();
+  const ::minidfs::ChunkserverInfo& chunkserverinfos(int index) const;
+  ::minidfs::ChunkserverInfo* add_chunkserverinfos();
   const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::minidfs::ChunkserverInfo >&
-      chunkserverinfo() const;
+      chunkserverinfos() const;
 
   // .minidfs.Block block = 1;
   bool has_block() const;
@@ -496,8 +504,295 @@ class LocatedBlock :
   class _Internal;
 
   ::PROTOBUF_NAMESPACE_ID::internal::InternalMetadataWithArena _internal_metadata_;
-  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::minidfs::ChunkserverInfo > chunkserverinfo_;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::minidfs::ChunkserverInfo > chunkserverinfos_;
   ::minidfs::Block* block_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_minidfs_2eproto;
+};
+// -------------------------------------------------------------------
+
+class LocatedBlocks :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:minidfs.LocatedBlocks) */ {
+ public:
+  LocatedBlocks();
+  virtual ~LocatedBlocks();
+
+  LocatedBlocks(const LocatedBlocks& from);
+  LocatedBlocks(LocatedBlocks&& from) noexcept
+    : LocatedBlocks() {
+    *this = ::std::move(from);
+  }
+
+  inline LocatedBlocks& operator=(const LocatedBlocks& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline LocatedBlocks& operator=(LocatedBlocks&& from) noexcept {
+    if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
+      if (this != &from) InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return GetMetadataStatic().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return GetMetadataStatic().reflection;
+  }
+  static const LocatedBlocks& default_instance();
+
+  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
+  static inline const LocatedBlocks* internal_default_instance() {
+    return reinterpret_cast<const LocatedBlocks*>(
+               &_LocatedBlocks_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    3;
+
+  friend void swap(LocatedBlocks& a, LocatedBlocks& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(LocatedBlocks* other) {
+    if (other == this) return;
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline LocatedBlocks* New() const final {
+    return CreateMaybeMessage<LocatedBlocks>(nullptr);
+  }
+
+  LocatedBlocks* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<LocatedBlocks>(arena);
+  }
+  void CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void CopyFrom(const LocatedBlocks& from);
+  void MergeFrom(const LocatedBlocks& from);
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  #if GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  #else
+  bool MergePartialFromCodedStream(
+      ::PROTOBUF_NAMESPACE_ID::io::CodedInputStream* input) final;
+  #endif  // GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
+  void SerializeWithCachedSizes(
+      ::PROTOBUF_NAMESPACE_ID::io::CodedOutputStream* output) const final;
+  ::PROTOBUF_NAMESPACE_ID::uint8* InternalSerializeWithCachedSizesToArray(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  inline void SharedCtor();
+  inline void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(LocatedBlocks* other);
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "minidfs.LocatedBlocks";
+  }
+  private:
+  inline ::PROTOBUF_NAMESPACE_ID::Arena* GetArenaNoVirtual() const {
+    return nullptr;
+  }
+  inline void* MaybeArenaPtr() const {
+    return nullptr;
+  }
+  public:
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+  private:
+  static ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadataStatic() {
+    ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&::descriptor_table_minidfs_2eproto);
+    return ::descriptor_table_minidfs_2eproto.file_level_metadata[kIndexInFileMessages];
+  }
+
+  public:
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kLocatedBlksFieldNumber = 1,
+  };
+  // repeated .minidfs.LocatedBlock locatedBlks = 1;
+  int locatedblks_size() const;
+  void clear_locatedblks();
+  ::minidfs::LocatedBlock* mutable_locatedblks(int index);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::minidfs::LocatedBlock >*
+      mutable_locatedblks();
+  const ::minidfs::LocatedBlock& locatedblks(int index) const;
+  ::minidfs::LocatedBlock* add_locatedblks();
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::minidfs::LocatedBlock >&
+      locatedblks() const;
+
+  // @@protoc_insertion_point(class_scope:minidfs.LocatedBlocks)
+ private:
+  class _Internal;
+
+  ::PROTOBUF_NAMESPACE_ID::internal::InternalMetadataWithArena _internal_metadata_;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::minidfs::LocatedBlock > locatedblks_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_minidfs_2eproto;
+};
+// -------------------------------------------------------------------
+
+class FileStorageInfo :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:minidfs.FileStorageInfo) */ {
+ public:
+  FileStorageInfo();
+  virtual ~FileStorageInfo();
+
+  FileStorageInfo(const FileStorageInfo& from);
+  FileStorageInfo(FileStorageInfo&& from) noexcept
+    : FileStorageInfo() {
+    *this = ::std::move(from);
+  }
+
+  inline FileStorageInfo& operator=(const FileStorageInfo& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline FileStorageInfo& operator=(FileStorageInfo&& from) noexcept {
+    if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
+      if (this != &from) InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return GetMetadataStatic().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return GetMetadataStatic().reflection;
+  }
+  static const FileStorageInfo& default_instance();
+
+  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
+  static inline const FileStorageInfo* internal_default_instance() {
+    return reinterpret_cast<const FileStorageInfo*>(
+               &_FileStorageInfo_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    4;
+
+  friend void swap(FileStorageInfo& a, FileStorageInfo& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(FileStorageInfo* other) {
+    if (other == this) return;
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline FileStorageInfo* New() const final {
+    return CreateMaybeMessage<FileStorageInfo>(nullptr);
+  }
+
+  FileStorageInfo* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<FileStorageInfo>(arena);
+  }
+  void CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void CopyFrom(const FileStorageInfo& from);
+  void MergeFrom(const FileStorageInfo& from);
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  #if GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  #else
+  bool MergePartialFromCodedStream(
+      ::PROTOBUF_NAMESPACE_ID::io::CodedInputStream* input) final;
+  #endif  // GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
+  void SerializeWithCachedSizes(
+      ::PROTOBUF_NAMESPACE_ID::io::CodedOutputStream* output) const final;
+  ::PROTOBUF_NAMESPACE_ID::uint8* InternalSerializeWithCachedSizesToArray(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  inline void SharedCtor();
+  inline void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(FileStorageInfo* other);
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "minidfs.FileStorageInfo";
+  }
+  private:
+  inline ::PROTOBUF_NAMESPACE_ID::Arena* GetArenaNoVirtual() const {
+    return nullptr;
+  }
+  inline void* MaybeArenaPtr() const {
+    return nullptr;
+  }
+  public:
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+  private:
+  static ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadataStatic() {
+    ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&::descriptor_table_minidfs_2eproto);
+    return ::descriptor_table_minidfs_2eproto.file_level_metadata[kIndexInFileMessages];
+  }
+
+  public:
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kLocatedblksFieldNumber = 2,
+    kFileFieldNumber = 1,
+  };
+  // repeated .minidfs.LocatedBlock locatedblks = 2;
+  int locatedblks_size() const;
+  void clear_locatedblks();
+  ::minidfs::LocatedBlock* mutable_locatedblks(int index);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::minidfs::LocatedBlock >*
+      mutable_locatedblks();
+  const ::minidfs::LocatedBlock& locatedblks(int index) const;
+  ::minidfs::LocatedBlock* add_locatedblks();
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::minidfs::LocatedBlock >&
+      locatedblks() const;
+
+  // string file = 1;
+  void clear_file();
+  const std::string& file() const;
+  void set_file(const std::string& value);
+  void set_file(std::string&& value);
+  void set_file(const char* value);
+  void set_file(const char* value, size_t size);
+  std::string* mutable_file();
+  std::string* release_file();
+  void set_allocated_file(std::string* file);
+
+  // @@protoc_insertion_point(class_scope:minidfs.FileStorageInfo)
+ private:
+  class _Internal;
+
+  ::PROTOBUF_NAMESPACE_ID::internal::InternalMetadataWithArena _internal_metadata_;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::minidfs::LocatedBlock > locatedblks_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr file_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_minidfs_2eproto;
 };
@@ -664,39 +959,162 @@ inline void LocatedBlock::set_allocated_block(::minidfs::Block* block) {
   // @@protoc_insertion_point(field_set_allocated:minidfs.LocatedBlock.block)
 }
 
-// repeated .minidfs.ChunkserverInfo chunkserverInfo = 2;
-inline int LocatedBlock::chunkserverinfo_size() const {
-  return chunkserverinfo_.size();
+// repeated .minidfs.ChunkserverInfo chunkserverInfos = 2;
+inline int LocatedBlock::chunkserverinfos_size() const {
+  return chunkserverinfos_.size();
 }
-inline void LocatedBlock::clear_chunkserverinfo() {
-  chunkserverinfo_.Clear();
+inline void LocatedBlock::clear_chunkserverinfos() {
+  chunkserverinfos_.Clear();
 }
-inline ::minidfs::ChunkserverInfo* LocatedBlock::mutable_chunkserverinfo(int index) {
-  // @@protoc_insertion_point(field_mutable:minidfs.LocatedBlock.chunkserverInfo)
-  return chunkserverinfo_.Mutable(index);
+inline ::minidfs::ChunkserverInfo* LocatedBlock::mutable_chunkserverinfos(int index) {
+  // @@protoc_insertion_point(field_mutable:minidfs.LocatedBlock.chunkserverInfos)
+  return chunkserverinfos_.Mutable(index);
 }
 inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::minidfs::ChunkserverInfo >*
-LocatedBlock::mutable_chunkserverinfo() {
-  // @@protoc_insertion_point(field_mutable_list:minidfs.LocatedBlock.chunkserverInfo)
-  return &chunkserverinfo_;
+LocatedBlock::mutable_chunkserverinfos() {
+  // @@protoc_insertion_point(field_mutable_list:minidfs.LocatedBlock.chunkserverInfos)
+  return &chunkserverinfos_;
 }
-inline const ::minidfs::ChunkserverInfo& LocatedBlock::chunkserverinfo(int index) const {
-  // @@protoc_insertion_point(field_get:minidfs.LocatedBlock.chunkserverInfo)
-  return chunkserverinfo_.Get(index);
+inline const ::minidfs::ChunkserverInfo& LocatedBlock::chunkserverinfos(int index) const {
+  // @@protoc_insertion_point(field_get:minidfs.LocatedBlock.chunkserverInfos)
+  return chunkserverinfos_.Get(index);
 }
-inline ::minidfs::ChunkserverInfo* LocatedBlock::add_chunkserverinfo() {
-  // @@protoc_insertion_point(field_add:minidfs.LocatedBlock.chunkserverInfo)
-  return chunkserverinfo_.Add();
+inline ::minidfs::ChunkserverInfo* LocatedBlock::add_chunkserverinfos() {
+  // @@protoc_insertion_point(field_add:minidfs.LocatedBlock.chunkserverInfos)
+  return chunkserverinfos_.Add();
 }
 inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::minidfs::ChunkserverInfo >&
-LocatedBlock::chunkserverinfo() const {
-  // @@protoc_insertion_point(field_list:minidfs.LocatedBlock.chunkserverInfo)
-  return chunkserverinfo_;
+LocatedBlock::chunkserverinfos() const {
+  // @@protoc_insertion_point(field_list:minidfs.LocatedBlock.chunkserverInfos)
+  return chunkserverinfos_;
+}
+
+// -------------------------------------------------------------------
+
+// LocatedBlocks
+
+// repeated .minidfs.LocatedBlock locatedBlks = 1;
+inline int LocatedBlocks::locatedblks_size() const {
+  return locatedblks_.size();
+}
+inline void LocatedBlocks::clear_locatedblks() {
+  locatedblks_.Clear();
+}
+inline ::minidfs::LocatedBlock* LocatedBlocks::mutable_locatedblks(int index) {
+  // @@protoc_insertion_point(field_mutable:minidfs.LocatedBlocks.locatedBlks)
+  return locatedblks_.Mutable(index);
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::minidfs::LocatedBlock >*
+LocatedBlocks::mutable_locatedblks() {
+  // @@protoc_insertion_point(field_mutable_list:minidfs.LocatedBlocks.locatedBlks)
+  return &locatedblks_;
+}
+inline const ::minidfs::LocatedBlock& LocatedBlocks::locatedblks(int index) const {
+  // @@protoc_insertion_point(field_get:minidfs.LocatedBlocks.locatedBlks)
+  return locatedblks_.Get(index);
+}
+inline ::minidfs::LocatedBlock* LocatedBlocks::add_locatedblks() {
+  // @@protoc_insertion_point(field_add:minidfs.LocatedBlocks.locatedBlks)
+  return locatedblks_.Add();
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::minidfs::LocatedBlock >&
+LocatedBlocks::locatedblks() const {
+  // @@protoc_insertion_point(field_list:minidfs.LocatedBlocks.locatedBlks)
+  return locatedblks_;
+}
+
+// -------------------------------------------------------------------
+
+// FileStorageInfo
+
+// string file = 1;
+inline void FileStorageInfo::clear_file() {
+  file_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline const std::string& FileStorageInfo::file() const {
+  // @@protoc_insertion_point(field_get:minidfs.FileStorageInfo.file)
+  return file_.GetNoArena();
+}
+inline void FileStorageInfo::set_file(const std::string& value) {
+  
+  file_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:minidfs.FileStorageInfo.file)
+}
+inline void FileStorageInfo::set_file(std::string&& value) {
+  
+  file_.SetNoArena(
+    &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:minidfs.FileStorageInfo.file)
+}
+inline void FileStorageInfo::set_file(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  
+  file_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:minidfs.FileStorageInfo.file)
+}
+inline void FileStorageInfo::set_file(const char* value, size_t size) {
+  
+  file_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:minidfs.FileStorageInfo.file)
+}
+inline std::string* FileStorageInfo::mutable_file() {
+  
+  // @@protoc_insertion_point(field_mutable:minidfs.FileStorageInfo.file)
+  return file_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline std::string* FileStorageInfo::release_file() {
+  // @@protoc_insertion_point(field_release:minidfs.FileStorageInfo.file)
+  
+  return file_.ReleaseNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline void FileStorageInfo::set_allocated_file(std::string* file) {
+  if (file != nullptr) {
+    
+  } else {
+    
+  }
+  file_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), file);
+  // @@protoc_insertion_point(field_set_allocated:minidfs.FileStorageInfo.file)
+}
+
+// repeated .minidfs.LocatedBlock locatedblks = 2;
+inline int FileStorageInfo::locatedblks_size() const {
+  return locatedblks_.size();
+}
+inline void FileStorageInfo::clear_locatedblks() {
+  locatedblks_.Clear();
+}
+inline ::minidfs::LocatedBlock* FileStorageInfo::mutable_locatedblks(int index) {
+  // @@protoc_insertion_point(field_mutable:minidfs.FileStorageInfo.locatedblks)
+  return locatedblks_.Mutable(index);
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::minidfs::LocatedBlock >*
+FileStorageInfo::mutable_locatedblks() {
+  // @@protoc_insertion_point(field_mutable_list:minidfs.FileStorageInfo.locatedblks)
+  return &locatedblks_;
+}
+inline const ::minidfs::LocatedBlock& FileStorageInfo::locatedblks(int index) const {
+  // @@protoc_insertion_point(field_get:minidfs.FileStorageInfo.locatedblks)
+  return locatedblks_.Get(index);
+}
+inline ::minidfs::LocatedBlock* FileStorageInfo::add_locatedblks() {
+  // @@protoc_insertion_point(field_add:minidfs.FileStorageInfo.locatedblks)
+  return locatedblks_.Add();
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::minidfs::LocatedBlock >&
+FileStorageInfo::locatedblks() const {
+  // @@protoc_insertion_point(field_list:minidfs.FileStorageInfo.locatedblks)
+  return locatedblks_;
 }
 
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

@@ -20,7 +20,7 @@ namespace minidfs {
 /// This class is just an interface.
 class ClientProtocol {
   public:
-    /// \brief Get a file's block location information from Master.
+    /// \brief Get a file's block location information from Master. MethodID = 1.
     ///
     /// \param file the file name stored in minidfs.
     /// \param locatedBlks a list of locatedBlocks which maps from a block ID to chunkservers.
@@ -28,7 +28,7 @@ class ClientProtocol {
     /// \return returning status. 0: success; 1: fail.
     virtual int getBlockLocations(const string& file, LocatedBlocks* locatedBlks) = 0;
 
-    /// \brief Create a file.
+    /// \brief Create a file. MethodID = 2.
     ///
     /// This operation informs Master to create the meta info for the first block
     /// \param file the file name stored in minidfs.

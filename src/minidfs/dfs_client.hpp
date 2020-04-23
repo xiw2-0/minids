@@ -8,6 +8,8 @@
 #define DFS_CLIENT_H_
 
 #include <string>
+#include <minidfs/client_protocol.hpp>
+#include <rpc/client_protocol_proxy.hpp>
 
 using std::string;
 
@@ -18,27 +20,33 @@ namespace minidfs {
 /// It communicates with Master node to get/set the metadata of files/directories.
 /// It interacts with Chunkserver to send/recv chunk data.
 class DFSClient {
-  public:
-    DFSClient(/* args */);
-    ~DFSClient();
+ private:
+  /// 
+  std::unique_ptr<ClientProtocol> master;
 
-    /// \brief Get a file's block location information from Master.
-    ///
-    /// \param file the file name stored in minidfs.
-    /// \return void
-    void getBlockLocations(string file);
+ public:
+  /// \brief Create a DFSClient given the Master's IP and port.
+  DFSClient(const string& serverIP, int serverPort);
 
-    /// \brief Create a file.
-    ///
-    /// This operation informs Master to create the meta info for the first block
-    /// \param file the file name stored in minidfs.
-    /// \return void
-    void create(string file);
+  ~DFSClient();
 
+  /// \brief Get a file's block location information from Master. MethodID = 1.
+  ///
+  /// \param file the file name stored in minidfs.
+  /// \param locatedBlks a list of locatedBlocks which maps from a block ID to chunkservers.
+  ///        It is the returning parameter. 
+  /// \return return 0 on success, -1 for errors.
+  int getBlockLocations(const string& file, LocatedBlocks* locatedBlks);
 
-  private:
-    /// 
-    
+  /// \brief Create a file. MethodID = 2.
+  ///
+  /// This operation informs Master to create the meta info for the first block
+  /// \param file the file name stored in minidfs.
+  /// \param locatedBlk contains chunkservers' information.
+  ///        It is the returning parameter. 
+  /// \return return 0 on success, -1 for errors.
+  int create(const string& file, LocatedBlock* locatedBlk);
+
 };
 
 

@@ -8,15 +8,20 @@
 
 namespace minidfs {
 
-
-DFSClient::DFSClient(/* args */) {
+DFSClient::DFSClient(const string& serverIP, int serverPort):
+  master(new rpc::ClientProtocolProxy(serverIP, serverPort)) {
 }
 
 DFSClient::~DFSClient() {
 }
 
+int DFSClient::getBlockLocations(const string& file, LocatedBlocks* locatedBlks) {
+  return master->getBlockLocations(file, locatedBlks);
+}
 
-
+int DFSClient::create(const string& file, LocatedBlock* locatedBlk) {
+  return master->create(file, locatedBlk);
+}
 
 } // namespace minidfs
 

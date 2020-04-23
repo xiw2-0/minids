@@ -13,6 +13,6 @@ using std::cout;
 using std::cin;
 
 int main(int argc, char const *argv[]) {
-    cout << "Hello world!" << std::endl;
-    return 0;
+  cout << "Hello world!" << std::endl;
+  return 0;
 }

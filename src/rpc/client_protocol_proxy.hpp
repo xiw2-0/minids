@@ -13,45 +13,38 @@
 
 namespace rpc {
 
-/// Uses rpc_client to communicate with master.
-/// Serializes the method calls' parameters and uses rpc
+/// \brief ClientProtocolProxy uses rpc client to communicate with master.
+///
+/// It serializes the method calls' parameters and uses rpc
 /// client to send the serialized function call to master.
-class ClientProtocolProxy: public minidfs:: ClientProtocol {
+/// Make sure to call startRPCClient() before rpc communication.
+class ClientProtocolProxy: public minidfs::ClientProtocol {
   private:
     RPCClient client;
 
   public:
-    ClientProtocolProxy(/* args */);
+    /// \brief Construct a RPCClient in this constructor. 
+    ClientProtocolProxy(const string& serverIP, int serverPort);
+
     ~ClientProtocolProxy();
 
-      public:
-    /// \brief Get a file's block location information from Master.
+    /// \brief Get a file's block location information from Master. MethodID = 1.
     ///
     /// \param file the file name stored in minidfs.
     /// \param locatedBlks a list of locatedBlocks which maps from a block ID to chunkservers.
     ///        It is the returning parameter. 
-    /// \return returning status. 0: success; 1: fail.
-    virtual int getBlockLocations(const string& file, minidfs:: LocatedBlocks* locatedBlks) override;
+    /// \return return 0 on success, -1 for errors.
+    virtual int getBlockLocations(const string& file, minidfs::LocatedBlocks* locatedBlks) override;
 
-    /// \brief Create a file.
+    /// \brief Create a file. MethodID = 2.
     ///
     /// This operation informs Master to create the meta info for the first block
     /// \param file the file name stored in minidfs.
     /// \param locatedBlk contains chunkservers' information.
     ///        It is the returning parameter. 
-    /// \return returning status. 0 for success; 1 for fail.
-    virtual int create(const string& file, minidfs:: LocatedBlock* locatedBlk) override;
+    /// \return return 0 on success, -1 for errors.
+    virtual int create(const string& file, minidfs::LocatedBlock* locatedBlk) override;
 };
-
-
-
-ClientProtocolProxy::ClientProtocolProxy(/* args */)
-{
-}
-
-ClientProtocolProxy::~ClientProtocolProxy()
-{
-}
 
 
 

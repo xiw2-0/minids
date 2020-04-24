@@ -25,7 +25,7 @@ class ClientProtocol {
     /// \param file the file name stored in minidfs.
     /// \param locatedBlks a list of locatedBlocks which maps from a block ID to chunkservers.
     ///        It is the returning parameter. 
-    /// \return returning status. 0: success; 1: fail.
+    /// \return returning status. 0 on success, 1 for error.
     virtual int getBlockLocations(const string& file, LocatedBlocks* locatedBlks) = 0;
 
     /// \brief Create a file. MethodID = 2.
@@ -34,7 +34,7 @@ class ClientProtocol {
     /// \param file the file name stored in minidfs.
     /// \param locatedBlk contains chunkservers' information.
     ///        It is the returning parameter. 
-    /// \return returning status. 0 for success; 1 for fail.
+    /// \return returning status. 0 on success, 1 for error.
     virtual int create(const string& file, LocatedBlock* locatedBlk) = 0;
 };
 

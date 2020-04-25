@@ -45,9 +45,11 @@ namespace rpc {
 class RPCServer {
  private:
   /// \brief Master is responsible for dealing with the requests.
+  ///
   /// When \class RPCServer receives a rpc call, it forwards the 
   /// call to master.
-  std::unique_ptr<minidfs::DFSMaster> master;
+  /// Changed from unique_ptr to normal ptr.
+  minidfs::DFSMaster* master;
 
   int serverPort;
   struct sockaddr_in serverAddr;
@@ -62,7 +64,7 @@ class RPCServer {
   ///
   /// \param serverPort Master's serving port
   /// \param maxConns maximum number of connections
-  RPCServer(int serverPort, int maxConns);
+  RPCServer(int serverPort, int maxConns, minidfs::DFSMaster* master);
 
   ~RPCServer();
 

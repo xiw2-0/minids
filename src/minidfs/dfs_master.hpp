@@ -7,8 +7,12 @@
 #ifndef DFS_MASTER_
 #define DFS_MASTER_
 
+#include <fstream>
+
 #include <minidfs/client_protocol.hpp>
+#include <proto/minidfs.pb.h>
 #include <rpc/rpc_server.hpp>
+
 
 namespace minidfs {
 
@@ -22,11 +26,9 @@ namespace minidfs {
 /// TODO: xiW add read/write lock to avoid concurrent errors and thus to support concurrence.
 class DFSMaster: public ClientProtocol{
  private:
-  /// namesystem file names
-  string dfIDFile;
-  string dentryFile;
-  string inodeFile;
 
+  /// namesystem file
+  string nameSysFile;
 
 
   /// Server waits for the rpcs call and forwards the calls to master.
@@ -46,12 +48,14 @@ class DFSMaster: public ClientProtocol{
   /// This will be serialized to local disk.
   std::map<int, std::vector<int>> dentries;
 
-  /// \brief Maps from file id to block ids
+  /// \brief Maps from file id to block ids. Dirs are not included here.
   ///
   /// This will be serialized to local disk.
   std::map<int, std::vector<int>> inodes;
   /// The max block ID that has been allocated
   int currentMaxBlkID;
+  /// \brief Maps from block id to blocks.
+  std::map<int, Block> blks;
 
   /// Maps from block id to chunkservers
   /// TODO: xiw This can be changed to chunkserver id too.
@@ -67,10 +71,14 @@ class DFSMaster: public ClientProtocol{
   /// \param inodeFile
   /// \param serverPort Master's serving port
   /// \param maxConns maximum number of connections
-  DFSMaster(const string& dfIDFile, const string& dentryFile, const string& inodeFile,
+  DFSMaster(const string& nameSysFile,
             int serverPort, int maxConns);
 
   ~DFSMaster();
+
+  /// \brief Init Master. Parse the persistent name system. Wait
+  /// for the report from the chunkservers.
+  void initMater();
 
   /// \brief News a thread to run \class RPCServer and waits it endlessly.
   void startRun();

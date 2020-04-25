@@ -47,7 +47,7 @@ struct TableStruct_minidfs_2eproto {
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::AuxillaryParseTableField aux[]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
-  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[5]
+  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[9]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::FieldMetadata field_metadata[];
   static const ::PROTOBUF_NAMESPACE_ID::internal::SerializationTable serialization_table[];
@@ -61,22 +61,38 @@ extern BlockDefaultTypeInternal _Block_default_instance_;
 class ChunkserverInfo;
 class ChunkserverInfoDefaultTypeInternal;
 extern ChunkserverInfoDefaultTypeInternal _ChunkserverInfo_default_instance_;
-class FileStorageInfo;
-class FileStorageInfoDefaultTypeInternal;
-extern FileStorageInfoDefaultTypeInternal _FileStorageInfo_default_instance_;
+class Dentry;
+class DentryDefaultTypeInternal;
+extern DentryDefaultTypeInternal _Dentry_default_instance_;
+class DentrySection;
+class DentrySectionDefaultTypeInternal;
+extern DentrySectionDefaultTypeInternal _DentrySection_default_instance_;
+class Inode;
+class InodeDefaultTypeInternal;
+extern InodeDefaultTypeInternal _Inode_default_instance_;
+class InodeSection;
+class InodeSectionDefaultTypeInternal;
+extern InodeSectionDefaultTypeInternal _InodeSection_default_instance_;
 class LocatedBlock;
 class LocatedBlockDefaultTypeInternal;
 extern LocatedBlockDefaultTypeInternal _LocatedBlock_default_instance_;
 class LocatedBlocks;
 class LocatedBlocksDefaultTypeInternal;
 extern LocatedBlocksDefaultTypeInternal _LocatedBlocks_default_instance_;
+class NameSystem;
+class NameSystemDefaultTypeInternal;
+extern NameSystemDefaultTypeInternal _NameSystem_default_instance_;
 }  // namespace minidfs
 PROTOBUF_NAMESPACE_OPEN
 template<> ::minidfs::Block* Arena::CreateMaybeMessage<::minidfs::Block>(Arena*);
 template<> ::minidfs::ChunkserverInfo* Arena::CreateMaybeMessage<::minidfs::ChunkserverInfo>(Arena*);
-template<> ::minidfs::FileStorageInfo* Arena::CreateMaybeMessage<::minidfs::FileStorageInfo>(Arena*);
+template<> ::minidfs::Dentry* Arena::CreateMaybeMessage<::minidfs::Dentry>(Arena*);
+template<> ::minidfs::DentrySection* Arena::CreateMaybeMessage<::minidfs::DentrySection>(Arena*);
+template<> ::minidfs::Inode* Arena::CreateMaybeMessage<::minidfs::Inode>(Arena*);
+template<> ::minidfs::InodeSection* Arena::CreateMaybeMessage<::minidfs::InodeSection>(Arena*);
 template<> ::minidfs::LocatedBlock* Arena::CreateMaybeMessage<::minidfs::LocatedBlock>(Arena*);
 template<> ::minidfs::LocatedBlocks* Arena::CreateMaybeMessage<::minidfs::LocatedBlocks>(Arena*);
+template<> ::minidfs::NameSystem* Arena::CreateMaybeMessage<::minidfs::NameSystem>(Arena*);
 PROTOBUF_NAMESPACE_CLOSE
 namespace minidfs {
 
@@ -648,23 +664,23 @@ class LocatedBlocks :
 };
 // -------------------------------------------------------------------
 
-class FileStorageInfo :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:minidfs.FileStorageInfo) */ {
+class Inode :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:minidfs.Inode) */ {
  public:
-  FileStorageInfo();
-  virtual ~FileStorageInfo();
+  Inode();
+  virtual ~Inode();
 
-  FileStorageInfo(const FileStorageInfo& from);
-  FileStorageInfo(FileStorageInfo&& from) noexcept
-    : FileStorageInfo() {
+  Inode(const Inode& from);
+  Inode(Inode&& from) noexcept
+    : Inode() {
     *this = ::std::move(from);
   }
 
-  inline FileStorageInfo& operator=(const FileStorageInfo& from) {
+  inline Inode& operator=(const Inode& from) {
     CopyFrom(from);
     return *this;
   }
-  inline FileStorageInfo& operator=(FileStorageInfo&& from) noexcept {
+  inline Inode& operator=(Inode&& from) noexcept {
     if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
       if (this != &from) InternalSwap(&from);
     } else {
@@ -682,37 +698,37 @@ class FileStorageInfo :
   static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
     return GetMetadataStatic().reflection;
   }
-  static const FileStorageInfo& default_instance();
+  static const Inode& default_instance();
 
   static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
-  static inline const FileStorageInfo* internal_default_instance() {
-    return reinterpret_cast<const FileStorageInfo*>(
-               &_FileStorageInfo_default_instance_);
+  static inline const Inode* internal_default_instance() {
+    return reinterpret_cast<const Inode*>(
+               &_Inode_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
     4;
 
-  friend void swap(FileStorageInfo& a, FileStorageInfo& b) {
+  friend void swap(Inode& a, Inode& b) {
     a.Swap(&b);
   }
-  inline void Swap(FileStorageInfo* other) {
+  inline void Swap(Inode* other) {
     if (other == this) return;
     InternalSwap(other);
   }
 
   // implements Message ----------------------------------------------
 
-  inline FileStorageInfo* New() const final {
-    return CreateMaybeMessage<FileStorageInfo>(nullptr);
+  inline Inode* New() const final {
+    return CreateMaybeMessage<Inode>(nullptr);
   }
 
-  FileStorageInfo* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
-    return CreateMaybeMessage<FileStorageInfo>(arena);
+  Inode* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<Inode>(arena);
   }
   void CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
   void MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
-  void CopyFrom(const FileStorageInfo& from);
-  void MergeFrom(const FileStorageInfo& from);
+  void CopyFrom(const Inode& from);
+  void MergeFrom(const Inode& from);
   PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
   bool IsInitialized() const final;
 
@@ -733,10 +749,10 @@ class FileStorageInfo :
   inline void SharedCtor();
   inline void SharedDtor();
   void SetCachedSize(int size) const final;
-  void InternalSwap(FileStorageInfo* other);
+  void InternalSwap(Inode* other);
   friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
   static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
-    return "minidfs.FileStorageInfo";
+    return "minidfs.Inode";
   }
   private:
   inline ::PROTOBUF_NAMESPACE_ID::Arena* GetArenaNoVirtual() const {
@@ -761,38 +777,629 @@ class FileStorageInfo :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kLocatedblksFieldNumber = 2,
-    kFileFieldNumber = 1,
+    kBlksFieldNumber = 4,
+    kNameFieldNumber = 2,
+    kIdFieldNumber = 1,
+    kIsDirFieldNumber = 3,
   };
-  // repeated .minidfs.LocatedBlock locatedblks = 2;
-  int locatedblks_size() const;
-  void clear_locatedblks();
-  ::minidfs::LocatedBlock* mutable_locatedblks(int index);
-  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::minidfs::LocatedBlock >*
-      mutable_locatedblks();
-  const ::minidfs::LocatedBlock& locatedblks(int index) const;
-  ::minidfs::LocatedBlock* add_locatedblks();
-  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::minidfs::LocatedBlock >&
-      locatedblks() const;
+  // repeated .minidfs.Block blks = 4;
+  int blks_size() const;
+  void clear_blks();
+  ::minidfs::Block* mutable_blks(int index);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::minidfs::Block >*
+      mutable_blks();
+  const ::minidfs::Block& blks(int index) const;
+  ::minidfs::Block* add_blks();
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::minidfs::Block >&
+      blks() const;
 
-  // string file = 1;
-  void clear_file();
-  const std::string& file() const;
-  void set_file(const std::string& value);
-  void set_file(std::string&& value);
-  void set_file(const char* value);
-  void set_file(const char* value, size_t size);
-  std::string* mutable_file();
-  std::string* release_file();
-  void set_allocated_file(std::string* file);
+  // string name = 2;
+  void clear_name();
+  const std::string& name() const;
+  void set_name(const std::string& value);
+  void set_name(std::string&& value);
+  void set_name(const char* value);
+  void set_name(const char* value, size_t size);
+  std::string* mutable_name();
+  std::string* release_name();
+  void set_allocated_name(std::string* name);
 
-  // @@protoc_insertion_point(class_scope:minidfs.FileStorageInfo)
+  // int32 id = 1;
+  void clear_id();
+  ::PROTOBUF_NAMESPACE_ID::int32 id() const;
+  void set_id(::PROTOBUF_NAMESPACE_ID::int32 value);
+
+  // bool isDir = 3;
+  void clear_isdir();
+  bool isdir() const;
+  void set_isdir(bool value);
+
+  // @@protoc_insertion_point(class_scope:minidfs.Inode)
  private:
   class _Internal;
 
   ::PROTOBUF_NAMESPACE_ID::internal::InternalMetadataWithArena _internal_metadata_;
-  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::minidfs::LocatedBlock > locatedblks_;
-  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr file_;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::minidfs::Block > blks_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr name_;
+  ::PROTOBUF_NAMESPACE_ID::int32 id_;
+  bool isdir_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_minidfs_2eproto;
+};
+// -------------------------------------------------------------------
+
+class InodeSection :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:minidfs.InodeSection) */ {
+ public:
+  InodeSection();
+  virtual ~InodeSection();
+
+  InodeSection(const InodeSection& from);
+  InodeSection(InodeSection&& from) noexcept
+    : InodeSection() {
+    *this = ::std::move(from);
+  }
+
+  inline InodeSection& operator=(const InodeSection& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline InodeSection& operator=(InodeSection&& from) noexcept {
+    if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
+      if (this != &from) InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return GetMetadataStatic().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return GetMetadataStatic().reflection;
+  }
+  static const InodeSection& default_instance();
+
+  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
+  static inline const InodeSection* internal_default_instance() {
+    return reinterpret_cast<const InodeSection*>(
+               &_InodeSection_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    5;
+
+  friend void swap(InodeSection& a, InodeSection& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(InodeSection* other) {
+    if (other == this) return;
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline InodeSection* New() const final {
+    return CreateMaybeMessage<InodeSection>(nullptr);
+  }
+
+  InodeSection* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<InodeSection>(arena);
+  }
+  void CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void CopyFrom(const InodeSection& from);
+  void MergeFrom(const InodeSection& from);
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  #if GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  #else
+  bool MergePartialFromCodedStream(
+      ::PROTOBUF_NAMESPACE_ID::io::CodedInputStream* input) final;
+  #endif  // GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
+  void SerializeWithCachedSizes(
+      ::PROTOBUF_NAMESPACE_ID::io::CodedOutputStream* output) const final;
+  ::PROTOBUF_NAMESPACE_ID::uint8* InternalSerializeWithCachedSizesToArray(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  inline void SharedCtor();
+  inline void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(InodeSection* other);
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "minidfs.InodeSection";
+  }
+  private:
+  inline ::PROTOBUF_NAMESPACE_ID::Arena* GetArenaNoVirtual() const {
+    return nullptr;
+  }
+  inline void* MaybeArenaPtr() const {
+    return nullptr;
+  }
+  public:
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+  private:
+  static ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadataStatic() {
+    ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&::descriptor_table_minidfs_2eproto);
+    return ::descriptor_table_minidfs_2eproto.file_level_metadata[kIndexInFileMessages];
+  }
+
+  public:
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kInodesFieldNumber = 1,
+  };
+  // repeated .minidfs.Inode inodes = 1;
+  int inodes_size() const;
+  void clear_inodes();
+  ::minidfs::Inode* mutable_inodes(int index);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::minidfs::Inode >*
+      mutable_inodes();
+  const ::minidfs::Inode& inodes(int index) const;
+  ::minidfs::Inode* add_inodes();
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::minidfs::Inode >&
+      inodes() const;
+
+  // @@protoc_insertion_point(class_scope:minidfs.InodeSection)
+ private:
+  class _Internal;
+
+  ::PROTOBUF_NAMESPACE_ID::internal::InternalMetadataWithArena _internal_metadata_;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::minidfs::Inode > inodes_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_minidfs_2eproto;
+};
+// -------------------------------------------------------------------
+
+class Dentry :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:minidfs.Dentry) */ {
+ public:
+  Dentry();
+  virtual ~Dentry();
+
+  Dentry(const Dentry& from);
+  Dentry(Dentry&& from) noexcept
+    : Dentry() {
+    *this = ::std::move(from);
+  }
+
+  inline Dentry& operator=(const Dentry& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline Dentry& operator=(Dentry&& from) noexcept {
+    if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
+      if (this != &from) InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return GetMetadataStatic().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return GetMetadataStatic().reflection;
+  }
+  static const Dentry& default_instance();
+
+  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
+  static inline const Dentry* internal_default_instance() {
+    return reinterpret_cast<const Dentry*>(
+               &_Dentry_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    6;
+
+  friend void swap(Dentry& a, Dentry& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(Dentry* other) {
+    if (other == this) return;
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline Dentry* New() const final {
+    return CreateMaybeMessage<Dentry>(nullptr);
+  }
+
+  Dentry* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<Dentry>(arena);
+  }
+  void CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void CopyFrom(const Dentry& from);
+  void MergeFrom(const Dentry& from);
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  #if GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  #else
+  bool MergePartialFromCodedStream(
+      ::PROTOBUF_NAMESPACE_ID::io::CodedInputStream* input) final;
+  #endif  // GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
+  void SerializeWithCachedSizes(
+      ::PROTOBUF_NAMESPACE_ID::io::CodedOutputStream* output) const final;
+  ::PROTOBUF_NAMESPACE_ID::uint8* InternalSerializeWithCachedSizesToArray(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  inline void SharedCtor();
+  inline void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(Dentry* other);
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "minidfs.Dentry";
+  }
+  private:
+  inline ::PROTOBUF_NAMESPACE_ID::Arena* GetArenaNoVirtual() const {
+    return nullptr;
+  }
+  inline void* MaybeArenaPtr() const {
+    return nullptr;
+  }
+  public:
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+  private:
+  static ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadataStatic() {
+    ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&::descriptor_table_minidfs_2eproto);
+    return ::descriptor_table_minidfs_2eproto.file_level_metadata[kIndexInFileMessages];
+  }
+
+  public:
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kSubDentriesFieldNumber = 2,
+    kIdFieldNumber = 1,
+  };
+  // repeated int32 subDentries = 2;
+  int subdentries_size() const;
+  void clear_subdentries();
+  ::PROTOBUF_NAMESPACE_ID::int32 subdentries(int index) const;
+  void set_subdentries(int index, ::PROTOBUF_NAMESPACE_ID::int32 value);
+  void add_subdentries(::PROTOBUF_NAMESPACE_ID::int32 value);
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::int32 >&
+      subdentries() const;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::int32 >*
+      mutable_subdentries();
+
+  // int32 id = 1;
+  void clear_id();
+  ::PROTOBUF_NAMESPACE_ID::int32 id() const;
+  void set_id(::PROTOBUF_NAMESPACE_ID::int32 value);
+
+  // @@protoc_insertion_point(class_scope:minidfs.Dentry)
+ private:
+  class _Internal;
+
+  ::PROTOBUF_NAMESPACE_ID::internal::InternalMetadataWithArena _internal_metadata_;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::int32 > subdentries_;
+  mutable std::atomic<int> _subdentries_cached_byte_size_;
+  ::PROTOBUF_NAMESPACE_ID::int32 id_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_minidfs_2eproto;
+};
+// -------------------------------------------------------------------
+
+class DentrySection :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:minidfs.DentrySection) */ {
+ public:
+  DentrySection();
+  virtual ~DentrySection();
+
+  DentrySection(const DentrySection& from);
+  DentrySection(DentrySection&& from) noexcept
+    : DentrySection() {
+    *this = ::std::move(from);
+  }
+
+  inline DentrySection& operator=(const DentrySection& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline DentrySection& operator=(DentrySection&& from) noexcept {
+    if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
+      if (this != &from) InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return GetMetadataStatic().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return GetMetadataStatic().reflection;
+  }
+  static const DentrySection& default_instance();
+
+  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
+  static inline const DentrySection* internal_default_instance() {
+    return reinterpret_cast<const DentrySection*>(
+               &_DentrySection_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    7;
+
+  friend void swap(DentrySection& a, DentrySection& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(DentrySection* other) {
+    if (other == this) return;
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline DentrySection* New() const final {
+    return CreateMaybeMessage<DentrySection>(nullptr);
+  }
+
+  DentrySection* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<DentrySection>(arena);
+  }
+  void CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void CopyFrom(const DentrySection& from);
+  void MergeFrom(const DentrySection& from);
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  #if GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  #else
+  bool MergePartialFromCodedStream(
+      ::PROTOBUF_NAMESPACE_ID::io::CodedInputStream* input) final;
+  #endif  // GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
+  void SerializeWithCachedSizes(
+      ::PROTOBUF_NAMESPACE_ID::io::CodedOutputStream* output) const final;
+  ::PROTOBUF_NAMESPACE_ID::uint8* InternalSerializeWithCachedSizesToArray(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  inline void SharedCtor();
+  inline void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(DentrySection* other);
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "minidfs.DentrySection";
+  }
+  private:
+  inline ::PROTOBUF_NAMESPACE_ID::Arena* GetArenaNoVirtual() const {
+    return nullptr;
+  }
+  inline void* MaybeArenaPtr() const {
+    return nullptr;
+  }
+  public:
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+  private:
+  static ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadataStatic() {
+    ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&::descriptor_table_minidfs_2eproto);
+    return ::descriptor_table_minidfs_2eproto.file_level_metadata[kIndexInFileMessages];
+  }
+
+  public:
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kDentriesFieldNumber = 1,
+  };
+  // repeated .minidfs.Dentry dentries = 1;
+  int dentries_size() const;
+  void clear_dentries();
+  ::minidfs::Dentry* mutable_dentries(int index);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::minidfs::Dentry >*
+      mutable_dentries();
+  const ::minidfs::Dentry& dentries(int index) const;
+  ::minidfs::Dentry* add_dentries();
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::minidfs::Dentry >&
+      dentries() const;
+
+  // @@protoc_insertion_point(class_scope:minidfs.DentrySection)
+ private:
+  class _Internal;
+
+  ::PROTOBUF_NAMESPACE_ID::internal::InternalMetadataWithArena _internal_metadata_;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::minidfs::Dentry > dentries_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_minidfs_2eproto;
+};
+// -------------------------------------------------------------------
+
+class NameSystem :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:minidfs.NameSystem) */ {
+ public:
+  NameSystem();
+  virtual ~NameSystem();
+
+  NameSystem(const NameSystem& from);
+  NameSystem(NameSystem&& from) noexcept
+    : NameSystem() {
+    *this = ::std::move(from);
+  }
+
+  inline NameSystem& operator=(const NameSystem& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline NameSystem& operator=(NameSystem&& from) noexcept {
+    if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
+      if (this != &from) InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return GetMetadataStatic().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return GetMetadataStatic().reflection;
+  }
+  static const NameSystem& default_instance();
+
+  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
+  static inline const NameSystem* internal_default_instance() {
+    return reinterpret_cast<const NameSystem*>(
+               &_NameSystem_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    8;
+
+  friend void swap(NameSystem& a, NameSystem& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(NameSystem* other) {
+    if (other == this) return;
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline NameSystem* New() const final {
+    return CreateMaybeMessage<NameSystem>(nullptr);
+  }
+
+  NameSystem* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<NameSystem>(arena);
+  }
+  void CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void CopyFrom(const NameSystem& from);
+  void MergeFrom(const NameSystem& from);
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  #if GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  #else
+  bool MergePartialFromCodedStream(
+      ::PROTOBUF_NAMESPACE_ID::io::CodedInputStream* input) final;
+  #endif  // GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
+  void SerializeWithCachedSizes(
+      ::PROTOBUF_NAMESPACE_ID::io::CodedOutputStream* output) const final;
+  ::PROTOBUF_NAMESPACE_ID::uint8* InternalSerializeWithCachedSizesToArray(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  inline void SharedCtor();
+  inline void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(NameSystem* other);
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "minidfs.NameSystem";
+  }
+  private:
+  inline ::PROTOBUF_NAMESPACE_ID::Arena* GetArenaNoVirtual() const {
+    return nullptr;
+  }
+  inline void* MaybeArenaPtr() const {
+    return nullptr;
+  }
+  public:
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+  private:
+  static ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadataStatic() {
+    ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&::descriptor_table_minidfs_2eproto);
+    return ::descriptor_table_minidfs_2eproto.file_level_metadata[kIndexInFileMessages];
+  }
+
+  public:
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kInodeSectionFieldNumber = 3,
+    kDentrySectionFieldNumber = 4,
+    kMaxDfIDFieldNumber = 1,
+    kMaxBlkIDFieldNumber = 2,
+  };
+  // .minidfs.InodeSection inodeSection = 3;
+  bool has_inodesection() const;
+  void clear_inodesection();
+  const ::minidfs::InodeSection& inodesection() const;
+  ::minidfs::InodeSection* release_inodesection();
+  ::minidfs::InodeSection* mutable_inodesection();
+  void set_allocated_inodesection(::minidfs::InodeSection* inodesection);
+
+  // .minidfs.DentrySection dentrySection = 4;
+  bool has_dentrysection() const;
+  void clear_dentrysection();
+  const ::minidfs::DentrySection& dentrysection() const;
+  ::minidfs::DentrySection* release_dentrysection();
+  ::minidfs::DentrySection* mutable_dentrysection();
+  void set_allocated_dentrysection(::minidfs::DentrySection* dentrysection);
+
+  // int32 maxDfID = 1;
+  void clear_maxdfid();
+  ::PROTOBUF_NAMESPACE_ID::int32 maxdfid() const;
+  void set_maxdfid(::PROTOBUF_NAMESPACE_ID::int32 value);
+
+  // int32 maxBlkID = 2;
+  void clear_maxblkid();
+  ::PROTOBUF_NAMESPACE_ID::int32 maxblkid() const;
+  void set_maxblkid(::PROTOBUF_NAMESPACE_ID::int32 value);
+
+  // @@protoc_insertion_point(class_scope:minidfs.NameSystem)
+ private:
+  class _Internal;
+
+  ::PROTOBUF_NAMESPACE_ID::internal::InternalMetadataWithArena _internal_metadata_;
+  ::minidfs::InodeSection* inodesection_;
+  ::minidfs::DentrySection* dentrysection_;
+  ::PROTOBUF_NAMESPACE_ID::int32 maxdfid_;
+  ::PROTOBUF_NAMESPACE_ID::int32 maxblkid_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_minidfs_2eproto;
 };
@@ -1025,92 +1632,378 @@ LocatedBlocks::locatedblks() const {
 
 // -------------------------------------------------------------------
 
-// FileStorageInfo
+// Inode
 
-// string file = 1;
-inline void FileStorageInfo::clear_file() {
-  file_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+// int32 id = 1;
+inline void Inode::clear_id() {
+  id_ = 0;
 }
-inline const std::string& FileStorageInfo::file() const {
-  // @@protoc_insertion_point(field_get:minidfs.FileStorageInfo.file)
-  return file_.GetNoArena();
+inline ::PROTOBUF_NAMESPACE_ID::int32 Inode::id() const {
+  // @@protoc_insertion_point(field_get:minidfs.Inode.id)
+  return id_;
 }
-inline void FileStorageInfo::set_file(const std::string& value) {
+inline void Inode::set_id(::PROTOBUF_NAMESPACE_ID::int32 value) {
   
-  file_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
-  // @@protoc_insertion_point(field_set:minidfs.FileStorageInfo.file)
+  id_ = value;
+  // @@protoc_insertion_point(field_set:minidfs.Inode.id)
 }
-inline void FileStorageInfo::set_file(std::string&& value) {
+
+// string name = 2;
+inline void Inode::clear_name() {
+  name_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline const std::string& Inode::name() const {
+  // @@protoc_insertion_point(field_get:minidfs.Inode.name)
+  return name_.GetNoArena();
+}
+inline void Inode::set_name(const std::string& value) {
   
-  file_.SetNoArena(
+  name_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:minidfs.Inode.name)
+}
+inline void Inode::set_name(std::string&& value) {
+  
+  name_.SetNoArena(
     &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
-  // @@protoc_insertion_point(field_set_rvalue:minidfs.FileStorageInfo.file)
+  // @@protoc_insertion_point(field_set_rvalue:minidfs.Inode.name)
 }
-inline void FileStorageInfo::set_file(const char* value) {
+inline void Inode::set_name(const char* value) {
   GOOGLE_DCHECK(value != nullptr);
   
-  file_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:minidfs.FileStorageInfo.file)
+  name_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:minidfs.Inode.name)
 }
-inline void FileStorageInfo::set_file(const char* value, size_t size) {
+inline void Inode::set_name(const char* value, size_t size) {
   
-  file_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+  name_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
       ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:minidfs.FileStorageInfo.file)
+  // @@protoc_insertion_point(field_set_pointer:minidfs.Inode.name)
 }
-inline std::string* FileStorageInfo::mutable_file() {
+inline std::string* Inode::mutable_name() {
   
-  // @@protoc_insertion_point(field_mutable:minidfs.FileStorageInfo.file)
-  return file_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  // @@protoc_insertion_point(field_mutable:minidfs.Inode.name)
+  return name_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
-inline std::string* FileStorageInfo::release_file() {
-  // @@protoc_insertion_point(field_release:minidfs.FileStorageInfo.file)
+inline std::string* Inode::release_name() {
+  // @@protoc_insertion_point(field_release:minidfs.Inode.name)
   
-  return file_.ReleaseNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  return name_.ReleaseNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
-inline void FileStorageInfo::set_allocated_file(std::string* file) {
-  if (file != nullptr) {
+inline void Inode::set_allocated_name(std::string* name) {
+  if (name != nullptr) {
     
   } else {
     
   }
-  file_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), file);
-  // @@protoc_insertion_point(field_set_allocated:minidfs.FileStorageInfo.file)
+  name_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), name);
+  // @@protoc_insertion_point(field_set_allocated:minidfs.Inode.name)
 }
 
-// repeated .minidfs.LocatedBlock locatedblks = 2;
-inline int FileStorageInfo::locatedblks_size() const {
-  return locatedblks_.size();
+// bool isDir = 3;
+inline void Inode::clear_isdir() {
+  isdir_ = false;
 }
-inline void FileStorageInfo::clear_locatedblks() {
-  locatedblks_.Clear();
+inline bool Inode::isdir() const {
+  // @@protoc_insertion_point(field_get:minidfs.Inode.isDir)
+  return isdir_;
 }
-inline ::minidfs::LocatedBlock* FileStorageInfo::mutable_locatedblks(int index) {
-  // @@protoc_insertion_point(field_mutable:minidfs.FileStorageInfo.locatedblks)
-  return locatedblks_.Mutable(index);
+inline void Inode::set_isdir(bool value) {
+  
+  isdir_ = value;
+  // @@protoc_insertion_point(field_set:minidfs.Inode.isDir)
 }
-inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::minidfs::LocatedBlock >*
-FileStorageInfo::mutable_locatedblks() {
-  // @@protoc_insertion_point(field_mutable_list:minidfs.FileStorageInfo.locatedblks)
-  return &locatedblks_;
+
+// repeated .minidfs.Block blks = 4;
+inline int Inode::blks_size() const {
+  return blks_.size();
 }
-inline const ::minidfs::LocatedBlock& FileStorageInfo::locatedblks(int index) const {
-  // @@protoc_insertion_point(field_get:minidfs.FileStorageInfo.locatedblks)
-  return locatedblks_.Get(index);
+inline void Inode::clear_blks() {
+  blks_.Clear();
 }
-inline ::minidfs::LocatedBlock* FileStorageInfo::add_locatedblks() {
-  // @@protoc_insertion_point(field_add:minidfs.FileStorageInfo.locatedblks)
-  return locatedblks_.Add();
+inline ::minidfs::Block* Inode::mutable_blks(int index) {
+  // @@protoc_insertion_point(field_mutable:minidfs.Inode.blks)
+  return blks_.Mutable(index);
 }
-inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::minidfs::LocatedBlock >&
-FileStorageInfo::locatedblks() const {
-  // @@protoc_insertion_point(field_list:minidfs.FileStorageInfo.locatedblks)
-  return locatedblks_;
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::minidfs::Block >*
+Inode::mutable_blks() {
+  // @@protoc_insertion_point(field_mutable_list:minidfs.Inode.blks)
+  return &blks_;
+}
+inline const ::minidfs::Block& Inode::blks(int index) const {
+  // @@protoc_insertion_point(field_get:minidfs.Inode.blks)
+  return blks_.Get(index);
+}
+inline ::minidfs::Block* Inode::add_blks() {
+  // @@protoc_insertion_point(field_add:minidfs.Inode.blks)
+  return blks_.Add();
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::minidfs::Block >&
+Inode::blks() const {
+  // @@protoc_insertion_point(field_list:minidfs.Inode.blks)
+  return blks_;
+}
+
+// -------------------------------------------------------------------
+
+// InodeSection
+
+// repeated .minidfs.Inode inodes = 1;
+inline int InodeSection::inodes_size() const {
+  return inodes_.size();
+}
+inline void InodeSection::clear_inodes() {
+  inodes_.Clear();
+}
+inline ::minidfs::Inode* InodeSection::mutable_inodes(int index) {
+  // @@protoc_insertion_point(field_mutable:minidfs.InodeSection.inodes)
+  return inodes_.Mutable(index);
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::minidfs::Inode >*
+InodeSection::mutable_inodes() {
+  // @@protoc_insertion_point(field_mutable_list:minidfs.InodeSection.inodes)
+  return &inodes_;
+}
+inline const ::minidfs::Inode& InodeSection::inodes(int index) const {
+  // @@protoc_insertion_point(field_get:minidfs.InodeSection.inodes)
+  return inodes_.Get(index);
+}
+inline ::minidfs::Inode* InodeSection::add_inodes() {
+  // @@protoc_insertion_point(field_add:minidfs.InodeSection.inodes)
+  return inodes_.Add();
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::minidfs::Inode >&
+InodeSection::inodes() const {
+  // @@protoc_insertion_point(field_list:minidfs.InodeSection.inodes)
+  return inodes_;
+}
+
+// -------------------------------------------------------------------
+
+// Dentry
+
+// int32 id = 1;
+inline void Dentry::clear_id() {
+  id_ = 0;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 Dentry::id() const {
+  // @@protoc_insertion_point(field_get:minidfs.Dentry.id)
+  return id_;
+}
+inline void Dentry::set_id(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  
+  id_ = value;
+  // @@protoc_insertion_point(field_set:minidfs.Dentry.id)
+}
+
+// repeated int32 subDentries = 2;
+inline int Dentry::subdentries_size() const {
+  return subdentries_.size();
+}
+inline void Dentry::clear_subdentries() {
+  subdentries_.Clear();
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 Dentry::subdentries(int index) const {
+  // @@protoc_insertion_point(field_get:minidfs.Dentry.subDentries)
+  return subdentries_.Get(index);
+}
+inline void Dentry::set_subdentries(int index, ::PROTOBUF_NAMESPACE_ID::int32 value) {
+  subdentries_.Set(index, value);
+  // @@protoc_insertion_point(field_set:minidfs.Dentry.subDentries)
+}
+inline void Dentry::add_subdentries(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  subdentries_.Add(value);
+  // @@protoc_insertion_point(field_add:minidfs.Dentry.subDentries)
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::int32 >&
+Dentry::subdentries() const {
+  // @@protoc_insertion_point(field_list:minidfs.Dentry.subDentries)
+  return subdentries_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::int32 >*
+Dentry::mutable_subdentries() {
+  // @@protoc_insertion_point(field_mutable_list:minidfs.Dentry.subDentries)
+  return &subdentries_;
+}
+
+// -------------------------------------------------------------------
+
+// DentrySection
+
+// repeated .minidfs.Dentry dentries = 1;
+inline int DentrySection::dentries_size() const {
+  return dentries_.size();
+}
+inline void DentrySection::clear_dentries() {
+  dentries_.Clear();
+}
+inline ::minidfs::Dentry* DentrySection::mutable_dentries(int index) {
+  // @@protoc_insertion_point(field_mutable:minidfs.DentrySection.dentries)
+  return dentries_.Mutable(index);
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::minidfs::Dentry >*
+DentrySection::mutable_dentries() {
+  // @@protoc_insertion_point(field_mutable_list:minidfs.DentrySection.dentries)
+  return &dentries_;
+}
+inline const ::minidfs::Dentry& DentrySection::dentries(int index) const {
+  // @@protoc_insertion_point(field_get:minidfs.DentrySection.dentries)
+  return dentries_.Get(index);
+}
+inline ::minidfs::Dentry* DentrySection::add_dentries() {
+  // @@protoc_insertion_point(field_add:minidfs.DentrySection.dentries)
+  return dentries_.Add();
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::minidfs::Dentry >&
+DentrySection::dentries() const {
+  // @@protoc_insertion_point(field_list:minidfs.DentrySection.dentries)
+  return dentries_;
+}
+
+// -------------------------------------------------------------------
+
+// NameSystem
+
+// int32 maxDfID = 1;
+inline void NameSystem::clear_maxdfid() {
+  maxdfid_ = 0;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 NameSystem::maxdfid() const {
+  // @@protoc_insertion_point(field_get:minidfs.NameSystem.maxDfID)
+  return maxdfid_;
+}
+inline void NameSystem::set_maxdfid(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  
+  maxdfid_ = value;
+  // @@protoc_insertion_point(field_set:minidfs.NameSystem.maxDfID)
+}
+
+// int32 maxBlkID = 2;
+inline void NameSystem::clear_maxblkid() {
+  maxblkid_ = 0;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 NameSystem::maxblkid() const {
+  // @@protoc_insertion_point(field_get:minidfs.NameSystem.maxBlkID)
+  return maxblkid_;
+}
+inline void NameSystem::set_maxblkid(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  
+  maxblkid_ = value;
+  // @@protoc_insertion_point(field_set:minidfs.NameSystem.maxBlkID)
+}
+
+// .minidfs.InodeSection inodeSection = 3;
+inline bool NameSystem::has_inodesection() const {
+  return this != internal_default_instance() && inodesection_ != nullptr;
+}
+inline void NameSystem::clear_inodesection() {
+  if (GetArenaNoVirtual() == nullptr && inodesection_ != nullptr) {
+    delete inodesection_;
+  }
+  inodesection_ = nullptr;
+}
+inline const ::minidfs::InodeSection& NameSystem::inodesection() const {
+  const ::minidfs::InodeSection* p = inodesection_;
+  // @@protoc_insertion_point(field_get:minidfs.NameSystem.inodeSection)
+  return p != nullptr ? *p : *reinterpret_cast<const ::minidfs::InodeSection*>(
+      &::minidfs::_InodeSection_default_instance_);
+}
+inline ::minidfs::InodeSection* NameSystem::release_inodesection() {
+  // @@protoc_insertion_point(field_release:minidfs.NameSystem.inodeSection)
+  
+  ::minidfs::InodeSection* temp = inodesection_;
+  inodesection_ = nullptr;
+  return temp;
+}
+inline ::minidfs::InodeSection* NameSystem::mutable_inodesection() {
+  
+  if (inodesection_ == nullptr) {
+    auto* p = CreateMaybeMessage<::minidfs::InodeSection>(GetArenaNoVirtual());
+    inodesection_ = p;
+  }
+  // @@protoc_insertion_point(field_mutable:minidfs.NameSystem.inodeSection)
+  return inodesection_;
+}
+inline void NameSystem::set_allocated_inodesection(::minidfs::InodeSection* inodesection) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaNoVirtual();
+  if (message_arena == nullptr) {
+    delete inodesection_;
+  }
+  if (inodesection) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena = nullptr;
+    if (message_arena != submessage_arena) {
+      inodesection = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, inodesection, submessage_arena);
+    }
+    
+  } else {
+    
+  }
+  inodesection_ = inodesection;
+  // @@protoc_insertion_point(field_set_allocated:minidfs.NameSystem.inodeSection)
+}
+
+// .minidfs.DentrySection dentrySection = 4;
+inline bool NameSystem::has_dentrysection() const {
+  return this != internal_default_instance() && dentrysection_ != nullptr;
+}
+inline void NameSystem::clear_dentrysection() {
+  if (GetArenaNoVirtual() == nullptr && dentrysection_ != nullptr) {
+    delete dentrysection_;
+  }
+  dentrysection_ = nullptr;
+}
+inline const ::minidfs::DentrySection& NameSystem::dentrysection() const {
+  const ::minidfs::DentrySection* p = dentrysection_;
+  // @@protoc_insertion_point(field_get:minidfs.NameSystem.dentrySection)
+  return p != nullptr ? *p : *reinterpret_cast<const ::minidfs::DentrySection*>(
+      &::minidfs::_DentrySection_default_instance_);
+}
+inline ::minidfs::DentrySection* NameSystem::release_dentrysection() {
+  // @@protoc_insertion_point(field_release:minidfs.NameSystem.dentrySection)
+  
+  ::minidfs::DentrySection* temp = dentrysection_;
+  dentrysection_ = nullptr;
+  return temp;
+}
+inline ::minidfs::DentrySection* NameSystem::mutable_dentrysection() {
+  
+  if (dentrysection_ == nullptr) {
+    auto* p = CreateMaybeMessage<::minidfs::DentrySection>(GetArenaNoVirtual());
+    dentrysection_ = p;
+  }
+  // @@protoc_insertion_point(field_mutable:minidfs.NameSystem.dentrySection)
+  return dentrysection_;
+}
+inline void NameSystem::set_allocated_dentrysection(::minidfs::DentrySection* dentrysection) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaNoVirtual();
+  if (message_arena == nullptr) {
+    delete dentrysection_;
+  }
+  if (dentrysection) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena = nullptr;
+    if (message_arena != submessage_arena) {
+      dentrysection = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, dentrysection, submessage_arena);
+    }
+    
+  } else {
+    
+  }
+  dentrysection_ = dentrysection;
+  // @@protoc_insertion_point(field_set_allocated:minidfs.NameSystem.dentrySection)
 }
 
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

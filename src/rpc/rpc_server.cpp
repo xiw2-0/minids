@@ -10,8 +10,8 @@
 
 namespace rpc {
 
-RPCServer::RPCServer(int serverPort, int maxConns)
-    : serverPort(serverPort), maxConnections(maxConns) {
+RPCServer::RPCServer(int serverPort, int maxConns, minidfs::DFSMaster* master)
+    : serverPort(serverPort), maxConnections(maxConns), master(master) {
 }
 
 RPCServer::~RPCServer() {
@@ -68,8 +68,8 @@ int RPCServer::initServer() {
 }
 
 int RPCServer::bindRPCCalls() {
-  rpcBindings[1] = this->getBlockLocations;
-  rpcBindings[2] = this->create;
+  rpcBindings[1] = std::bind(&RPCServer::getBlockLocations, this, std::placeholders::_1, std::placeholders::_2);
+  rpcBindings[2] = std::bind(&RPCServer::create, this, std::placeholders::_1, std::placeholders::_2);
   return 0;
 }
 

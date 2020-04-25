@@ -2,6 +2,10 @@ syntax = "proto3";
 
 package minidfs;
 
+//////////////////////
+/// RPC
+//////////////////////
+
 /// \brief Block information
 message Block {
     int32 blockID = 1;
@@ -25,8 +29,37 @@ message LocatedBlocks {
     repeated LocatedBlock locatedBlks = 1;
 }
 
-/// \brief Associate each file with several locatedblocks
-message FileStorageInfo {
-    string file = 1;
-    repeated LocatedBlock locatedblks = 2;
+//////////////////////
+/// Name System
+//////////////////////
+
+
+/// \brief Inode records the basic info about a file/dir
+message Inode {
+    int32 id = 1;
+    string name = 2;
+    bool isDir = 3;
+    repeated Block blks = 4;
+}
+
+message InodeSection {
+    repeated Inode inodes = 1;
+}
+
+/// \brief Dentry records the structure of the directories.
+message Dentry {
+    int32 id = 1;
+    repeated int32 subDentries = 2;
+}
+
+message DentrySection {
+    repeated Dentry dentries = 1;
+}
+
+/// \brief This will be serialized to local file
+message NameSystem {
+    int32 maxDfID = 1;
+    int32 maxBlkID = 2;
+    InodeSection inodeSection = 3;
+    DentrySection  dentrySection = 4;
 }

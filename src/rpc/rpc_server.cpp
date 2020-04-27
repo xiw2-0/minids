@@ -11,7 +11,7 @@
 namespace rpc {
 
 RPCServer::RPCServer(int serverPort, int maxConns, minidfs::DFSMaster* master)
-    : serverPort(serverPort), maxConnections(maxConns), master(master) {
+    : serverPort(serverPort), maxConnections(maxConns), master(master), isSafeMode(true) {
 }
 
 RPCServer::~RPCServer() {
@@ -78,22 +78,44 @@ void RPCServer::handleRequest(int connfd) {
   /// read the length
   if (recv(connfd, &len, 4, 0) < 0) {
     cerr << "Failed to recv data length from " << connfd << std::endl;
+    close(connfd);
     return;
   }
   
   string buf(len-4, 0);
   if (recv(connfd, &buf, len-4, 0) < 0) {
     cerr << "Failed to recv data from " << connfd << std::endl;
+    close(connfd);
     return;
   }
 
   int methodID = buf[0];
+
+  /// In safe mode
+  if (isSafeMode == true && methodID != 1) {
+    int32_t len = 4 + 1;
+    string buf(5, 0);
+    memcpy(&buf, &len, 4);
+    /// Safe mode code = 100
+    buf[4] = 100;
+    send(connfd, &buf, len, 0);
+
+    cerr << "In safe mode\n";
+    close(connfd);
+    
+    isSafeMode = !master->isSafe();
+    return;
+  }
+
   auto func = rpcBindings[methodID];
   if (func(connfd, buf.substr(1, len-5)) < 0) {
     cerr << "Failed to send response to " << connfd << std::endl;
+    close(connfd);
     return;
   }
   cerr << "Succeed to process one request\n";
+  /// close client sock
+  close(connfd);
 }
 
 /// Format of response: len(4 Byte) : status(1 Byte) : response

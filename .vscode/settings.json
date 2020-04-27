@@ -52,5 +52,12 @@
     "cinttypes": "cpp",
     "typeinfo": "cpp",
     "functional": "cpp"
-  }
+  },
+  "cSpell.words": [
+    "blkid",
+    "dfid",
+    "inodeid",
+    "maxblkid",
+    "maxdfid"
+  ]
 }

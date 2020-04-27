@@ -57,10 +57,10 @@ class DFSMaster: public ClientProtocol{
   /// \brief Maps from block id to blocks.
   std::map<int, Block> blks;
 
-  /// Maps from block id to chunkservers
-  /// TODO: xiw This can be changed to chunkserver id too.
-  /// Maybe in later version.
-  std::map<int, std::vector<string>> blkLocs;
+  /// Maps from block id to chunkserver ids
+  std::map<int, std::vector<int>> blkLocs;
+  /// Maps from chunkserver id to \class  ChunkserverInfo
+  std::map<int, ChunkserverInfo> chunkservers;
 
 
  public:
@@ -76,15 +76,24 @@ class DFSMaster: public ClientProtocol{
 
   ~DFSMaster();
 
-  /// \brief Init Master. Parse the persistent name system. Wait
-  /// for the report from the chunkservers.
-  void initMater();
 
-  /// \brief News a thread to run \class RPCServer and waits it endlessly.
+
+  /// \brief First, this method call inits the Master. Then it
+  /// enters the safemode. Finally, it offers service to clients.
+  ///
+  /// In the first step, the Master read the persistent file 
+  /// from local storage. Then, it listens the block reports from
+  /// datanodes. In this second phase, the Master doesn't offer
+  /// service to clients. When the Master feels safe to 
+  /// start providing service to clients, it starts to respond to clients.
   void startRun();
 
-  ///
+  /// \brief Take a snapshot of the name system and store it to local disk.
   int checkpoint();
+
+  /// \brief Is it safe to recv requests from clients?
+  /// Safe when there is at least one chunkserver alive for each blk. 
+  bool isSafe();
 
   /// \brief Get a file's block location information from Master. MethodID = 1.
   ///
@@ -111,6 +120,9 @@ class DFSMaster: public ClientProtocol{
 
   /// \brief Parse the fdIDs/inodes/dentries from local disk.
   int parseNameSystem();
+
+  /// \brief Init Master. Parse the persistent name system.
+  int initMater();
 };
 
 

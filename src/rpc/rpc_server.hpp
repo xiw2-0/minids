@@ -16,6 +16,7 @@
 #include <errno.h>
 #include <netinet/in.h>
 #include <thread>
+#include <unistd.h>
 
 #include <proto/minidfs.pb.h>
 
@@ -59,6 +60,10 @@ class RPCServer {
   std::map<int, std::function<int(int, const string&)>> rpcBindings;
 
  public:
+  /// \brief When in safemode, only recv the block-report rpc calls from chunkserver.
+  bool isSafeMode;
+
+ public:
 
   /// \brief Construct the server.
   ///
@@ -74,6 +79,8 @@ class RPCServer {
 
   /// \brief Wait for the requests from clients and chunkservers.
   /// It runs endlessly. Call init() before run()!
+  ///
+  /// The first stage of run() is in safe mode.
   void run();
 
  private:

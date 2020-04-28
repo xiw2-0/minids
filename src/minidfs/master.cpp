@@ -7,8 +7,8 @@
 #include <iostream>
 #include <minidfs/dfs_master.hpp>
 
-const string nameSysFile("namesys");
-const int serverPort = 10000;
+const string nameSysFile("./data/namesys");
+const int serverPort = 12345;
 const int maxConn = 3;
 
 
@@ -17,6 +17,11 @@ int main(int argc, char const *argv[])
 {
   std::cout << "Start Master...\n";
   auto master = minidfs::DFSMaster(nameSysFile, serverPort, maxConn);
-  master.startRun();
+  
+  if (argc == 2 && 0 == strcmp(argv[1], "-format")) {
+    master.format();
+  } else {
+    master.startRun();
+  }
   return 0;
 }

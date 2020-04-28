@@ -18,13 +18,38 @@ DFSMaster::DFSMaster(const string& nameSysFile,
 DFSMaster::~DFSMaster() {
 }
 
+int DFSMaster::format() {
+  dfIDs.clear();
+  dfIDs["/"] = 0;
+  currentMaxDfID = 0;
+
+  dentries.clear();
+  dentries[0] = std::vector<int>();
+
+  inodes.clear();
+  /// block id starts from 1
+  currentMaxBlkID = 0;
+
+  blks.clear();
+  blkLocs.clear();
+
+  if (serializeNameSystem() == -1) {
+    cerr << "[DFSMaster] " << "Failed to format name system!\n";
+    return -1;
+  }
+  cerr << "[DFSMaster] "  << "Formated!\n";
+  return 0;
+}
 
 void DFSMaster::startRun() {
   if (initMater() < 0) {
-    cerr << "Init master failure\n";
+    cerr << "[DFSMaster] "  << "Init master failure\n";
     return;
   }
-
+  if (server.init() == -1) {
+    cerr << "[DFSMaster] "  << "Init server of master failure\n";
+    return;
+  }
   server.run();
 }
 
@@ -41,13 +66,13 @@ bool DFSMaster::isSafe() {
 
 int DFSMaster::getBlockLocations(const string& file, minidfs::LocatedBlocks* locatedBlks) {
   if (dfIDs.find(file) == dfIDs.end()) {
-    cerr << "No such a file/dir\n";
+    cerr << "[DFSMaster] "  << "No such a file/dir\n";
     return 1;
   }
 
   int dfid = dfIDs[file];
   if (inodes.find(dfid) == inodes.end()) {
-    cerr << "No such a file\n";
+    cerr << "[DFSMaster] "  << "No such a file\n";
     return 1;
   }
 
@@ -67,15 +92,47 @@ int DFSMaster::getBlockLocations(const string& file, minidfs::LocatedBlocks* loc
 }
 
 int DFSMaster::create(const string& file, LocatedBlock* locatedBlk) {
-  
+  if (dfIDs.find(file) != dfIDs.end()) {
+    cerr << "[DFSMaster] "  << file << " existed!\n";
+    return 1;
+  }
+
+  string dir;
+  splitPath(file, dir);
+
+  if (dfIDs.find(dir) == dfIDs.end()) {
+    cerr << "[DFSMaster] "  << "Dir " << dir << " does not exist!\n";
+    return 1;
+  }
+
+  /// TODO: xiw, add a lock to guard currentMaxDfID
+  int newDfID = ++currentMaxDfID;
+  dfIDs[file] = newDfID;
+
+  dentries[dfIDs[dir]].push_back(newDfID);
+
+  int newBlkid = ++currentMaxBlkID;
+  inodes[newDfID].push_back(newBlkid);
+
+  /// just in test
+  auto retblock = locatedBlk->mutable_block();
+  retblock->set_blockid(newBlkid);
+  retblock->set_blocklen(10);
+
+  auto chunkserverinfo = locatedBlk->add_chunkserverinfos();
+  chunkserverinfo->set_chunkserverip("ip_test");
+  chunkserverinfo->set_chunkserverport(18000);
+
+  cerr << "[DFSMaster] "  << "Created a file\n";
+  return 0;
 }
 
 
 
 int DFSMaster::serializeNameSystem() {
   std::ofstream fs(nameSysFile, std::ios::out|std::ios::binary);
-  if (fs.is_open()) {
-    cerr << "Failed to open Name system file: " << nameSysFile << std::endl;
+  if (!fs.is_open()) {
+    cerr << "[DFSMaster] "  << "Failed to open Name system file: " << nameSysFile << std::endl;
     return -1;
   }
 
@@ -121,14 +178,14 @@ int DFSMaster::serializeNameSystem() {
   namesys.SerializePartialToOstream(&fs);
   fs.clear();
   fs.close();
-  cerr << "Succeed to serialize the name system to file: " << nameSysFile << std::endl;
+  cerr << "[DFSMaster] "  << "Succeed to serialize the name system to file: " << nameSysFile << std::endl;
   return 0;
 }
 
 int DFSMaster::parseNameSystem() {
   std::ifstream fs(nameSysFile, std::ios::in|std::ios::binary);
-  if (fs.is_open()) {
-    cerr << "Failed to open Name system file: " << nameSysFile << std::endl;
+  if (!fs.is_open()) {
+    cerr << "[DFSMaster] "  << "Failed to open Name system file: " << nameSysFile << std::endl;
     return -1;
   }
 
@@ -175,7 +232,7 @@ int DFSMaster::parseNameSystem() {
 
   fs.clear();
   fs.close();
-  cerr << "Succeed to parse the name system from file: " << nameSysFile << std::endl;
+  cerr << "[DFSMaster] "  << "Succeed to parse the name system from file: " << nameSysFile << std::endl;
   return 0;
 }
 
@@ -184,5 +241,18 @@ int DFSMaster::initMater() {
   chunkservers = std::map<int, ChunkserverInfo>();
   return parseNameSystem();
 }
+
+void DFSMaster::splitPath(const string& path, string& dir) {
+  int index = path.find_last_of('/');
+  if (index == -1) {
+    dir = "/home";
+  } else if (index == 0) {
+    dir = "/";
+  } else {
+    dir = path.substr(0, index);
+  }
+}
+
+
 
 } // namespace minidfs

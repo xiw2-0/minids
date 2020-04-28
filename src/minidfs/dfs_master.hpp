@@ -76,7 +76,11 @@ class DFSMaster: public ClientProtocol{
 
   ~DFSMaster();
 
-
+  /// \brief Format the name system
+  ///
+  /// Reserve only the root dir and delete all the others.
+  /// Serialize the name system into local disk.
+  int format();
 
   /// \brief First, this method call inits the Master. Then it
   /// enters the safemode. Finally, it offers service to clients.
@@ -123,6 +127,12 @@ class DFSMaster: public ClientProtocol{
 
   /// \brief Init Master. Parse the persistent name system.
   int initMater();
+
+ private:
+ /// Utils function
+
+ /// Split the path to get the parent dir
+ void splitPath(const string& path, string& dir);
 };
 
 

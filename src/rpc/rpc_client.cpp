@@ -22,20 +22,21 @@ int RPCClient::connectMaster() {
   serverAddr.sin_family = AF_INET;
   serverAddr.sin_port = htons(serverPort);
   if (inet_pton(AF_INET, serverIP.c_str(), &serverAddr.sin_addr) < 0) {
-    cerr << "inet_pton() error for: " << serverIP << std::endl;
+    cerr << "[RPCClient] "  << "inet_pton() error for: " << serverIP << std::endl;
     return -1;
   }
 
   sockfd = socket(AF_INET, SOCK_STREAM, 0);
   if (sockfd < 0) {
-    cerr << "Failed to create socket\n" << strerror(errno) << " errno: " << errno << std::endl; 
+    cerr << "[RPCClient] "  << "Failed to create socket\n" << strerror(errno) << " errno: " << errno << std::endl; 
     return -1;
   }
 
   if (connect(sockfd, (sockaddr*)&serverAddr, sizeof(serverAddr)) < 0) {
-    cerr << "Cannot connect to " << serverIP << std::endl;
+    cerr << "[RPCClient] "  << "Cannot connect to " << serverIP << std::endl;
     return -1;
   }
+  cerr << "[RPCClient] "  << "Succeed to connect Master:\n" << serverIP << ":" << serverPort << std::endl;
   return 0;
 }
 
@@ -44,14 +45,24 @@ void RPCClient::closeConnection() {
 }
 
 int RPCClient::sendRequest(int methodID, const string& request) {
-  int32_t len = 4 + 1 + request.size();
+  /// Send len
+  uint32_t len = htonl(4 + 1 + request.size());
+  if (send(sockfd, &len, 4, 0) == -1) {
+    return -1;
+  }
 
-  string buf(5, 0);
-  memcpy(&buf, &len, 4);
-  buf[4] = methodID;
-  buf += request;
+  /// Send methodID
+  char mID = methodID;
+  if (send(sockfd, &mID, 1, 0) == -1) {
+    return -1;
+  }
 
-  return send(sockfd, &buf, len, 0);
+  /// Send request
+  int ret = send(sockfd, request.c_str(), request.size(), 0);
+  if (ret == 0) {
+    cerr << "[RPCClient] " << "Succeed to send request\n";
+  }
+  return ret;
 }
 
 int RPCClient::recvResponse(int* status, string* response) {
@@ -60,14 +71,23 @@ int RPCClient::recvResponse(int* status, string* response) {
   if (recv(sockfd, &len, 4, 0) < 0) {
     return -1;
   }
-  
-  string buf(len-4, 0);
-  if (recv(sockfd, &buf, len-4, 0) < 0) {
+  len = ntohl(len);
+
+  /// read the status
+  char statusCh = 0;
+  if (recv(sockfd, &statusCh, 1, 0) < 0) {
     return -1;
   }
+  *status = statusCh;
   
-  *status = buf[0];
-  *response = buf.substr(1, len-5);
+  /// read response
+  std::vector<char> buf(len-5);
+
+  if (recv(sockfd, buf.data(), len-5, 0) < 0) {
+    return -1;
+  }
+  *response = string(buf.begin(), buf.end());
+
   return 0;
 }
 

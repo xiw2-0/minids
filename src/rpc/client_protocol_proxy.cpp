@@ -18,13 +18,13 @@ ClientProtocolProxy::~ClientProtocolProxy() {
 int ClientProtocolProxy::getBlockLocations(const string& file, minidfs::LocatedBlocks* locatedBlks){
   /// connect Master
   if (client.connectMaster() < 0) {
-    cerr << "Connection failed\n";
+    cerr << "[ClientProtocolProxy] "  << "Connection failed\n";
     return 1;
   }
 
   /// send the request
   if (client.sendRequest(1, file) < 0) {
-    cerr << "Failed to send request\n";
+    cerr << "[ClientProtocolProxy] "  << "Failed to send request\n";
     return 1;
   }
 
@@ -43,13 +43,13 @@ int ClientProtocolProxy::getBlockLocations(const string& file, minidfs::LocatedB
 int ClientProtocolProxy::create(const string& file, minidfs::LocatedBlock* locatedBlk) {
   /// connect Master
   if (client.connectMaster() < 0) {
-    cerr << "Connection failed\n";
+    cerr << "[ClientProtocolProxy] "  << "Connection failed\n";
     return 1;
   }
 
   /// send the request
   if (client.sendRequest(2, file) < 0) {
-    cerr << "Failed to send request\n";
+    cerr << "[ClientProtocolProxy] "  << "Failed to send request\n";
     return 1;
   }
 

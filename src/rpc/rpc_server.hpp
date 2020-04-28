@@ -75,6 +75,8 @@ class RPCServer {
 
   /// \brief Initialize the server and bind the rpc method ID
   /// to member function. Call this method before calling run().
+  ///
+  /// \return return 0 on success, -1 for errors.
   int init();
 
   /// \brief Wait for the requests from clients and chunkservers.
@@ -119,6 +121,25 @@ class RPCServer {
   /// \param request the file name to be stored in minidfs.
   /// \return return 0 on success, -1 for errors.
   int create(int connfd, const string& request);
+
+  /// \brief Recv rpc request from the RPCClient.
+  ///
+  /// The format of request is:
+  /// len(4 Byte) : methodID(1 Byte) : request
+  ///
+  /// \param connfd the accepted socket fd.
+  /// \param methodID remote procedure call ID
+  /// \param request the serialized parameters
+  /// \return return 0 on success, -1 for errors.
+  int recvRequest(int connfd, int& methodID, string& request);
+
+  /// \brief Send rpc response to the RPCClient.
+  ///
+  /// The format of reponse is:
+  /// len(4 Byte) : status(1 Byte) : response
+  /// \param connfd the accepted socket fd.
+  /// \return return 0 on success, -1 for errors.
+  int sendResponse(int connfd, int status, const string& response);
 };
 
 

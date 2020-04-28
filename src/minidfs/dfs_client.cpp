@@ -8,8 +8,8 @@
 
 namespace minidfs {
 
-DFSClient::DFSClient(const string& serverIP, int serverPort):
-  master(new rpc::ClientProtocolProxy(serverIP, serverPort)) {
+DFSClient::DFSClient(const string& serverIP, int serverPort)
+    : master(new rpc::ClientProtocolProxy(serverIP, serverPort)) {
 }
 
 DFSClient::~DFSClient() {

@@ -4,12 +4,13 @@ BIN_DIR = ./bin
 
 protosrc = ${wildcard ${SRC_DIR}/proto/*.proto}
 
-cppsrc = ${wildcard ${SRC_DIR}/minidfs/*.cpp}
+cppsrc = ${wildcard ${SRC_DIR}/minidfs/*.cpp} \
+				 ${wildcard ${SRC_DIR}/rpc/*.cpp}
 ccsrc = ${wildcard ${SRC_DIR}/proto/*.cc}
 
 cppobj = ${patsubst ${SRC_DIR}%, ${BUILD_DIR}%, ${cppsrc:.cpp=.o}}
 ccobj = ${patsubst ${SRC_DIR}%, ${BUILD_DIR}%, ${ccsrc:.cc=.o}}
-mainobj = %fs_shell.o
+mainobj = %fs_shell.o %/master.o
 obj = ${filter-out ${mainobj}, ${cppobj} ${ccobj}}
 
 
@@ -17,18 +18,28 @@ DFS_SHELL = dfs_shell
 dfs_shell_obj = ${BUILD_DIR}/minidfs/fs_shell.o
 BIN_DFS_SHELL = ${BIN_DIR}/${DFS_SHELL}
 
+MASTER = master
+master_obj = ${BUILD_DIR}/minidfs/master.o
+BIN_MASTER = ${BIN_DIR}/${MASTER}
+
 INC_DIR = -I${SRC_DIR} -I${SRC_DIR}/proto
-CCFLAGS = ${INC_DIR}
-LDFLAGS = `pkg-config --cflags --libs protobuf`
+CCFLAGS = ${INC_DIR} -std=c++11
+LDFLAGS = `pkg-config --cflags --libs protobuf` -lpthread
 
 
-all: ${BIN_DFS_SHELL}
+all: ${BIN_MASTER} ${BIN_DFS_SHELL}
 .PHONY: all
 
 ${BIN_DFS_SHELL}: ${dfs_shell_obj} $(obj)
 	$(CXX) $^ -o $@  $(LDFLAGS)
 
+${BIN_MASTER}: ${master_obj} $(obj)
+	$(CXX) $^ -o $@  $(LDFLAGS)
+
 ${BUILD_DIR}/minidfs/%.o: ${SRC_DIR}/minidfs/%.cpp
+	$(CXX) -c $< -o $@ ${CCFLAGS}
+
+${BUILD_DIR}/rpc/%.o: ${SRC_DIR}/rpc/%.cpp
 	$(CXX) -c $< -o $@ ${CCFLAGS}
 
 ${BUILD_DIR}/proto/%.o: ${SRC_DIR}/proto/%.cc

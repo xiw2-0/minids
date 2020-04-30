@@ -58,6 +58,7 @@
     "dfid",
     "inodeid",
     "maxblkid",
-    "maxdfid"
+    "maxdfid",
+    "recved"
   ]
 }

@@ -24,10 +24,33 @@ message LocatedBlock {
     repeated ChunkserverInfo chunkserverInfos = 2;
 }
 
-///
+/// A sequence of located blocks, usually returned as the response of getBlockLocations()
 message LocatedBlocks {
     repeated LocatedBlock locatedBlks = 1;
 }
+
+message BlkIDs {
+    repeated int32 blkIDs = 1;
+}
+
+/// Report blocks in chunkserver
+message BlockReport {
+    ChunkserverInfo chunkserverInfo = 1;
+    repeated int32 blkIDs = 2;
+}
+
+/// Command from Master to instruct the chunkserver to copy (or other operatoin) the block to other nodes
+message BlockTask {
+    int32 operation = 1;
+    LocatedBlock locatedBlk = 2;
+}
+
+/// Blocks' instructions
+message BlockTasks {
+    repeated BlockTask blkTasks = 1;
+}
+
+
 
 //////////////////////
 /// Name System

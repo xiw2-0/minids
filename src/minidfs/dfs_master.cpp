@@ -67,13 +67,13 @@ bool DFSMaster::isSafe() {
 int DFSMaster::getBlockLocations(const string& file, minidfs::LocatedBlocks* locatedBlks) {
   if (dfIDs.find(file) == dfIDs.end()) {
     cerr << "[DFSMaster] "  << "No such a file/dir\n";
-    return 1;
+    return OpCode::OP_NO_SUCH_FILE;
   }
 
   int dfid = dfIDs[file];
   if (inodes.find(dfid) == inodes.end()) {
     cerr << "[DFSMaster] "  << "No such a file\n";
-    return 1;
+    return OpCode::OP_NO_SUCH_FILE;
   }
 
   /// Set the return value
@@ -88,13 +88,13 @@ int DFSMaster::getBlockLocations(const string& file, minidfs::LocatedBlocks* loc
       *chunkserverinfo = chunkservers[chkserverID];
     }
   }
-  return 0;
+  return OpCode::OP_SUCCESS;
 }
 
 int DFSMaster::create(const string& file, LocatedBlock* locatedBlk) {
   if (dfIDs.find(file) != dfIDs.end()) {
     cerr << "[DFSMaster] "  << file << " existed!\n";
-    return 1;
+    return OpCode::OP_FILE_ALREADY_EXISTED;
   }
 
   string dir;
@@ -102,7 +102,7 @@ int DFSMaster::create(const string& file, LocatedBlock* locatedBlk) {
 
   if (dfIDs.find(dir) == dfIDs.end()) {
     cerr << "[DFSMaster] "  << "Dir " << dir << " does not exist!\n";
-    return 1;
+    return OpCode::OP_NO_SUCH_FILE;
   }
 
   /// TODO: xiw, add a lock to guard currentMaxDfID
@@ -124,10 +124,24 @@ int DFSMaster::create(const string& file, LocatedBlock* locatedBlk) {
   chunkserverinfo->set_chunkserverport(18000);
 
   cerr << "[DFSMaster] "  << "Created a file\n";
-  return 0;
+  return OpCode::OP_SUCCESS;
 }
 
+int DFSMaster::heartBeat(const ChunkserverInfo& chunkserverInfo) {
 
+}
+
+int DFSMaster::blkReport(const ChunkserverInfo& chunkserverInfo, const std::vector<int>& blkIDs, std::vector<int>& deletedBlks) {
+
+}
+
+int DFSMaster::getBlkTask(const ChunkserverInfo& chunkserverInfo, BlockTasks* blkTasks) {
+
+}
+
+int DFSMaster::recvedBlks(const ChunkserverInfo& chunkserverInfo, const std::vector<int>& blkIDs) {
+
+}
 
 int DFSMaster::serializeNameSystem() {
   std::ofstream fs(nameSysFile, std::ios::out|std::ios::binary);

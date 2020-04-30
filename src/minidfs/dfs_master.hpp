@@ -9,7 +9,9 @@
 
 #include <fstream>
 
+#include <minidfs/chunkserver_protocol.hpp>
 #include <minidfs/client_protocol.hpp>
+#include <minidfs/op_code.hpp>
 #include <proto/minidfs.pb.h>
 #include <rpc/rpc_server.hpp>
 
@@ -24,7 +26,7 @@ namespace minidfs {
 /// When master receives a new socket, it generates a new thread to handle
 /// this request.
 /// TODO: xiW add read/write lock to avoid concurrent errors and thus to support concurrence.
-class DFSMaster: public ClientProtocol{
+class DFSMaster: public ClientProtocol, public ChunkserverProtocol{
  private:
 
   /// namesystem file
@@ -61,6 +63,11 @@ class DFSMaster: public ClientProtocol{
   std::map<int, std::vector<int>> blkLocs;
   /// Maps from chunkserver id to \class  ChunkserverInfo
   std::map<int, ChunkserverInfo> chunkservers;
+  /// Maps from chunkserver id to \class  ChunkserverInfo
+  std::map<ChunkserverInfo, int> chunkserverIDs;
+  /// The max chunkserver ID that has been allocated
+  int currentMaxChunkserverID;
+
 
 
  public:
@@ -99,12 +106,18 @@ class DFSMaster: public ClientProtocol{
   /// Safe when there is at least one chunkserver alive for each blk. 
   bool isSafe();
 
+
+  ////////////////////////
+  /// ClientProtocol
+  ////////////////////////
+
+
   /// \brief Get a file's block location information from Master. MethodID = 1.
   ///
   /// \param file the file name stored in minidfs.
   /// \param locatedBlks a list of locatedBlocks which maps from a block ID to chunkservers.
   ///        It is the returning parameter. 
-  /// \return returning status. 0 on success, 1 for errors.
+  /// \return return OpCode.
   virtual int getBlockLocations(const string& file, LocatedBlocks* locatedBlks) override;
 
   /// \brief Create a file. MethodID = 2.
@@ -113,10 +126,46 @@ class DFSMaster: public ClientProtocol{
   /// \param file the file name stored in minidfs.
   /// \param locatedBlk contains chunkservers' information.
   ///        It is the returning parameter. 
-  /// \return returning status. 0 on success, 1 for errors.
+  /// \return return OpCode.
   virtual int create(const string& file, LocatedBlock* locatedBlk) override;
- 
- 
+  
+  
+  ////////////////////////
+  /// ChunkserverProtocol
+  ////////////////////////
+
+
+  /// \brief Send heartbeat information to Master. MethodID = 101.
+  ///
+  /// \param chunkserverInfo containing the ip and port of the chunkserver
+  /// \return return OpCode.
+  virtual int heartBeat(const ChunkserverInfo& chunkserverInfo) override;
+
+  /// \brief Send block report to Master. MethodID = 102.
+  ///
+  /// The chunkserver informs Master about all the blocks it has
+  /// \param chunkserverInfo containing the ip and port of the chunkserver
+  /// \param blkIDs all the block ids it has
+  /// \param deletedBlks all the blocks it should delete
+  ///        It is the returning parameter. 
+  /// \return return OpCode.
+  virtual int blkReport(const ChunkserverInfo& chunkserverInfo, const std::vector<int>& blkIDs, std::vector<int>& deletedBlks) override;
+  
+  /// \brief Get block task from Master. MethodID = 103.
+  ///
+  /// \param chunkserverInfo containing the ip and port of the chunkserver
+  /// \param blkTasks block tasks from master. 
+  ///        It is the returning parameter.      
+  /// \return return OpCode.
+  virtual int getBlkTask(const ChunkserverInfo& chunkserverInfo, BlockTasks* blkTasks) override;
+  
+  /// \brief Inform Master about the received blocks. MethodID = 104.
+  ///
+  /// The chunkserver informs Master about all the blocks it received
+  /// \param chunkserverInfo containing the ip and port of the chunkserver
+  /// \param blkIDs all the block ids it received
+  /// \return return OpCode.
+  virtual int recvedBlks(const ChunkserverInfo& chunkserverInfo, const std::vector<int>& blkIDs) override;
  
  private:
   /// \brief Serialize the fdIDs/inodes/dentries to local disk.

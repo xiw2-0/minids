@@ -7,8 +7,8 @@
 
 namespace rpc {
 
-ClientProtocolProxy::ClientProtocolProxy(const string& serverIP, int serverPort):
-  client(RPCClient(serverIP, serverPort)) {
+ClientProtocolProxy::ClientProtocolProxy(const string& serverIP, int serverPort)
+    : client(RPCClient(serverIP, serverPort)) {
 }
 
 ClientProtocolProxy::~ClientProtocolProxy() {
@@ -19,13 +19,13 @@ int ClientProtocolProxy::getBlockLocations(const string& file, minidfs::LocatedB
   /// connect Master
   if (client.connectMaster() < 0) {
     cerr << "[ClientProtocolProxy] "  << "Connection failed\n";
-    return 1;
+    return OpCode::OP_FAILURE;
   }
 
   /// send the request
   if (client.sendRequest(1, file) < 0) {
     cerr << "[ClientProtocolProxy] "  << "Failed to send request\n";
-    return 1;
+    return OpCode::OP_FAILURE;
   }
 
   /// recv the response
@@ -37,20 +37,20 @@ int ClientProtocolProxy::getBlockLocations(const string& file, minidfs::LocatedB
   /// close the connection
   client.closeConnection();
 
-  return 0;
+  return status;
 }
 
 int ClientProtocolProxy::create(const string& file, minidfs::LocatedBlock* locatedBlk) {
   /// connect Master
   if (client.connectMaster() < 0) {
     cerr << "[ClientProtocolProxy] "  << "Connection failed\n";
-    return 1;
+    return OpCode::OP_FAILURE;
   }
 
   /// send the request
   if (client.sendRequest(2, file) < 0) {
     cerr << "[ClientProtocolProxy] "  << "Failed to send request\n";
-    return 1;
+    return OpCode::OP_FAILURE;
   }
 
   /// recv the response
@@ -62,7 +62,7 @@ int ClientProtocolProxy::create(const string& file, minidfs::LocatedBlock* locat
   /// close the connection
   client.closeConnection();
   
-  return 0;
+  return status;
 }
 
 

@@ -16,6 +16,7 @@
 // @@protoc_insertion_point(includes)
 #include <google/protobuf/port_def.inc>
 extern PROTOBUF_INTERNAL_EXPORT_minidfs_2eproto ::PROTOBUF_NAMESPACE_ID::internal::SCCInfo<0> scc_info_Block_minidfs_2eproto;
+extern PROTOBUF_INTERNAL_EXPORT_minidfs_2eproto ::PROTOBUF_NAMESPACE_ID::internal::SCCInfo<1> scc_info_BlockTask_minidfs_2eproto;
 extern PROTOBUF_INTERNAL_EXPORT_minidfs_2eproto ::PROTOBUF_NAMESPACE_ID::internal::SCCInfo<0> scc_info_ChunkserverInfo_minidfs_2eproto;
 extern PROTOBUF_INTERNAL_EXPORT_minidfs_2eproto ::PROTOBUF_NAMESPACE_ID::internal::SCCInfo<0> scc_info_Dentry_minidfs_2eproto;
 extern PROTOBUF_INTERNAL_EXPORT_minidfs_2eproto ::PROTOBUF_NAMESPACE_ID::internal::SCCInfo<1> scc_info_DentrySection_minidfs_2eproto;
@@ -39,6 +40,22 @@ class LocatedBlocksDefaultTypeInternal {
  public:
   ::PROTOBUF_NAMESPACE_ID::internal::ExplicitlyConstructed<LocatedBlocks> _instance;
 } _LocatedBlocks_default_instance_;
+class BlkIDsDefaultTypeInternal {
+ public:
+  ::PROTOBUF_NAMESPACE_ID::internal::ExplicitlyConstructed<BlkIDs> _instance;
+} _BlkIDs_default_instance_;
+class BlockReportDefaultTypeInternal {
+ public:
+  ::PROTOBUF_NAMESPACE_ID::internal::ExplicitlyConstructed<BlockReport> _instance;
+} _BlockReport_default_instance_;
+class BlockTaskDefaultTypeInternal {
+ public:
+  ::PROTOBUF_NAMESPACE_ID::internal::ExplicitlyConstructed<BlockTask> _instance;
+} _BlockTask_default_instance_;
+class BlockTasksDefaultTypeInternal {
+ public:
+  ::PROTOBUF_NAMESPACE_ID::internal::ExplicitlyConstructed<BlockTasks> _instance;
+} _BlockTasks_default_instance_;
 class InodeDefaultTypeInternal {
  public:
   ::PROTOBUF_NAMESPACE_ID::internal::ExplicitlyConstructed<Inode> _instance;
@@ -60,6 +77,20 @@ class NameSystemDefaultTypeInternal {
   ::PROTOBUF_NAMESPACE_ID::internal::ExplicitlyConstructed<NameSystem> _instance;
 } _NameSystem_default_instance_;
 }  // namespace minidfs
+static void InitDefaultsscc_info_BlkIDs_minidfs_2eproto() {
+  GOOGLE_PROTOBUF_VERIFY_VERSION;
+
+  {
+    void* ptr = &::minidfs::_BlkIDs_default_instance_;
+    new (ptr) ::minidfs::BlkIDs();
+    ::PROTOBUF_NAMESPACE_ID::internal::OnShutdownDestroyMessage(ptr);
+  }
+  ::minidfs::BlkIDs::InitAsDefaultInstance();
+}
+
+::PROTOBUF_NAMESPACE_ID::internal::SCCInfo<0> scc_info_BlkIDs_minidfs_2eproto =
+    {{ATOMIC_VAR_INIT(::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase::kUninitialized), 0, InitDefaultsscc_info_BlkIDs_minidfs_2eproto}, {}};
+
 static void InitDefaultsscc_info_Block_minidfs_2eproto() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
@@ -73,6 +104,51 @@ static void InitDefaultsscc_info_Block_minidfs_2eproto() {
 
 ::PROTOBUF_NAMESPACE_ID::internal::SCCInfo<0> scc_info_Block_minidfs_2eproto =
     {{ATOMIC_VAR_INIT(::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase::kUninitialized), 0, InitDefaultsscc_info_Block_minidfs_2eproto}, {}};
+
+static void InitDefaultsscc_info_BlockReport_minidfs_2eproto() {
+  GOOGLE_PROTOBUF_VERIFY_VERSION;
+
+  {
+    void* ptr = &::minidfs::_BlockReport_default_instance_;
+    new (ptr) ::minidfs::BlockReport();
+    ::PROTOBUF_NAMESPACE_ID::internal::OnShutdownDestroyMessage(ptr);
+  }
+  ::minidfs::BlockReport::InitAsDefaultInstance();
+}
+
+::PROTOBUF_NAMESPACE_ID::internal::SCCInfo<1> scc_info_BlockReport_minidfs_2eproto =
+    {{ATOMIC_VAR_INIT(::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase::kUninitialized), 1, InitDefaultsscc_info_BlockReport_minidfs_2eproto}, {
+      &scc_info_ChunkserverInfo_minidfs_2eproto.base,}};
+
+static void InitDefaultsscc_info_BlockTask_minidfs_2eproto() {
+  GOOGLE_PROTOBUF_VERIFY_VERSION;
+
+  {
+    void* ptr = &::minidfs::_BlockTask_default_instance_;
+    new (ptr) ::minidfs::BlockTask();
+    ::PROTOBUF_NAMESPACE_ID::internal::OnShutdownDestroyMessage(ptr);
+  }
+  ::minidfs::BlockTask::InitAsDefaultInstance();
+}
+
+::PROTOBUF_NAMESPACE_ID::internal::SCCInfo<1> scc_info_BlockTask_minidfs_2eproto =
+    {{ATOMIC_VAR_INIT(::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase::kUninitialized), 1, InitDefaultsscc_info_BlockTask_minidfs_2eproto}, {
+      &scc_info_LocatedBlock_minidfs_2eproto.base,}};
+
+static void InitDefaultsscc_info_BlockTasks_minidfs_2eproto() {
+  GOOGLE_PROTOBUF_VERIFY_VERSION;
+
+  {
+    void* ptr = &::minidfs::_BlockTasks_default_instance_;
+    new (ptr) ::minidfs::BlockTasks();
+    ::PROTOBUF_NAMESPACE_ID::internal::OnShutdownDestroyMessage(ptr);
+  }
+  ::minidfs::BlockTasks::InitAsDefaultInstance();
+}
+
+::PROTOBUF_NAMESPACE_ID::internal::SCCInfo<1> scc_info_BlockTasks_minidfs_2eproto =
+    {{ATOMIC_VAR_INIT(::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase::kUninitialized), 1, InitDefaultsscc_info_BlockTasks_minidfs_2eproto}, {
+      &scc_info_BlockTask_minidfs_2eproto.base,}};
 
 static void InitDefaultsscc_info_ChunkserverInfo_minidfs_2eproto() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
@@ -194,7 +270,7 @@ static void InitDefaultsscc_info_NameSystem_minidfs_2eproto() {
       &scc_info_InodeSection_minidfs_2eproto.base,
       &scc_info_DentrySection_minidfs_2eproto.base,}};
 
-static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_minidfs_2eproto[9];
+static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_minidfs_2eproto[13];
 static constexpr ::PROTOBUF_NAMESPACE_ID::EnumDescriptor const** file_level_enum_descriptors_minidfs_2eproto = nullptr;
 static constexpr ::PROTOBUF_NAMESPACE_ID::ServiceDescriptor const** file_level_service_descriptors_minidfs_2eproto = nullptr;
 
@@ -226,6 +302,32 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_minidfs_2eproto::offsets[] PRO
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
   PROTOBUF_FIELD_OFFSET(::minidfs::LocatedBlocks, locatedblks_),
+  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::minidfs::BlkIDs, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  PROTOBUF_FIELD_OFFSET(::minidfs::BlkIDs, blkids_),
+  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::minidfs::BlockReport, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  PROTOBUF_FIELD_OFFSET(::minidfs::BlockReport, chunkserverinfo_),
+  PROTOBUF_FIELD_OFFSET(::minidfs::BlockReport, blkids_),
+  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::minidfs::BlockTask, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  PROTOBUF_FIELD_OFFSET(::minidfs::BlockTask, operation_),
+  PROTOBUF_FIELD_OFFSET(::minidfs::BlockTask, locatedblk_),
+  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::minidfs::BlockTasks, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  PROTOBUF_FIELD_OFFSET(::minidfs::BlockTasks, blktasks_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::minidfs::Inode, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -269,11 +371,15 @@ static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOB
   { 7, -1, sizeof(::minidfs::ChunkserverInfo)},
   { 14, -1, sizeof(::minidfs::LocatedBlock)},
   { 21, -1, sizeof(::minidfs::LocatedBlocks)},
-  { 27, -1, sizeof(::minidfs::Inode)},
-  { 36, -1, sizeof(::minidfs::InodeSection)},
-  { 42, -1, sizeof(::minidfs::Dentry)},
-  { 49, -1, sizeof(::minidfs::DentrySection)},
-  { 55, -1, sizeof(::minidfs::NameSystem)},
+  { 27, -1, sizeof(::minidfs::BlkIDs)},
+  { 33, -1, sizeof(::minidfs::BlockReport)},
+  { 40, -1, sizeof(::minidfs::BlockTask)},
+  { 47, -1, sizeof(::minidfs::BlockTasks)},
+  { 53, -1, sizeof(::minidfs::Inode)},
+  { 62, -1, sizeof(::minidfs::InodeSection)},
+  { 68, -1, sizeof(::minidfs::Dentry)},
+  { 75, -1, sizeof(::minidfs::DentrySection)},
+  { 81, -1, sizeof(::minidfs::NameSystem)},
 };
 
 static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
@@ -281,6 +387,10 @@ static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] =
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::minidfs::_ChunkserverInfo_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::minidfs::_LocatedBlock_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::minidfs::_LocatedBlocks_default_instance_),
+  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::minidfs::_BlkIDs_default_instance_),
+  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::minidfs::_BlockReport_default_instance_),
+  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::minidfs::_BlockTask_default_instance_),
+  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::minidfs::_BlockTasks_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::minidfs::_Inode_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::minidfs::_InodeSection_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::minidfs::_Dentry_default_instance_),
@@ -296,21 +406,31 @@ const char descriptor_table_protodef_minidfs_2eproto[] PROTOBUF_SECTION_VARIABLE
   "\030\001 \001(\0132\016.minidfs.Block\0222\n\020chunkserverInf"
   "os\030\002 \003(\0132\030.minidfs.ChunkserverInfo\";\n\rLo"
   "catedBlocks\022*\n\013locatedBlks\030\001 \003(\0132\025.minid"
-  "fs.LocatedBlock\"N\n\005Inode\022\n\n\002id\030\001 \001(\005\022\014\n\004"
-  "name\030\002 \001(\t\022\r\n\005isDir\030\003 \001(\010\022\034\n\004blks\030\004 \003(\0132"
-  "\016.minidfs.Block\".\n\014InodeSection\022\036\n\006inode"
-  "s\030\001 \003(\0132\016.minidfs.Inode\")\n\006Dentry\022\n\n\002id\030"
-  "\001 \001(\005\022\023\n\013subDentries\030\002 \003(\005\"2\n\rDentrySect"
-  "ion\022!\n\010dentries\030\001 \003(\0132\017.minidfs.Dentry\"\213"
-  "\001\n\nNameSystem\022\017\n\007maxDfID\030\001 \001(\005\022\020\n\010maxBlk"
-  "ID\030\002 \001(\005\022+\n\014inodeSection\030\003 \001(\0132\025.minidfs"
-  ".InodeSection\022-\n\rdentrySection\030\004 \001(\0132\026.m"
-  "inidfs.DentrySectionb\006proto3"
+  "fs.LocatedBlock\"\030\n\006BlkIDs\022\016\n\006blkIDs\030\001 \003("
+  "\005\"P\n\013BlockReport\0221\n\017chunkserverInfo\030\001 \001("
+  "\0132\030.minidfs.ChunkserverInfo\022\016\n\006blkIDs\030\002 "
+  "\003(\005\"I\n\tBlockTask\022\021\n\toperation\030\001 \001(\005\022)\n\nl"
+  "ocatedBlk\030\002 \001(\0132\025.minidfs.LocatedBlock\"2"
+  "\n\nBlockTasks\022$\n\010blkTasks\030\001 \003(\0132\022.minidfs"
+  ".BlockTask\"N\n\005Inode\022\n\n\002id\030\001 \001(\005\022\014\n\004name\030"
+  "\002 \001(\t\022\r\n\005isDir\030\003 \001(\010\022\034\n\004blks\030\004 \003(\0132\016.min"
+  "idfs.Block\".\n\014InodeSection\022\036\n\006inodes\030\001 \003"
+  "(\0132\016.minidfs.Inode\")\n\006Dentry\022\n\n\002id\030\001 \001(\005"
+  "\022\023\n\013subDentries\030\002 \003(\005\"2\n\rDentrySection\022!"
+  "\n\010dentries\030\001 \003(\0132\017.minidfs.Dentry\"\213\001\n\nNa"
+  "meSystem\022\017\n\007maxDfID\030\001 \001(\005\022\020\n\010maxBlkID\030\002 "
+  "\001(\005\022+\n\014inodeSection\030\003 \001(\0132\025.minidfs.Inod"
+  "eSection\022-\n\rdentrySection\030\004 \001(\0132\026.minidf"
+  "s.DentrySectionb\006proto3"
   ;
 static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_minidfs_2eproto_deps[1] = {
 };
-static ::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase*const descriptor_table_minidfs_2eproto_sccs[9] = {
+static ::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase*const descriptor_table_minidfs_2eproto_sccs[13] = {
+  &scc_info_BlkIDs_minidfs_2eproto.base,
   &scc_info_Block_minidfs_2eproto.base,
+  &scc_info_BlockReport_minidfs_2eproto.base,
+  &scc_info_BlockTask_minidfs_2eproto.base,
+  &scc_info_BlockTasks_minidfs_2eproto.base,
   &scc_info_ChunkserverInfo_minidfs_2eproto.base,
   &scc_info_Dentry_minidfs_2eproto.base,
   &scc_info_DentrySection_minidfs_2eproto.base,
@@ -323,10 +443,10 @@ static ::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase*const descriptor_table_min
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_minidfs_2eproto_once;
 static bool descriptor_table_minidfs_2eproto_initialized = false;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_minidfs_2eproto = {
-  &descriptor_table_minidfs_2eproto_initialized, descriptor_table_protodef_minidfs_2eproto, "minidfs.proto", 668,
-  &descriptor_table_minidfs_2eproto_once, descriptor_table_minidfs_2eproto_sccs, descriptor_table_minidfs_2eproto_deps, 9, 0,
+  &descriptor_table_minidfs_2eproto_initialized, descriptor_table_protodef_minidfs_2eproto, "minidfs.proto", 903,
+  &descriptor_table_minidfs_2eproto_once, descriptor_table_minidfs_2eproto_sccs, descriptor_table_minidfs_2eproto_deps, 13, 0,
   schemas, file_default_instances, TableStruct_minidfs_2eproto::offsets,
-  file_level_metadata_minidfs_2eproto, 9, file_level_enum_descriptors_minidfs_2eproto, file_level_service_descriptors_minidfs_2eproto,
+  file_level_metadata_minidfs_2eproto, 13, file_level_enum_descriptors_minidfs_2eproto, file_level_service_descriptors_minidfs_2eproto,
 };
 
 // Force running AddDescriptors() at dynamic initialization time.
@@ -1520,6 +1640,1187 @@ void LocatedBlocks::InternalSwap(LocatedBlocks* other) {
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata LocatedBlocks::GetMetadata() const {
+  return GetMetadataStatic();
+}
+
+
+// ===================================================================
+
+void BlkIDs::InitAsDefaultInstance() {
+}
+class BlkIDs::_Internal {
+ public:
+};
+
+BlkIDs::BlkIDs()
+  : ::PROTOBUF_NAMESPACE_ID::Message(), _internal_metadata_(nullptr) {
+  SharedCtor();
+  // @@protoc_insertion_point(constructor:minidfs.BlkIDs)
+}
+BlkIDs::BlkIDs(const BlkIDs& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message(),
+      _internal_metadata_(nullptr),
+      blkids_(from.blkids_) {
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  // @@protoc_insertion_point(copy_constructor:minidfs.BlkIDs)
+}
+
+void BlkIDs::SharedCtor() {
+}
+
+BlkIDs::~BlkIDs() {
+  // @@protoc_insertion_point(destructor:minidfs.BlkIDs)
+  SharedDtor();
+}
+
+void BlkIDs::SharedDtor() {
+}
+
+void BlkIDs::SetCachedSize(int size) const {
+  _cached_size_.Set(size);
+}
+const BlkIDs& BlkIDs::default_instance() {
+  ::PROTOBUF_NAMESPACE_ID::internal::InitSCC(&::scc_info_BlkIDs_minidfs_2eproto.base);
+  return *internal_default_instance();
+}
+
+
+void BlkIDs::Clear() {
+// @@protoc_insertion_point(message_clear_start:minidfs.BlkIDs)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  blkids_.Clear();
+  _internal_metadata_.Clear();
+}
+
+#if GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
+const char* BlkIDs::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  while (!ctx->Done(&ptr)) {
+    ::PROTOBUF_NAMESPACE_ID::uint32 tag;
+    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    CHK_(ptr);
+    switch (tag >> 3) {
+      // repeated int32 blkIDs = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 10)) {
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::PackedInt32Parser(mutable_blkids(), ptr, ctx);
+          CHK_(ptr);
+        } else if (static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 8) {
+          add_blkids(::PROTOBUF_NAMESPACE_ID::internal::ReadVarint(&ptr));
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      default: {
+      handle_unusual:
+        if ((tag & 7) == 4 || tag == 0) {
+          ctx->SetLastTag(tag);
+          goto success;
+        }
+        ptr = UnknownFieldParse(tag, &_internal_metadata_, ptr, ctx);
+        CHK_(ptr != nullptr);
+        continue;
+      }
+    }  // switch
+  }  // while
+success:
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto success;
+#undef CHK_
+}
+#else  // GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
+bool BlkIDs::MergePartialFromCodedStream(
+    ::PROTOBUF_NAMESPACE_ID::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!PROTOBUF_PREDICT_TRUE(EXPRESSION)) goto failure
+  ::PROTOBUF_NAMESPACE_ID::uint32 tag;
+  // @@protoc_insertion_point(parse_start:minidfs.BlkIDs)
+  for (;;) {
+    ::std::pair<::PROTOBUF_NAMESPACE_ID::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
+    tag = p.first;
+    if (!p.second) goto handle_unusual;
+    switch (::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // repeated int32 blkIDs = 1;
+      case 1: {
+        if (static_cast< ::PROTOBUF_NAMESPACE_ID::uint8>(tag) == (10 & 0xFF)) {
+          DO_((::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::ReadPackedPrimitive<
+                   ::PROTOBUF_NAMESPACE_ID::int32, ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::TYPE_INT32>(
+                 input, this->mutable_blkids())));
+        } else if (static_cast< ::PROTOBUF_NAMESPACE_ID::uint8>(tag) == (8 & 0xFF)) {
+          DO_((::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::ReadRepeatedPrimitiveNoInline<
+                   ::PROTOBUF_NAMESPACE_ID::int32, ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::TYPE_INT32>(
+                 1, 10u, input, this->mutable_blkids())));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      default: {
+      handle_unusual:
+        if (tag == 0) {
+          goto success;
+        }
+        DO_(::PROTOBUF_NAMESPACE_ID::internal::WireFormat::SkipField(
+              input, tag, _internal_metadata_.mutable_unknown_fields()));
+        break;
+      }
+    }
+  }
+success:
+  // @@protoc_insertion_point(parse_success:minidfs.BlkIDs)
+  return true;
+failure:
+  // @@protoc_insertion_point(parse_failure:minidfs.BlkIDs)
+  return false;
+#undef DO_
+}
+#endif  // GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
+
+void BlkIDs::SerializeWithCachedSizes(
+    ::PROTOBUF_NAMESPACE_ID::io::CodedOutputStream* output) const {
+  // @@protoc_insertion_point(serialize_start:minidfs.BlkIDs)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // repeated int32 blkIDs = 1;
+  if (this->blkids_size() > 0) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteTag(1, ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED, output);
+    output->WriteVarint32(_blkids_cached_byte_size_.load(
+        std::memory_order_relaxed));
+  }
+  for (int i = 0, n = this->blkids_size(); i < n; i++) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32NoTag(
+      this->blkids(i), output);
+  }
+
+  if (_internal_metadata_.have_unknown_fields()) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::SerializeUnknownFields(
+        _internal_metadata_.unknown_fields(), output);
+  }
+  // @@protoc_insertion_point(serialize_end:minidfs.BlkIDs)
+}
+
+::PROTOBUF_NAMESPACE_ID::uint8* BlkIDs::InternalSerializeWithCachedSizesToArray(
+    ::PROTOBUF_NAMESPACE_ID::uint8* target) const {
+  // @@protoc_insertion_point(serialize_to_array_start:minidfs.BlkIDs)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // repeated int32 blkIDs = 1;
+  if (this->blkids_size() > 0) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteTagToArray(
+      1,
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED,
+      target);
+    target = ::PROTOBUF_NAMESPACE_ID::io::CodedOutputStream::WriteVarint32ToArray(
+        _blkids_cached_byte_size_.load(std::memory_order_relaxed),
+         target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+      WriteInt32NoTagToArray(this->blkids_, target);
+  }
+
+  if (_internal_metadata_.have_unknown_fields()) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::SerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields(), target);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:minidfs.BlkIDs)
+  return target;
+}
+
+size_t BlkIDs::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:minidfs.BlkIDs)
+  size_t total_size = 0;
+
+  if (_internal_metadata_.have_unknown_fields()) {
+    total_size +=
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::ComputeUnknownFieldsSize(
+        _internal_metadata_.unknown_fields());
+  }
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // repeated int32 blkIDs = 1;
+  {
+    size_t data_size = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+      Int32Size(this->blkids_);
+    if (data_size > 0) {
+      total_size += 1 +
+        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32Size(
+            static_cast<::PROTOBUF_NAMESPACE_ID::int32>(data_size));
+    }
+    int cached_size = ::PROTOBUF_NAMESPACE_ID::internal::ToCachedSize(data_size);
+    _blkids_cached_byte_size_.store(cached_size,
+                                    std::memory_order_relaxed);
+    total_size += data_size;
+  }
+
+  int cached_size = ::PROTOBUF_NAMESPACE_ID::internal::ToCachedSize(total_size);
+  SetCachedSize(cached_size);
+  return total_size;
+}
+
+void BlkIDs::MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+// @@protoc_insertion_point(generalized_merge_from_start:minidfs.BlkIDs)
+  GOOGLE_DCHECK_NE(&from, this);
+  const BlkIDs* source =
+      ::PROTOBUF_NAMESPACE_ID::DynamicCastToGenerated<BlkIDs>(
+          &from);
+  if (source == nullptr) {
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:minidfs.BlkIDs)
+    ::PROTOBUF_NAMESPACE_ID::internal::ReflectionOps::Merge(from, this);
+  } else {
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:minidfs.BlkIDs)
+    MergeFrom(*source);
+  }
+}
+
+void BlkIDs::MergeFrom(const BlkIDs& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:minidfs.BlkIDs)
+  GOOGLE_DCHECK_NE(&from, this);
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  blkids_.MergeFrom(from.blkids_);
+}
+
+void BlkIDs::CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:minidfs.BlkIDs)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void BlkIDs::CopyFrom(const BlkIDs& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:minidfs.BlkIDs)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool BlkIDs::IsInitialized() const {
+  return true;
+}
+
+void BlkIDs::InternalSwap(BlkIDs* other) {
+  using std::swap;
+  _internal_metadata_.Swap(&other->_internal_metadata_);
+  blkids_.InternalSwap(&other->blkids_);
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata BlkIDs::GetMetadata() const {
+  return GetMetadataStatic();
+}
+
+
+// ===================================================================
+
+void BlockReport::InitAsDefaultInstance() {
+  ::minidfs::_BlockReport_default_instance_._instance.get_mutable()->chunkserverinfo_ = const_cast< ::minidfs::ChunkserverInfo*>(
+      ::minidfs::ChunkserverInfo::internal_default_instance());
+}
+class BlockReport::_Internal {
+ public:
+  static const ::minidfs::ChunkserverInfo& chunkserverinfo(const BlockReport* msg);
+};
+
+const ::minidfs::ChunkserverInfo&
+BlockReport::_Internal::chunkserverinfo(const BlockReport* msg) {
+  return *msg->chunkserverinfo_;
+}
+BlockReport::BlockReport()
+  : ::PROTOBUF_NAMESPACE_ID::Message(), _internal_metadata_(nullptr) {
+  SharedCtor();
+  // @@protoc_insertion_point(constructor:minidfs.BlockReport)
+}
+BlockReport::BlockReport(const BlockReport& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message(),
+      _internal_metadata_(nullptr),
+      blkids_(from.blkids_) {
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  if (from.has_chunkserverinfo()) {
+    chunkserverinfo_ = new ::minidfs::ChunkserverInfo(*from.chunkserverinfo_);
+  } else {
+    chunkserverinfo_ = nullptr;
+  }
+  // @@protoc_insertion_point(copy_constructor:minidfs.BlockReport)
+}
+
+void BlockReport::SharedCtor() {
+  ::PROTOBUF_NAMESPACE_ID::internal::InitSCC(&scc_info_BlockReport_minidfs_2eproto.base);
+  chunkserverinfo_ = nullptr;
+}
+
+BlockReport::~BlockReport() {
+  // @@protoc_insertion_point(destructor:minidfs.BlockReport)
+  SharedDtor();
+}
+
+void BlockReport::SharedDtor() {
+  if (this != internal_default_instance()) delete chunkserverinfo_;
+}
+
+void BlockReport::SetCachedSize(int size) const {
+  _cached_size_.Set(size);
+}
+const BlockReport& BlockReport::default_instance() {
+  ::PROTOBUF_NAMESPACE_ID::internal::InitSCC(&::scc_info_BlockReport_minidfs_2eproto.base);
+  return *internal_default_instance();
+}
+
+
+void BlockReport::Clear() {
+// @@protoc_insertion_point(message_clear_start:minidfs.BlockReport)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  blkids_.Clear();
+  if (GetArenaNoVirtual() == nullptr && chunkserverinfo_ != nullptr) {
+    delete chunkserverinfo_;
+  }
+  chunkserverinfo_ = nullptr;
+  _internal_metadata_.Clear();
+}
+
+#if GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
+const char* BlockReport::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  while (!ctx->Done(&ptr)) {
+    ::PROTOBUF_NAMESPACE_ID::uint32 tag;
+    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    CHK_(ptr);
+    switch (tag >> 3) {
+      // .minidfs.ChunkserverInfo chunkserverInfo = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 10)) {
+          ptr = ctx->ParseMessage(mutable_chunkserverinfo(), ptr);
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      // repeated int32 blkIDs = 2;
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 18)) {
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::PackedInt32Parser(mutable_blkids(), ptr, ctx);
+          CHK_(ptr);
+        } else if (static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 16) {
+          add_blkids(::PROTOBUF_NAMESPACE_ID::internal::ReadVarint(&ptr));
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      default: {
+      handle_unusual:
+        if ((tag & 7) == 4 || tag == 0) {
+          ctx->SetLastTag(tag);
+          goto success;
+        }
+        ptr = UnknownFieldParse(tag, &_internal_metadata_, ptr, ctx);
+        CHK_(ptr != nullptr);
+        continue;
+      }
+    }  // switch
+  }  // while
+success:
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto success;
+#undef CHK_
+}
+#else  // GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
+bool BlockReport::MergePartialFromCodedStream(
+    ::PROTOBUF_NAMESPACE_ID::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!PROTOBUF_PREDICT_TRUE(EXPRESSION)) goto failure
+  ::PROTOBUF_NAMESPACE_ID::uint32 tag;
+  // @@protoc_insertion_point(parse_start:minidfs.BlockReport)
+  for (;;) {
+    ::std::pair<::PROTOBUF_NAMESPACE_ID::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
+    tag = p.first;
+    if (!p.second) goto handle_unusual;
+    switch (::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // .minidfs.ChunkserverInfo chunkserverInfo = 1;
+      case 1: {
+        if (static_cast< ::PROTOBUF_NAMESPACE_ID::uint8>(tag) == (10 & 0xFF)) {
+          DO_(::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::ReadMessage(
+               input, mutable_chunkserverinfo()));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // repeated int32 blkIDs = 2;
+      case 2: {
+        if (static_cast< ::PROTOBUF_NAMESPACE_ID::uint8>(tag) == (18 & 0xFF)) {
+          DO_((::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::ReadPackedPrimitive<
+                   ::PROTOBUF_NAMESPACE_ID::int32, ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::TYPE_INT32>(
+                 input, this->mutable_blkids())));
+        } else if (static_cast< ::PROTOBUF_NAMESPACE_ID::uint8>(tag) == (16 & 0xFF)) {
+          DO_((::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::ReadRepeatedPrimitiveNoInline<
+                   ::PROTOBUF_NAMESPACE_ID::int32, ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::TYPE_INT32>(
+                 1, 18u, input, this->mutable_blkids())));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      default: {
+      handle_unusual:
+        if (tag == 0) {
+          goto success;
+        }
+        DO_(::PROTOBUF_NAMESPACE_ID::internal::WireFormat::SkipField(
+              input, tag, _internal_metadata_.mutable_unknown_fields()));
+        break;
+      }
+    }
+  }
+success:
+  // @@protoc_insertion_point(parse_success:minidfs.BlockReport)
+  return true;
+failure:
+  // @@protoc_insertion_point(parse_failure:minidfs.BlockReport)
+  return false;
+#undef DO_
+}
+#endif  // GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
+
+void BlockReport::SerializeWithCachedSizes(
+    ::PROTOBUF_NAMESPACE_ID::io::CodedOutputStream* output) const {
+  // @@protoc_insertion_point(serialize_start:minidfs.BlockReport)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // .minidfs.ChunkserverInfo chunkserverInfo = 1;
+  if (this->has_chunkserverinfo()) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteMessageMaybeToArray(
+      1, _Internal::chunkserverinfo(this), output);
+  }
+
+  // repeated int32 blkIDs = 2;
+  if (this->blkids_size() > 0) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteTag(2, ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED, output);
+    output->WriteVarint32(_blkids_cached_byte_size_.load(
+        std::memory_order_relaxed));
+  }
+  for (int i = 0, n = this->blkids_size(); i < n; i++) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32NoTag(
+      this->blkids(i), output);
+  }
+
+  if (_internal_metadata_.have_unknown_fields()) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::SerializeUnknownFields(
+        _internal_metadata_.unknown_fields(), output);
+  }
+  // @@protoc_insertion_point(serialize_end:minidfs.BlockReport)
+}
+
+::PROTOBUF_NAMESPACE_ID::uint8* BlockReport::InternalSerializeWithCachedSizesToArray(
+    ::PROTOBUF_NAMESPACE_ID::uint8* target) const {
+  // @@protoc_insertion_point(serialize_to_array_start:minidfs.BlockReport)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // .minidfs.ChunkserverInfo chunkserverInfo = 1;
+  if (this->has_chunkserverinfo()) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+      InternalWriteMessageToArray(
+        1, _Internal::chunkserverinfo(this), target);
+  }
+
+  // repeated int32 blkIDs = 2;
+  if (this->blkids_size() > 0) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteTagToArray(
+      2,
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED,
+      target);
+    target = ::PROTOBUF_NAMESPACE_ID::io::CodedOutputStream::WriteVarint32ToArray(
+        _blkids_cached_byte_size_.load(std::memory_order_relaxed),
+         target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+      WriteInt32NoTagToArray(this->blkids_, target);
+  }
+
+  if (_internal_metadata_.have_unknown_fields()) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::SerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields(), target);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:minidfs.BlockReport)
+  return target;
+}
+
+size_t BlockReport::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:minidfs.BlockReport)
+  size_t total_size = 0;
+
+  if (_internal_metadata_.have_unknown_fields()) {
+    total_size +=
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::ComputeUnknownFieldsSize(
+        _internal_metadata_.unknown_fields());
+  }
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // repeated int32 blkIDs = 2;
+  {
+    size_t data_size = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+      Int32Size(this->blkids_);
+    if (data_size > 0) {
+      total_size += 1 +
+        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32Size(
+            static_cast<::PROTOBUF_NAMESPACE_ID::int32>(data_size));
+    }
+    int cached_size = ::PROTOBUF_NAMESPACE_ID::internal::ToCachedSize(data_size);
+    _blkids_cached_byte_size_.store(cached_size,
+                                    std::memory_order_relaxed);
+    total_size += data_size;
+  }
+
+  // .minidfs.ChunkserverInfo chunkserverInfo = 1;
+  if (this->has_chunkserverinfo()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
+        *chunkserverinfo_);
+  }
+
+  int cached_size = ::PROTOBUF_NAMESPACE_ID::internal::ToCachedSize(total_size);
+  SetCachedSize(cached_size);
+  return total_size;
+}
+
+void BlockReport::MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+// @@protoc_insertion_point(generalized_merge_from_start:minidfs.BlockReport)
+  GOOGLE_DCHECK_NE(&from, this);
+  const BlockReport* source =
+      ::PROTOBUF_NAMESPACE_ID::DynamicCastToGenerated<BlockReport>(
+          &from);
+  if (source == nullptr) {
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:minidfs.BlockReport)
+    ::PROTOBUF_NAMESPACE_ID::internal::ReflectionOps::Merge(from, this);
+  } else {
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:minidfs.BlockReport)
+    MergeFrom(*source);
+  }
+}
+
+void BlockReport::MergeFrom(const BlockReport& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:minidfs.BlockReport)
+  GOOGLE_DCHECK_NE(&from, this);
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  blkids_.MergeFrom(from.blkids_);
+  if (from.has_chunkserverinfo()) {
+    mutable_chunkserverinfo()->::minidfs::ChunkserverInfo::MergeFrom(from.chunkserverinfo());
+  }
+}
+
+void BlockReport::CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:minidfs.BlockReport)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void BlockReport::CopyFrom(const BlockReport& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:minidfs.BlockReport)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool BlockReport::IsInitialized() const {
+  return true;
+}
+
+void BlockReport::InternalSwap(BlockReport* other) {
+  using std::swap;
+  _internal_metadata_.Swap(&other->_internal_metadata_);
+  blkids_.InternalSwap(&other->blkids_);
+  swap(chunkserverinfo_, other->chunkserverinfo_);
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata BlockReport::GetMetadata() const {
+  return GetMetadataStatic();
+}
+
+
+// ===================================================================
+
+void BlockTask::InitAsDefaultInstance() {
+  ::minidfs::_BlockTask_default_instance_._instance.get_mutable()->locatedblk_ = const_cast< ::minidfs::LocatedBlock*>(
+      ::minidfs::LocatedBlock::internal_default_instance());
+}
+class BlockTask::_Internal {
+ public:
+  static const ::minidfs::LocatedBlock& locatedblk(const BlockTask* msg);
+};
+
+const ::minidfs::LocatedBlock&
+BlockTask::_Internal::locatedblk(const BlockTask* msg) {
+  return *msg->locatedblk_;
+}
+BlockTask::BlockTask()
+  : ::PROTOBUF_NAMESPACE_ID::Message(), _internal_metadata_(nullptr) {
+  SharedCtor();
+  // @@protoc_insertion_point(constructor:minidfs.BlockTask)
+}
+BlockTask::BlockTask(const BlockTask& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message(),
+      _internal_metadata_(nullptr) {
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  if (from.has_locatedblk()) {
+    locatedblk_ = new ::minidfs::LocatedBlock(*from.locatedblk_);
+  } else {
+    locatedblk_ = nullptr;
+  }
+  operation_ = from.operation_;
+  // @@protoc_insertion_point(copy_constructor:minidfs.BlockTask)
+}
+
+void BlockTask::SharedCtor() {
+  ::PROTOBUF_NAMESPACE_ID::internal::InitSCC(&scc_info_BlockTask_minidfs_2eproto.base);
+  ::memset(&locatedblk_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&operation_) -
+      reinterpret_cast<char*>(&locatedblk_)) + sizeof(operation_));
+}
+
+BlockTask::~BlockTask() {
+  // @@protoc_insertion_point(destructor:minidfs.BlockTask)
+  SharedDtor();
+}
+
+void BlockTask::SharedDtor() {
+  if (this != internal_default_instance()) delete locatedblk_;
+}
+
+void BlockTask::SetCachedSize(int size) const {
+  _cached_size_.Set(size);
+}
+const BlockTask& BlockTask::default_instance() {
+  ::PROTOBUF_NAMESPACE_ID::internal::InitSCC(&::scc_info_BlockTask_minidfs_2eproto.base);
+  return *internal_default_instance();
+}
+
+
+void BlockTask::Clear() {
+// @@protoc_insertion_point(message_clear_start:minidfs.BlockTask)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  if (GetArenaNoVirtual() == nullptr && locatedblk_ != nullptr) {
+    delete locatedblk_;
+  }
+  locatedblk_ = nullptr;
+  operation_ = 0;
+  _internal_metadata_.Clear();
+}
+
+#if GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
+const char* BlockTask::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  while (!ctx->Done(&ptr)) {
+    ::PROTOBUF_NAMESPACE_ID::uint32 tag;
+    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    CHK_(ptr);
+    switch (tag >> 3) {
+      // int32 operation = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 8)) {
+          operation_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint(&ptr);
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      // .minidfs.LocatedBlock locatedBlk = 2;
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 18)) {
+          ptr = ctx->ParseMessage(mutable_locatedblk(), ptr);
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      default: {
+      handle_unusual:
+        if ((tag & 7) == 4 || tag == 0) {
+          ctx->SetLastTag(tag);
+          goto success;
+        }
+        ptr = UnknownFieldParse(tag, &_internal_metadata_, ptr, ctx);
+        CHK_(ptr != nullptr);
+        continue;
+      }
+    }  // switch
+  }  // while
+success:
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto success;
+#undef CHK_
+}
+#else  // GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
+bool BlockTask::MergePartialFromCodedStream(
+    ::PROTOBUF_NAMESPACE_ID::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!PROTOBUF_PREDICT_TRUE(EXPRESSION)) goto failure
+  ::PROTOBUF_NAMESPACE_ID::uint32 tag;
+  // @@protoc_insertion_point(parse_start:minidfs.BlockTask)
+  for (;;) {
+    ::std::pair<::PROTOBUF_NAMESPACE_ID::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
+    tag = p.first;
+    if (!p.second) goto handle_unusual;
+    switch (::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // int32 operation = 1;
+      case 1: {
+        if (static_cast< ::PROTOBUF_NAMESPACE_ID::uint8>(tag) == (8 & 0xFF)) {
+
+          DO_((::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::ReadPrimitive<
+                   ::PROTOBUF_NAMESPACE_ID::int32, ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::TYPE_INT32>(
+                 input, &operation_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // .minidfs.LocatedBlock locatedBlk = 2;
+      case 2: {
+        if (static_cast< ::PROTOBUF_NAMESPACE_ID::uint8>(tag) == (18 & 0xFF)) {
+          DO_(::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::ReadMessage(
+               input, mutable_locatedblk()));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      default: {
+      handle_unusual:
+        if (tag == 0) {
+          goto success;
+        }
+        DO_(::PROTOBUF_NAMESPACE_ID::internal::WireFormat::SkipField(
+              input, tag, _internal_metadata_.mutable_unknown_fields()));
+        break;
+      }
+    }
+  }
+success:
+  // @@protoc_insertion_point(parse_success:minidfs.BlockTask)
+  return true;
+failure:
+  // @@protoc_insertion_point(parse_failure:minidfs.BlockTask)
+  return false;
+#undef DO_
+}
+#endif  // GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
+
+void BlockTask::SerializeWithCachedSizes(
+    ::PROTOBUF_NAMESPACE_ID::io::CodedOutputStream* output) const {
+  // @@protoc_insertion_point(serialize_start:minidfs.BlockTask)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // int32 operation = 1;
+  if (this->operation() != 0) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32(1, this->operation(), output);
+  }
+
+  // .minidfs.LocatedBlock locatedBlk = 2;
+  if (this->has_locatedblk()) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteMessageMaybeToArray(
+      2, _Internal::locatedblk(this), output);
+  }
+
+  if (_internal_metadata_.have_unknown_fields()) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::SerializeUnknownFields(
+        _internal_metadata_.unknown_fields(), output);
+  }
+  // @@protoc_insertion_point(serialize_end:minidfs.BlockTask)
+}
+
+::PROTOBUF_NAMESPACE_ID::uint8* BlockTask::InternalSerializeWithCachedSizesToArray(
+    ::PROTOBUF_NAMESPACE_ID::uint8* target) const {
+  // @@protoc_insertion_point(serialize_to_array_start:minidfs.BlockTask)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // int32 operation = 1;
+  if (this->operation() != 0) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(1, this->operation(), target);
+  }
+
+  // .minidfs.LocatedBlock locatedBlk = 2;
+  if (this->has_locatedblk()) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+      InternalWriteMessageToArray(
+        2, _Internal::locatedblk(this), target);
+  }
+
+  if (_internal_metadata_.have_unknown_fields()) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::SerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields(), target);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:minidfs.BlockTask)
+  return target;
+}
+
+size_t BlockTask::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:minidfs.BlockTask)
+  size_t total_size = 0;
+
+  if (_internal_metadata_.have_unknown_fields()) {
+    total_size +=
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::ComputeUnknownFieldsSize(
+        _internal_metadata_.unknown_fields());
+  }
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // .minidfs.LocatedBlock locatedBlk = 2;
+  if (this->has_locatedblk()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
+        *locatedblk_);
+  }
+
+  // int32 operation = 1;
+  if (this->operation() != 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32Size(
+        this->operation());
+  }
+
+  int cached_size = ::PROTOBUF_NAMESPACE_ID::internal::ToCachedSize(total_size);
+  SetCachedSize(cached_size);
+  return total_size;
+}
+
+void BlockTask::MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+// @@protoc_insertion_point(generalized_merge_from_start:minidfs.BlockTask)
+  GOOGLE_DCHECK_NE(&from, this);
+  const BlockTask* source =
+      ::PROTOBUF_NAMESPACE_ID::DynamicCastToGenerated<BlockTask>(
+          &from);
+  if (source == nullptr) {
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:minidfs.BlockTask)
+    ::PROTOBUF_NAMESPACE_ID::internal::ReflectionOps::Merge(from, this);
+  } else {
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:minidfs.BlockTask)
+    MergeFrom(*source);
+  }
+}
+
+void BlockTask::MergeFrom(const BlockTask& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:minidfs.BlockTask)
+  GOOGLE_DCHECK_NE(&from, this);
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  if (from.has_locatedblk()) {
+    mutable_locatedblk()->::minidfs::LocatedBlock::MergeFrom(from.locatedblk());
+  }
+  if (from.operation() != 0) {
+    set_operation(from.operation());
+  }
+}
+
+void BlockTask::CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:minidfs.BlockTask)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void BlockTask::CopyFrom(const BlockTask& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:minidfs.BlockTask)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool BlockTask::IsInitialized() const {
+  return true;
+}
+
+void BlockTask::InternalSwap(BlockTask* other) {
+  using std::swap;
+  _internal_metadata_.Swap(&other->_internal_metadata_);
+  swap(locatedblk_, other->locatedblk_);
+  swap(operation_, other->operation_);
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata BlockTask::GetMetadata() const {
+  return GetMetadataStatic();
+}
+
+
+// ===================================================================
+
+void BlockTasks::InitAsDefaultInstance() {
+}
+class BlockTasks::_Internal {
+ public:
+};
+
+BlockTasks::BlockTasks()
+  : ::PROTOBUF_NAMESPACE_ID::Message(), _internal_metadata_(nullptr) {
+  SharedCtor();
+  // @@protoc_insertion_point(constructor:minidfs.BlockTasks)
+}
+BlockTasks::BlockTasks(const BlockTasks& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message(),
+      _internal_metadata_(nullptr),
+      blktasks_(from.blktasks_) {
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  // @@protoc_insertion_point(copy_constructor:minidfs.BlockTasks)
+}
+
+void BlockTasks::SharedCtor() {
+  ::PROTOBUF_NAMESPACE_ID::internal::InitSCC(&scc_info_BlockTasks_minidfs_2eproto.base);
+}
+
+BlockTasks::~BlockTasks() {
+  // @@protoc_insertion_point(destructor:minidfs.BlockTasks)
+  SharedDtor();
+}
+
+void BlockTasks::SharedDtor() {
+}
+
+void BlockTasks::SetCachedSize(int size) const {
+  _cached_size_.Set(size);
+}
+const BlockTasks& BlockTasks::default_instance() {
+  ::PROTOBUF_NAMESPACE_ID::internal::InitSCC(&::scc_info_BlockTasks_minidfs_2eproto.base);
+  return *internal_default_instance();
+}
+
+
+void BlockTasks::Clear() {
+// @@protoc_insertion_point(message_clear_start:minidfs.BlockTasks)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  blktasks_.Clear();
+  _internal_metadata_.Clear();
+}
+
+#if GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
+const char* BlockTasks::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  while (!ctx->Done(&ptr)) {
+    ::PROTOBUF_NAMESPACE_ID::uint32 tag;
+    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    CHK_(ptr);
+    switch (tag >> 3) {
+      // repeated .minidfs.BlockTask blkTasks = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 10)) {
+          ptr -= 1;
+          do {
+            ptr += 1;
+            ptr = ctx->ParseMessage(add_blktasks(), ptr);
+            CHK_(ptr);
+            if (!ctx->DataAvailable(ptr)) break;
+          } while (::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<::PROTOBUF_NAMESPACE_ID::uint8>(ptr) == 10);
+        } else goto handle_unusual;
+        continue;
+      default: {
+      handle_unusual:
+        if ((tag & 7) == 4 || tag == 0) {
+          ctx->SetLastTag(tag);
+          goto success;
+        }
+        ptr = UnknownFieldParse(tag, &_internal_metadata_, ptr, ctx);
+        CHK_(ptr != nullptr);
+        continue;
+      }
+    }  // switch
+  }  // while
+success:
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto success;
+#undef CHK_
+}
+#else  // GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
+bool BlockTasks::MergePartialFromCodedStream(
+    ::PROTOBUF_NAMESPACE_ID::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!PROTOBUF_PREDICT_TRUE(EXPRESSION)) goto failure
+  ::PROTOBUF_NAMESPACE_ID::uint32 tag;
+  // @@protoc_insertion_point(parse_start:minidfs.BlockTasks)
+  for (;;) {
+    ::std::pair<::PROTOBUF_NAMESPACE_ID::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
+    tag = p.first;
+    if (!p.second) goto handle_unusual;
+    switch (::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // repeated .minidfs.BlockTask blkTasks = 1;
+      case 1: {
+        if (static_cast< ::PROTOBUF_NAMESPACE_ID::uint8>(tag) == (10 & 0xFF)) {
+          DO_(::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::ReadMessage(
+                input, add_blktasks()));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      default: {
+      handle_unusual:
+        if (tag == 0) {
+          goto success;
+        }
+        DO_(::PROTOBUF_NAMESPACE_ID::internal::WireFormat::SkipField(
+              input, tag, _internal_metadata_.mutable_unknown_fields()));
+        break;
+      }
+    }
+  }
+success:
+  // @@protoc_insertion_point(parse_success:minidfs.BlockTasks)
+  return true;
+failure:
+  // @@protoc_insertion_point(parse_failure:minidfs.BlockTasks)
+  return false;
+#undef DO_
+}
+#endif  // GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
+
+void BlockTasks::SerializeWithCachedSizes(
+    ::PROTOBUF_NAMESPACE_ID::io::CodedOutputStream* output) const {
+  // @@protoc_insertion_point(serialize_start:minidfs.BlockTasks)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // repeated .minidfs.BlockTask blkTasks = 1;
+  for (unsigned int i = 0,
+      n = static_cast<unsigned int>(this->blktasks_size()); i < n; i++) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteMessageMaybeToArray(
+      1,
+      this->blktasks(static_cast<int>(i)),
+      output);
+  }
+
+  if (_internal_metadata_.have_unknown_fields()) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::SerializeUnknownFields(
+        _internal_metadata_.unknown_fields(), output);
+  }
+  // @@protoc_insertion_point(serialize_end:minidfs.BlockTasks)
+}
+
+::PROTOBUF_NAMESPACE_ID::uint8* BlockTasks::InternalSerializeWithCachedSizesToArray(
+    ::PROTOBUF_NAMESPACE_ID::uint8* target) const {
+  // @@protoc_insertion_point(serialize_to_array_start:minidfs.BlockTasks)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // repeated .minidfs.BlockTask blkTasks = 1;
+  for (unsigned int i = 0,
+      n = static_cast<unsigned int>(this->blktasks_size()); i < n; i++) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+      InternalWriteMessageToArray(
+        1, this->blktasks(static_cast<int>(i)), target);
+  }
+
+  if (_internal_metadata_.have_unknown_fields()) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::SerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields(), target);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:minidfs.BlockTasks)
+  return target;
+}
+
+size_t BlockTasks::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:minidfs.BlockTasks)
+  size_t total_size = 0;
+
+  if (_internal_metadata_.have_unknown_fields()) {
+    total_size +=
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::ComputeUnknownFieldsSize(
+        _internal_metadata_.unknown_fields());
+  }
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // repeated .minidfs.BlockTask blkTasks = 1;
+  {
+    unsigned int count = static_cast<unsigned int>(this->blktasks_size());
+    total_size += 1UL * count;
+    for (unsigned int i = 0; i < count; i++) {
+      total_size +=
+        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
+          this->blktasks(static_cast<int>(i)));
+    }
+  }
+
+  int cached_size = ::PROTOBUF_NAMESPACE_ID::internal::ToCachedSize(total_size);
+  SetCachedSize(cached_size);
+  return total_size;
+}
+
+void BlockTasks::MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+// @@protoc_insertion_point(generalized_merge_from_start:minidfs.BlockTasks)
+  GOOGLE_DCHECK_NE(&from, this);
+  const BlockTasks* source =
+      ::PROTOBUF_NAMESPACE_ID::DynamicCastToGenerated<BlockTasks>(
+          &from);
+  if (source == nullptr) {
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:minidfs.BlockTasks)
+    ::PROTOBUF_NAMESPACE_ID::internal::ReflectionOps::Merge(from, this);
+  } else {
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:minidfs.BlockTasks)
+    MergeFrom(*source);
+  }
+}
+
+void BlockTasks::MergeFrom(const BlockTasks& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:minidfs.BlockTasks)
+  GOOGLE_DCHECK_NE(&from, this);
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  blktasks_.MergeFrom(from.blktasks_);
+}
+
+void BlockTasks::CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:minidfs.BlockTasks)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void BlockTasks::CopyFrom(const BlockTasks& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:minidfs.BlockTasks)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool BlockTasks::IsInitialized() const {
+  return true;
+}
+
+void BlockTasks::InternalSwap(BlockTasks* other) {
+  using std::swap;
+  _internal_metadata_.Swap(&other->_internal_metadata_);
+  CastToBase(&blktasks_)->InternalSwap(CastToBase(&other->blktasks_));
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata BlockTasks::GetMetadata() const {
   return GetMetadataStatic();
 }
 
@@ -3206,6 +4507,18 @@ template<> PROTOBUF_NOINLINE ::minidfs::LocatedBlock* Arena::CreateMaybeMessage<
 }
 template<> PROTOBUF_NOINLINE ::minidfs::LocatedBlocks* Arena::CreateMaybeMessage< ::minidfs::LocatedBlocks >(Arena* arena) {
   return Arena::CreateInternal< ::minidfs::LocatedBlocks >(arena);
+}
+template<> PROTOBUF_NOINLINE ::minidfs::BlkIDs* Arena::CreateMaybeMessage< ::minidfs::BlkIDs >(Arena* arena) {
+  return Arena::CreateInternal< ::minidfs::BlkIDs >(arena);
+}
+template<> PROTOBUF_NOINLINE ::minidfs::BlockReport* Arena::CreateMaybeMessage< ::minidfs::BlockReport >(Arena* arena) {
+  return Arena::CreateInternal< ::minidfs::BlockReport >(arena);
+}
+template<> PROTOBUF_NOINLINE ::minidfs::BlockTask* Arena::CreateMaybeMessage< ::minidfs::BlockTask >(Arena* arena) {
+  return Arena::CreateInternal< ::minidfs::BlockTask >(arena);
+}
+template<> PROTOBUF_NOINLINE ::minidfs::BlockTasks* Arena::CreateMaybeMessage< ::minidfs::BlockTasks >(Arena* arena) {
+  return Arena::CreateInternal< ::minidfs::BlockTasks >(arena);
 }
 template<> PROTOBUF_NOINLINE ::minidfs::Inode* Arena::CreateMaybeMessage< ::minidfs::Inode >(Arena* arena) {
   return Arena::CreateInternal< ::minidfs::Inode >(arena);

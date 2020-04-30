@@ -47,7 +47,7 @@ struct TableStruct_minidfs_2eproto {
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::AuxillaryParseTableField aux[]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
-  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[9]
+  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[13]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::FieldMetadata field_metadata[];
   static const ::PROTOBUF_NAMESPACE_ID::internal::SerializationTable serialization_table[];
@@ -55,9 +55,21 @@ struct TableStruct_minidfs_2eproto {
 };
 extern const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_minidfs_2eproto;
 namespace minidfs {
+class BlkIDs;
+class BlkIDsDefaultTypeInternal;
+extern BlkIDsDefaultTypeInternal _BlkIDs_default_instance_;
 class Block;
 class BlockDefaultTypeInternal;
 extern BlockDefaultTypeInternal _Block_default_instance_;
+class BlockReport;
+class BlockReportDefaultTypeInternal;
+extern BlockReportDefaultTypeInternal _BlockReport_default_instance_;
+class BlockTask;
+class BlockTaskDefaultTypeInternal;
+extern BlockTaskDefaultTypeInternal _BlockTask_default_instance_;
+class BlockTasks;
+class BlockTasksDefaultTypeInternal;
+extern BlockTasksDefaultTypeInternal _BlockTasks_default_instance_;
 class ChunkserverInfo;
 class ChunkserverInfoDefaultTypeInternal;
 extern ChunkserverInfoDefaultTypeInternal _ChunkserverInfo_default_instance_;
@@ -84,7 +96,11 @@ class NameSystemDefaultTypeInternal;
 extern NameSystemDefaultTypeInternal _NameSystem_default_instance_;
 }  // namespace minidfs
 PROTOBUF_NAMESPACE_OPEN
+template<> ::minidfs::BlkIDs* Arena::CreateMaybeMessage<::minidfs::BlkIDs>(Arena*);
 template<> ::minidfs::Block* Arena::CreateMaybeMessage<::minidfs::Block>(Arena*);
+template<> ::minidfs::BlockReport* Arena::CreateMaybeMessage<::minidfs::BlockReport>(Arena*);
+template<> ::minidfs::BlockTask* Arena::CreateMaybeMessage<::minidfs::BlockTask>(Arena*);
+template<> ::minidfs::BlockTasks* Arena::CreateMaybeMessage<::minidfs::BlockTasks>(Arena*);
 template<> ::minidfs::ChunkserverInfo* Arena::CreateMaybeMessage<::minidfs::ChunkserverInfo>(Arena*);
 template<> ::minidfs::Dentry* Arena::CreateMaybeMessage<::minidfs::Dentry>(Arena*);
 template<> ::minidfs::DentrySection* Arena::CreateMaybeMessage<::minidfs::DentrySection>(Arena*);
@@ -664,6 +680,570 @@ class LocatedBlocks :
 };
 // -------------------------------------------------------------------
 
+class BlkIDs :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:minidfs.BlkIDs) */ {
+ public:
+  BlkIDs();
+  virtual ~BlkIDs();
+
+  BlkIDs(const BlkIDs& from);
+  BlkIDs(BlkIDs&& from) noexcept
+    : BlkIDs() {
+    *this = ::std::move(from);
+  }
+
+  inline BlkIDs& operator=(const BlkIDs& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline BlkIDs& operator=(BlkIDs&& from) noexcept {
+    if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
+      if (this != &from) InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return GetMetadataStatic().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return GetMetadataStatic().reflection;
+  }
+  static const BlkIDs& default_instance();
+
+  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
+  static inline const BlkIDs* internal_default_instance() {
+    return reinterpret_cast<const BlkIDs*>(
+               &_BlkIDs_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    4;
+
+  friend void swap(BlkIDs& a, BlkIDs& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(BlkIDs* other) {
+    if (other == this) return;
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline BlkIDs* New() const final {
+    return CreateMaybeMessage<BlkIDs>(nullptr);
+  }
+
+  BlkIDs* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<BlkIDs>(arena);
+  }
+  void CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void CopyFrom(const BlkIDs& from);
+  void MergeFrom(const BlkIDs& from);
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  #if GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  #else
+  bool MergePartialFromCodedStream(
+      ::PROTOBUF_NAMESPACE_ID::io::CodedInputStream* input) final;
+  #endif  // GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
+  void SerializeWithCachedSizes(
+      ::PROTOBUF_NAMESPACE_ID::io::CodedOutputStream* output) const final;
+  ::PROTOBUF_NAMESPACE_ID::uint8* InternalSerializeWithCachedSizesToArray(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  inline void SharedCtor();
+  inline void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(BlkIDs* other);
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "minidfs.BlkIDs";
+  }
+  private:
+  inline ::PROTOBUF_NAMESPACE_ID::Arena* GetArenaNoVirtual() const {
+    return nullptr;
+  }
+  inline void* MaybeArenaPtr() const {
+    return nullptr;
+  }
+  public:
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+  private:
+  static ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadataStatic() {
+    ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&::descriptor_table_minidfs_2eproto);
+    return ::descriptor_table_minidfs_2eproto.file_level_metadata[kIndexInFileMessages];
+  }
+
+  public:
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kBlkIDsFieldNumber = 1,
+  };
+  // repeated int32 blkIDs = 1;
+  int blkids_size() const;
+  void clear_blkids();
+  ::PROTOBUF_NAMESPACE_ID::int32 blkids(int index) const;
+  void set_blkids(int index, ::PROTOBUF_NAMESPACE_ID::int32 value);
+  void add_blkids(::PROTOBUF_NAMESPACE_ID::int32 value);
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::int32 >&
+      blkids() const;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::int32 >*
+      mutable_blkids();
+
+  // @@protoc_insertion_point(class_scope:minidfs.BlkIDs)
+ private:
+  class _Internal;
+
+  ::PROTOBUF_NAMESPACE_ID::internal::InternalMetadataWithArena _internal_metadata_;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::int32 > blkids_;
+  mutable std::atomic<int> _blkids_cached_byte_size_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_minidfs_2eproto;
+};
+// -------------------------------------------------------------------
+
+class BlockReport :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:minidfs.BlockReport) */ {
+ public:
+  BlockReport();
+  virtual ~BlockReport();
+
+  BlockReport(const BlockReport& from);
+  BlockReport(BlockReport&& from) noexcept
+    : BlockReport() {
+    *this = ::std::move(from);
+  }
+
+  inline BlockReport& operator=(const BlockReport& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline BlockReport& operator=(BlockReport&& from) noexcept {
+    if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
+      if (this != &from) InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return GetMetadataStatic().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return GetMetadataStatic().reflection;
+  }
+  static const BlockReport& default_instance();
+
+  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
+  static inline const BlockReport* internal_default_instance() {
+    return reinterpret_cast<const BlockReport*>(
+               &_BlockReport_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    5;
+
+  friend void swap(BlockReport& a, BlockReport& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(BlockReport* other) {
+    if (other == this) return;
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline BlockReport* New() const final {
+    return CreateMaybeMessage<BlockReport>(nullptr);
+  }
+
+  BlockReport* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<BlockReport>(arena);
+  }
+  void CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void CopyFrom(const BlockReport& from);
+  void MergeFrom(const BlockReport& from);
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  #if GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  #else
+  bool MergePartialFromCodedStream(
+      ::PROTOBUF_NAMESPACE_ID::io::CodedInputStream* input) final;
+  #endif  // GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
+  void SerializeWithCachedSizes(
+      ::PROTOBUF_NAMESPACE_ID::io::CodedOutputStream* output) const final;
+  ::PROTOBUF_NAMESPACE_ID::uint8* InternalSerializeWithCachedSizesToArray(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  inline void SharedCtor();
+  inline void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(BlockReport* other);
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "minidfs.BlockReport";
+  }
+  private:
+  inline ::PROTOBUF_NAMESPACE_ID::Arena* GetArenaNoVirtual() const {
+    return nullptr;
+  }
+  inline void* MaybeArenaPtr() const {
+    return nullptr;
+  }
+  public:
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+  private:
+  static ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadataStatic() {
+    ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&::descriptor_table_minidfs_2eproto);
+    return ::descriptor_table_minidfs_2eproto.file_level_metadata[kIndexInFileMessages];
+  }
+
+  public:
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kBlkIDsFieldNumber = 2,
+    kChunkserverInfoFieldNumber = 1,
+  };
+  // repeated int32 blkIDs = 2;
+  int blkids_size() const;
+  void clear_blkids();
+  ::PROTOBUF_NAMESPACE_ID::int32 blkids(int index) const;
+  void set_blkids(int index, ::PROTOBUF_NAMESPACE_ID::int32 value);
+  void add_blkids(::PROTOBUF_NAMESPACE_ID::int32 value);
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::int32 >&
+      blkids() const;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::int32 >*
+      mutable_blkids();
+
+  // .minidfs.ChunkserverInfo chunkserverInfo = 1;
+  bool has_chunkserverinfo() const;
+  void clear_chunkserverinfo();
+  const ::minidfs::ChunkserverInfo& chunkserverinfo() const;
+  ::minidfs::ChunkserverInfo* release_chunkserverinfo();
+  ::minidfs::ChunkserverInfo* mutable_chunkserverinfo();
+  void set_allocated_chunkserverinfo(::minidfs::ChunkserverInfo* chunkserverinfo);
+
+  // @@protoc_insertion_point(class_scope:minidfs.BlockReport)
+ private:
+  class _Internal;
+
+  ::PROTOBUF_NAMESPACE_ID::internal::InternalMetadataWithArena _internal_metadata_;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::int32 > blkids_;
+  mutable std::atomic<int> _blkids_cached_byte_size_;
+  ::minidfs::ChunkserverInfo* chunkserverinfo_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_minidfs_2eproto;
+};
+// -------------------------------------------------------------------
+
+class BlockTask :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:minidfs.BlockTask) */ {
+ public:
+  BlockTask();
+  virtual ~BlockTask();
+
+  BlockTask(const BlockTask& from);
+  BlockTask(BlockTask&& from) noexcept
+    : BlockTask() {
+    *this = ::std::move(from);
+  }
+
+  inline BlockTask& operator=(const BlockTask& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline BlockTask& operator=(BlockTask&& from) noexcept {
+    if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
+      if (this != &from) InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return GetMetadataStatic().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return GetMetadataStatic().reflection;
+  }
+  static const BlockTask& default_instance();
+
+  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
+  static inline const BlockTask* internal_default_instance() {
+    return reinterpret_cast<const BlockTask*>(
+               &_BlockTask_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    6;
+
+  friend void swap(BlockTask& a, BlockTask& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(BlockTask* other) {
+    if (other == this) return;
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline BlockTask* New() const final {
+    return CreateMaybeMessage<BlockTask>(nullptr);
+  }
+
+  BlockTask* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<BlockTask>(arena);
+  }
+  void CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void CopyFrom(const BlockTask& from);
+  void MergeFrom(const BlockTask& from);
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  #if GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  #else
+  bool MergePartialFromCodedStream(
+      ::PROTOBUF_NAMESPACE_ID::io::CodedInputStream* input) final;
+  #endif  // GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
+  void SerializeWithCachedSizes(
+      ::PROTOBUF_NAMESPACE_ID::io::CodedOutputStream* output) const final;
+  ::PROTOBUF_NAMESPACE_ID::uint8* InternalSerializeWithCachedSizesToArray(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  inline void SharedCtor();
+  inline void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(BlockTask* other);
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "minidfs.BlockTask";
+  }
+  private:
+  inline ::PROTOBUF_NAMESPACE_ID::Arena* GetArenaNoVirtual() const {
+    return nullptr;
+  }
+  inline void* MaybeArenaPtr() const {
+    return nullptr;
+  }
+  public:
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+  private:
+  static ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadataStatic() {
+    ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&::descriptor_table_minidfs_2eproto);
+    return ::descriptor_table_minidfs_2eproto.file_level_metadata[kIndexInFileMessages];
+  }
+
+  public:
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kLocatedBlkFieldNumber = 2,
+    kOperationFieldNumber = 1,
+  };
+  // .minidfs.LocatedBlock locatedBlk = 2;
+  bool has_locatedblk() const;
+  void clear_locatedblk();
+  const ::minidfs::LocatedBlock& locatedblk() const;
+  ::minidfs::LocatedBlock* release_locatedblk();
+  ::minidfs::LocatedBlock* mutable_locatedblk();
+  void set_allocated_locatedblk(::minidfs::LocatedBlock* locatedblk);
+
+  // int32 operation = 1;
+  void clear_operation();
+  ::PROTOBUF_NAMESPACE_ID::int32 operation() const;
+  void set_operation(::PROTOBUF_NAMESPACE_ID::int32 value);
+
+  // @@protoc_insertion_point(class_scope:minidfs.BlockTask)
+ private:
+  class _Internal;
+
+  ::PROTOBUF_NAMESPACE_ID::internal::InternalMetadataWithArena _internal_metadata_;
+  ::minidfs::LocatedBlock* locatedblk_;
+  ::PROTOBUF_NAMESPACE_ID::int32 operation_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_minidfs_2eproto;
+};
+// -------------------------------------------------------------------
+
+class BlockTasks :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:minidfs.BlockTasks) */ {
+ public:
+  BlockTasks();
+  virtual ~BlockTasks();
+
+  BlockTasks(const BlockTasks& from);
+  BlockTasks(BlockTasks&& from) noexcept
+    : BlockTasks() {
+    *this = ::std::move(from);
+  }
+
+  inline BlockTasks& operator=(const BlockTasks& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline BlockTasks& operator=(BlockTasks&& from) noexcept {
+    if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
+      if (this != &from) InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return GetMetadataStatic().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return GetMetadataStatic().reflection;
+  }
+  static const BlockTasks& default_instance();
+
+  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
+  static inline const BlockTasks* internal_default_instance() {
+    return reinterpret_cast<const BlockTasks*>(
+               &_BlockTasks_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    7;
+
+  friend void swap(BlockTasks& a, BlockTasks& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(BlockTasks* other) {
+    if (other == this) return;
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline BlockTasks* New() const final {
+    return CreateMaybeMessage<BlockTasks>(nullptr);
+  }
+
+  BlockTasks* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<BlockTasks>(arena);
+  }
+  void CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void CopyFrom(const BlockTasks& from);
+  void MergeFrom(const BlockTasks& from);
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  #if GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  #else
+  bool MergePartialFromCodedStream(
+      ::PROTOBUF_NAMESPACE_ID::io::CodedInputStream* input) final;
+  #endif  // GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
+  void SerializeWithCachedSizes(
+      ::PROTOBUF_NAMESPACE_ID::io::CodedOutputStream* output) const final;
+  ::PROTOBUF_NAMESPACE_ID::uint8* InternalSerializeWithCachedSizesToArray(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  inline void SharedCtor();
+  inline void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(BlockTasks* other);
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "minidfs.BlockTasks";
+  }
+  private:
+  inline ::PROTOBUF_NAMESPACE_ID::Arena* GetArenaNoVirtual() const {
+    return nullptr;
+  }
+  inline void* MaybeArenaPtr() const {
+    return nullptr;
+  }
+  public:
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+  private:
+  static ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadataStatic() {
+    ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&::descriptor_table_minidfs_2eproto);
+    return ::descriptor_table_minidfs_2eproto.file_level_metadata[kIndexInFileMessages];
+  }
+
+  public:
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kBlkTasksFieldNumber = 1,
+  };
+  // repeated .minidfs.BlockTask blkTasks = 1;
+  int blktasks_size() const;
+  void clear_blktasks();
+  ::minidfs::BlockTask* mutable_blktasks(int index);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::minidfs::BlockTask >*
+      mutable_blktasks();
+  const ::minidfs::BlockTask& blktasks(int index) const;
+  ::minidfs::BlockTask* add_blktasks();
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::minidfs::BlockTask >&
+      blktasks() const;
+
+  // @@protoc_insertion_point(class_scope:minidfs.BlockTasks)
+ private:
+  class _Internal;
+
+  ::PROTOBUF_NAMESPACE_ID::internal::InternalMetadataWithArena _internal_metadata_;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::minidfs::BlockTask > blktasks_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_minidfs_2eproto;
+};
+// -------------------------------------------------------------------
+
 class Inode :
     public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:minidfs.Inode) */ {
  public:
@@ -706,7 +1286,7 @@ class Inode :
                &_Inode_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    4;
+    8;
 
   friend void swap(Inode& a, Inode& b) {
     a.Swap(&b);
@@ -870,7 +1450,7 @@ class InodeSection :
                &_InodeSection_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    5;
+    9;
 
   friend void swap(InodeSection& a, InodeSection& b) {
     a.Swap(&b);
@@ -1007,7 +1587,7 @@ class Dentry :
                &_Dentry_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    6;
+    10;
 
   friend void swap(Dentry& a, Dentry& b) {
     a.Swap(&b);
@@ -1152,7 +1732,7 @@ class DentrySection :
                &_DentrySection_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    7;
+    11;
 
   friend void swap(DentrySection& a, DentrySection& b) {
     a.Swap(&b);
@@ -1289,7 +1869,7 @@ class NameSystem :
                &_NameSystem_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    8;
+    12;
 
   friend void swap(NameSystem& a, NameSystem& b) {
     a.Swap(&b);
@@ -1628,6 +2208,228 @@ inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::minidfs::LocatedBlock 
 LocatedBlocks::locatedblks() const {
   // @@protoc_insertion_point(field_list:minidfs.LocatedBlocks.locatedBlks)
   return locatedblks_;
+}
+
+// -------------------------------------------------------------------
+
+// BlkIDs
+
+// repeated int32 blkIDs = 1;
+inline int BlkIDs::blkids_size() const {
+  return blkids_.size();
+}
+inline void BlkIDs::clear_blkids() {
+  blkids_.Clear();
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 BlkIDs::blkids(int index) const {
+  // @@protoc_insertion_point(field_get:minidfs.BlkIDs.blkIDs)
+  return blkids_.Get(index);
+}
+inline void BlkIDs::set_blkids(int index, ::PROTOBUF_NAMESPACE_ID::int32 value) {
+  blkids_.Set(index, value);
+  // @@protoc_insertion_point(field_set:minidfs.BlkIDs.blkIDs)
+}
+inline void BlkIDs::add_blkids(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  blkids_.Add(value);
+  // @@protoc_insertion_point(field_add:minidfs.BlkIDs.blkIDs)
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::int32 >&
+BlkIDs::blkids() const {
+  // @@protoc_insertion_point(field_list:minidfs.BlkIDs.blkIDs)
+  return blkids_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::int32 >*
+BlkIDs::mutable_blkids() {
+  // @@protoc_insertion_point(field_mutable_list:minidfs.BlkIDs.blkIDs)
+  return &blkids_;
+}
+
+// -------------------------------------------------------------------
+
+// BlockReport
+
+// .minidfs.ChunkserverInfo chunkserverInfo = 1;
+inline bool BlockReport::has_chunkserverinfo() const {
+  return this != internal_default_instance() && chunkserverinfo_ != nullptr;
+}
+inline void BlockReport::clear_chunkserverinfo() {
+  if (GetArenaNoVirtual() == nullptr && chunkserverinfo_ != nullptr) {
+    delete chunkserverinfo_;
+  }
+  chunkserverinfo_ = nullptr;
+}
+inline const ::minidfs::ChunkserverInfo& BlockReport::chunkserverinfo() const {
+  const ::minidfs::ChunkserverInfo* p = chunkserverinfo_;
+  // @@protoc_insertion_point(field_get:minidfs.BlockReport.chunkserverInfo)
+  return p != nullptr ? *p : *reinterpret_cast<const ::minidfs::ChunkserverInfo*>(
+      &::minidfs::_ChunkserverInfo_default_instance_);
+}
+inline ::minidfs::ChunkserverInfo* BlockReport::release_chunkserverinfo() {
+  // @@protoc_insertion_point(field_release:minidfs.BlockReport.chunkserverInfo)
+  
+  ::minidfs::ChunkserverInfo* temp = chunkserverinfo_;
+  chunkserverinfo_ = nullptr;
+  return temp;
+}
+inline ::minidfs::ChunkserverInfo* BlockReport::mutable_chunkserverinfo() {
+  
+  if (chunkserverinfo_ == nullptr) {
+    auto* p = CreateMaybeMessage<::minidfs::ChunkserverInfo>(GetArenaNoVirtual());
+    chunkserverinfo_ = p;
+  }
+  // @@protoc_insertion_point(field_mutable:minidfs.BlockReport.chunkserverInfo)
+  return chunkserverinfo_;
+}
+inline void BlockReport::set_allocated_chunkserverinfo(::minidfs::ChunkserverInfo* chunkserverinfo) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaNoVirtual();
+  if (message_arena == nullptr) {
+    delete chunkserverinfo_;
+  }
+  if (chunkserverinfo) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena = nullptr;
+    if (message_arena != submessage_arena) {
+      chunkserverinfo = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, chunkserverinfo, submessage_arena);
+    }
+    
+  } else {
+    
+  }
+  chunkserverinfo_ = chunkserverinfo;
+  // @@protoc_insertion_point(field_set_allocated:minidfs.BlockReport.chunkserverInfo)
+}
+
+// repeated int32 blkIDs = 2;
+inline int BlockReport::blkids_size() const {
+  return blkids_.size();
+}
+inline void BlockReport::clear_blkids() {
+  blkids_.Clear();
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 BlockReport::blkids(int index) const {
+  // @@protoc_insertion_point(field_get:minidfs.BlockReport.blkIDs)
+  return blkids_.Get(index);
+}
+inline void BlockReport::set_blkids(int index, ::PROTOBUF_NAMESPACE_ID::int32 value) {
+  blkids_.Set(index, value);
+  // @@protoc_insertion_point(field_set:minidfs.BlockReport.blkIDs)
+}
+inline void BlockReport::add_blkids(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  blkids_.Add(value);
+  // @@protoc_insertion_point(field_add:minidfs.BlockReport.blkIDs)
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::int32 >&
+BlockReport::blkids() const {
+  // @@protoc_insertion_point(field_list:minidfs.BlockReport.blkIDs)
+  return blkids_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedField< ::PROTOBUF_NAMESPACE_ID::int32 >*
+BlockReport::mutable_blkids() {
+  // @@protoc_insertion_point(field_mutable_list:minidfs.BlockReport.blkIDs)
+  return &blkids_;
+}
+
+// -------------------------------------------------------------------
+
+// BlockTask
+
+// int32 operation = 1;
+inline void BlockTask::clear_operation() {
+  operation_ = 0;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 BlockTask::operation() const {
+  // @@protoc_insertion_point(field_get:minidfs.BlockTask.operation)
+  return operation_;
+}
+inline void BlockTask::set_operation(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  
+  operation_ = value;
+  // @@protoc_insertion_point(field_set:minidfs.BlockTask.operation)
+}
+
+// .minidfs.LocatedBlock locatedBlk = 2;
+inline bool BlockTask::has_locatedblk() const {
+  return this != internal_default_instance() && locatedblk_ != nullptr;
+}
+inline void BlockTask::clear_locatedblk() {
+  if (GetArenaNoVirtual() == nullptr && locatedblk_ != nullptr) {
+    delete locatedblk_;
+  }
+  locatedblk_ = nullptr;
+}
+inline const ::minidfs::LocatedBlock& BlockTask::locatedblk() const {
+  const ::minidfs::LocatedBlock* p = locatedblk_;
+  // @@protoc_insertion_point(field_get:minidfs.BlockTask.locatedBlk)
+  return p != nullptr ? *p : *reinterpret_cast<const ::minidfs::LocatedBlock*>(
+      &::minidfs::_LocatedBlock_default_instance_);
+}
+inline ::minidfs::LocatedBlock* BlockTask::release_locatedblk() {
+  // @@protoc_insertion_point(field_release:minidfs.BlockTask.locatedBlk)
+  
+  ::minidfs::LocatedBlock* temp = locatedblk_;
+  locatedblk_ = nullptr;
+  return temp;
+}
+inline ::minidfs::LocatedBlock* BlockTask::mutable_locatedblk() {
+  
+  if (locatedblk_ == nullptr) {
+    auto* p = CreateMaybeMessage<::minidfs::LocatedBlock>(GetArenaNoVirtual());
+    locatedblk_ = p;
+  }
+  // @@protoc_insertion_point(field_mutable:minidfs.BlockTask.locatedBlk)
+  return locatedblk_;
+}
+inline void BlockTask::set_allocated_locatedblk(::minidfs::LocatedBlock* locatedblk) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaNoVirtual();
+  if (message_arena == nullptr) {
+    delete locatedblk_;
+  }
+  if (locatedblk) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena = nullptr;
+    if (message_arena != submessage_arena) {
+      locatedblk = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, locatedblk, submessage_arena);
+    }
+    
+  } else {
+    
+  }
+  locatedblk_ = locatedblk;
+  // @@protoc_insertion_point(field_set_allocated:minidfs.BlockTask.locatedBlk)
+}
+
+// -------------------------------------------------------------------
+
+// BlockTasks
+
+// repeated .minidfs.BlockTask blkTasks = 1;
+inline int BlockTasks::blktasks_size() const {
+  return blktasks_.size();
+}
+inline void BlockTasks::clear_blktasks() {
+  blktasks_.Clear();
+}
+inline ::minidfs::BlockTask* BlockTasks::mutable_blktasks(int index) {
+  // @@protoc_insertion_point(field_mutable:minidfs.BlockTasks.blkTasks)
+  return blktasks_.Mutable(index);
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::minidfs::BlockTask >*
+BlockTasks::mutable_blktasks() {
+  // @@protoc_insertion_point(field_mutable_list:minidfs.BlockTasks.blkTasks)
+  return &blktasks_;
+}
+inline const ::minidfs::BlockTask& BlockTasks::blktasks(int index) const {
+  // @@protoc_insertion_point(field_get:minidfs.BlockTasks.blkTasks)
+  return blktasks_.Get(index);
+}
+inline ::minidfs::BlockTask* BlockTasks::add_blktasks() {
+  // @@protoc_insertion_point(field_add:minidfs.BlockTasks.blkTasks)
+  return blktasks_.Add();
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::minidfs::BlockTask >&
+BlockTasks::blktasks() const {
+  // @@protoc_insertion_point(field_list:minidfs.BlockTasks.blkTasks)
+  return blktasks_;
 }
 
 // -------------------------------------------------------------------
@@ -1996,6 +2798,14 @@ inline void NameSystem::set_allocated_dentrysection(::minidfs::DentrySection* de
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

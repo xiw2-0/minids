@@ -35,7 +35,7 @@ class DFSClient {
   /// \param file the file name stored in minidfs.
   /// \param locatedBlks a list of locatedBlocks which maps from a block ID to chunkservers.
   ///        It is the returning parameter. 
-  /// \return return 0 on success, -1 for errors.
+  /// \return return OpCode.
   int getBlockLocations(const string& file, LocatedBlocks* locatedBlks);
 
   /// \brief Create a file. MethodID = 2.
@@ -44,7 +44,7 @@ class DFSClient {
   /// \param file the file name stored in minidfs.
   /// \param locatedBlk contains chunkservers' information.
   ///        It is the returning parameter. 
-  /// \return return 0 on success, -1 for errors.
+  /// \return return OpCode.
   int create(const string& file, LocatedBlock* locatedBlk);
 
 };

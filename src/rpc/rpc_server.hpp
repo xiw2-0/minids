@@ -19,9 +19,11 @@
 #include <unistd.h>
 
 #include <proto/minidfs.pb.h>
+#include <minidfs/op_code.hpp>
 
 using std::string;
 using std::cerr;
+using minidfs::OpCode;
 
 namespace minidfs {
 class DFSMaster;
@@ -103,6 +105,11 @@ class RPCServer {
   void handleRequest(int connfd);
 
 
+  ////////////////////////
+  /// ClientProtocol
+  ////////////////////////
+
+
   /// \brief Get a file's block location information from Master. MethodID = 1.
   /// This method forwards the request to master and fetches the response.
   /// Then it sends the response back to client.
@@ -121,6 +128,43 @@ class RPCServer {
   /// \param request the file name to be stored in minidfs.
   /// \return return 0 on success, -1 for errors.
   int create(int connfd, const string& request);
+
+
+  ////////////////////////
+  /// ChunkserverProtocol
+  ////////////////////////
+
+
+  /// \brief Send heartbeat information to Master. MethodID = 101.
+  ///
+  /// \param connfd the connected sockfd
+  /// \param request serialized chunkserverInfo which contains the ip and port of the chunkserver
+  /// \return return 0 on success, -1 for errors.
+  int heartBeat(int connfd, const string& request);
+  
+  /// \brief Send block report to Master. MethodID = 102.
+  ///
+  /// The chunkserver informs Master about all the blocks it has
+  /// \param connfd the connected sockfd
+  /// \param request serialized BlockReport
+  /// \return return 0 on success, -1 for errors.
+  int blkReport(int connfd, const string& request);
+
+  /// \brief Get block task from Master. MethodID = 103.
+  ///
+  /// \param connfd the connected sockfd
+  /// \param request serialized chunkserverInfo which contains the ip and port of the chunkserver
+  /// \return return 0 on success, -1 for errors.  
+  int getBlkTask(int connfd, const string& request);
+
+  /// \brief Inform Master about the received blocks. MethodID = 104.
+  ///
+  /// \param connfd the connected sockfd
+  /// \param request serialized BlkIDs that contains all the block ids it received
+  /// \return return 0 on success, -1 for errors.  
+  int recvedBlks(int connfd, const string& request);
+
+
 
   /// \brief Recv rpc request from the RPCClient.
   ///

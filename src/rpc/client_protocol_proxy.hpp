@@ -8,8 +8,11 @@
 #define CLIENT_PROTOCOL_PROXY_
 
 #include <minidfs/client_protocol.hpp>
+#include <minidfs/op_code.hpp>
 #include <proto/minidfs.pb.h>
 #include <rpc/rpc_client.hpp>
+
+using minidfs::OpCode;
 
 namespace rpc {
 
@@ -33,7 +36,7 @@ class ClientProtocolProxy: public minidfs::ClientProtocol {
   /// \param file the file name stored in minidfs.
   /// \param locatedBlks a list of locatedBlocks which maps from a block ID to chunkservers.
   ///        It is the returning parameter. 
-  /// \return returning status. 0 on success, 1 for errors.
+  /// \return return OpCode.
   virtual int getBlockLocations(const string& file, minidfs::LocatedBlocks* locatedBlks) override;
 
   /// \brief Create a file. MethodID = 2.
@@ -42,7 +45,7 @@ class ClientProtocolProxy: public minidfs::ClientProtocol {
   /// \param file the file name stored in minidfs.
   /// \param locatedBlk contains chunkservers' information.
   ///        It is the returning parameter. 
-  /// \return returning status. 0 on success, 1 for errors.
+  /// \return return OpCode.
   virtual int create(const string& file, minidfs::LocatedBlock* locatedBlk) override;
 };
 

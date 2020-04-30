@@ -9,7 +9,7 @@
 
 
 namespace rpc {
-
+/// TODO: xiw, isSafe should be true. False here is used to test rpc b/w client and master.
 RPCServer::RPCServer(int serverPort, int maxConns, minidfs::DFSMaster* master)
     : serverPort(serverPort), maxConnections(maxConns), master(master), isSafeMode(false) {
 }
@@ -70,8 +70,15 @@ int RPCServer::initServer() {
 }
 
 int RPCServer::bindRPCCalls() {
+  /// Client protocol
   rpcBindings[1] = std::bind(&RPCServer::getBlockLocations, this, std::placeholders::_1, std::placeholders::_2);
   rpcBindings[2] = std::bind(&RPCServer::create, this, std::placeholders::_1, std::placeholders::_2);
+
+  /// Chunkserver protocol
+  rpcBindings[101] = std::bind(&RPCServer::heartBeat, this, std::placeholders::_1, std::placeholders::_2);
+  rpcBindings[102] = std::bind(&RPCServer::blkReport, this, std::placeholders::_1, std::placeholders::_2);
+  rpcBindings[103] = std::bind(&RPCServer::getBlkTask, this, std::placeholders::_1, std::placeholders::_2);
+  rpcBindings[104] = std::bind(&RPCServer::recvedBlks, this, std::placeholders::_1, std::placeholders::_2);
   return 0;
 }
 
@@ -86,9 +93,9 @@ void RPCServer::handleRequest(int connfd) {
     return;
   }
 
-  /// In safe mode
-  if (isSafeMode == true && methodID != 1) {
-    int status = 100;
+  /// In safe mode, rpc calls from clients are ignored!
+  if (isSafeMode == true && methodID <= 100) {
+    int status = OpCode::OP_SAFE_MODE;
     string response;
     sendResponse(connfd, status, response);
 
@@ -124,11 +131,64 @@ int RPCServer::getBlockLocations(int connfd, const string& request) {
 int RPCServer::create(int connfd, const string& request) {
   minidfs::LocatedBlock locatedBlk;
   int status = master->create(request, &locatedBlk);
-  // TODO: use SerializeAsString or SerializeToString?
   string response = locatedBlk.SerializeAsString();
 
   return sendResponse(connfd, status, response);
 }
+
+int RPCServer::heartBeat(int connfd, const string& request) {
+  minidfs::ChunkserverInfo chunkserverInfo;
+  chunkserverInfo.ParseFromString(request);
+  int status = master->heartBeat(chunkserverInfo);
+  /// No response
+  string response;
+  return sendResponse(connfd, status, response);
+}
+
+int RPCServer::blkReport(int connfd, const string& request) {
+  minidfs::BlockReport report;
+  report.ParseFromString(request);
+
+  std::vector<int> blkIDs;
+  for (int i = 0; i < report.blkids_size(); ++i) {
+    blkIDs.push_back(report.blkids(i));
+  }
+
+  std::vector<int> deletedBlks;
+  int status = master->blkReport(report.chunkserverinfo(), blkIDs, deletedBlks);
+  /// construct the response
+  minidfs::BlkIDs response;
+  for (int i : deletedBlks) {
+    response.add_blkids(i);
+  }
+  return sendResponse(connfd, status, response.SerializeAsString());
+}
+
+int RPCServer::getBlkTask(int connfd, const string& request) {
+  minidfs::ChunkserverInfo chunkserverInfo;
+  chunkserverInfo.ParseFromString(request);
+
+  minidfs::BlockTasks blkTasks;
+  int status = master->getBlkTask(chunkserverInfo, &blkTasks);
+  
+  return sendResponse(connfd, status, blkTasks.SerializeAsString());
+}
+
+int RPCServer::recvedBlks(int connfd, const string& request) {
+  minidfs::BlockReport report;
+  report.ParseFromString(request);
+
+  std::vector<int> blkIDs;
+  for (int i = 0; i < report.blkids_size(); ++i) {
+    blkIDs.push_back(report.blkids(i));
+  }
+
+  int status = master->recvedBlks(report.chunkserverinfo(), blkIDs);
+  /// No response
+  string response;
+  return sendResponse(connfd, status, response);
+}
+
 
 int RPCServer::recvRequest(int connfd, int& methodID, string& request) {
   int32_t len = 0;

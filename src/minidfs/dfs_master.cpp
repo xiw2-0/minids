@@ -64,6 +64,18 @@ bool DFSMaster::isSafe() {
   return true;
 }
 
+void DFSMaster::checkHeartbeat() {
+  for (auto i = aliveChunkservers.begin(); i != aliveChunkservers.end();) {
+    if (i->second == true) {
+      i->second = false;
+      ++i;
+    } else {
+      findBlksToBeReplicated(i->first);
+      i = aliveChunkservers.erase(i);
+    }
+  }
+}
+
 int DFSMaster::getBlockLocations(const string& file, minidfs::LocatedBlocks* locatedBlks) {
   if (dfIDs.find(file) == dfIDs.end()) {
     cerr << "[DFSMaster] "  << "No such a file/dir\n";
@@ -128,19 +140,63 @@ int DFSMaster::create(const string& file, LocatedBlock* locatedBlk) {
 }
 
 int DFSMaster::heartBeat(const ChunkserverInfo& chunkserverInfo) {
+  int id = getChunkserverID(chunkserverInfo);
 
+  aliveChunkservers[id] = true;
+  /// TODO: xiw, is returning value here useless?
+  return OpCode::OP_SUCCESS;
 }
 
 int DFSMaster::blkReport(const ChunkserverInfo& chunkserverInfo, const std::vector<int>& blkIDs, std::vector<int>& deletedBlks) {
-
+  int id = getChunkserverID(chunkserverInfo);
+  aliveChunkservers[id] = true;
+  for (int blockid : blkIDs) {
+    /// all valid blocks should appear in blks
+    if (blks.find(blockid) == blks.end()) {
+      deletedBlks.push_back(blockid);
+    }
+  }
+  return OpCode::OP_SUCCESS;
 }
 
 int DFSMaster::getBlkTask(const ChunkserverInfo& chunkserverInfo, BlockTasks* blkTasks) {
-
+  int id = getChunkserverID(chunkserverInfo);
+  bool hasTask = false;
+  for (auto& b : blksToBeReplicated) {
+    for (auto& node : blkLocs[b.first]) {
+      if (node == id) {
+        distributeBlkTask(b.first, b.second, blkTasks->add_blktasks());
+        hasTask = true;
+        break;
+      }
+    }
+  }
+  return hasTask ? OpCode::OP_SUCCESS : OpCode::OP_NO_BLK_TASK;
 }
 
 int DFSMaster::recvedBlks(const ChunkserverInfo& chunkserverInfo, const std::vector<int>& blkIDs) {
-
+  int id = getChunkserverID(chunkserverInfo);
+  aliveChunkservers[id] = true;
+  for (int blockid : blkIDs) {
+    /// all valid blocks should appear in blks
+    if (blks.find(blockid) == blks.end()) {
+      cerr << "[DFSMaster] " << chunkserverInfo.chunkserverip() << " received invalid block " << blockid << std::endl;
+      continue;
+    }
+    if (blkLocs.find(blockid) == blkLocs.end()) {
+      blkLocs[blockid] = std::vector<int>();
+    }
+    int contained = false;
+    for(int& chunkserver : blkLocs[blockid]) {
+      if (chunkserver == id) {
+        contained = true;
+        break;
+      }
+    }
+    if (contained == false)
+      blkLocs[blockid].push_back(id);
+  }
+  return OpCode::OP_SUCCESS;
 }
 
 int DFSMaster::serializeNameSystem() {
@@ -251,8 +307,16 @@ int DFSMaster::parseNameSystem() {
 }
 
 int DFSMaster::initMater() {
+  /// chunkserver
   blkLocs = std::map<int, std::vector<int>>();
   chunkservers = std::map<int, ChunkserverInfo>();
+  chunkserverIDs = std::map<ChunkserverInfo, int>();
+  currentMaxChunkserverID = 0;
+  aliveChunkservers = std::map<int, bool>();
+
+  blksToBeReplicated = std::map<int, int>();
+  
+  /// name system
   return parseNameSystem();
 }
 
@@ -267,6 +331,61 @@ void DFSMaster::splitPath(const string& path, string& dir) {
   }
 }
 
+int DFSMaster::getChunkserverID(const ChunkserverInfo& chunkserverInfo) {
+  int id = -1;
+  if (chunkserverIDs.find(chunkserverInfo) != chunkserverIDs.end()) {
+    id = chunkserverIDs[chunkserverInfo];
+  } else {
+    id = ++currentMaxChunkserverID;
+
+    chunkserverIDs[chunkserverInfo] = id;
+    chunkservers[id] = chunkserverInfo;
+  }
+  return id;
+}
+
+void DFSMaster::findBlksToBeReplicated(int chunkserverID) {
+  for (auto& bl : blkLocs) {
+    for (const auto& chunkserver : bl.second) {
+      if (chunkserver == chunkserverID) {
+        if (blksToBeReplicated.find(bl.first) == blksToBeReplicated.end()) {
+          blksToBeReplicated[bl.first] = 0;
+        }
+        blksToBeReplicated[bl.first]++;
+        break;
+      }
+    }
+  }
+}
+
+void DFSMaster::distributeBlkTask(int blockID, int repFactor, BlockTask* blkTask) {
+  blkTask->set_operation(OpCode::OP_COPY);
+
+  auto locatedBlk = blkTask->mutable_locatedblk();
+  *locatedBlk->mutable_block() = blks[blockID];
+  int numFound = 0;
+  for (auto& i : chunkservers) {
+    bool contained = false;
+    for (int& backup : blkLocs[blockID]) {
+      if (backup == i.first) {
+        contained = true;
+        break;
+      }
+    }
+    if (contained == false) {
+      *locatedBlk->add_chunkserverinfos() = i.second;
+      ++numFound;
+    }
+    if (numFound >= repFactor) {
+      break;
+    }
+  }
+  if (numFound < repFactor) {
+    cerr << "[DFSMaster] " << "Required " << repFactor << "repair nodes; "
+         << "only " << numFound << " found\n";
+  }
+  blksToBeReplicated.erase(blockID);
+}
 
 
 } // namespace minidfs

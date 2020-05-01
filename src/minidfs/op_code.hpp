@@ -31,6 +31,7 @@ class OpCode {
   /////////////////////////////////
 
   static const char OP_COPY;
+  static const char OP_NO_BLK_TASK;
   
 };
 
@@ -42,7 +43,7 @@ const char OpCode::OP_FILE_ALREADY_EXISTED = 21;
 const char OpCode::OP_SAFE_MODE = 30;
 
 const char OpCode::OP_COPY = 40;
-
+const char OpCode::OP_NO_BLK_TASK = 41;
 } // namespace minidfs
 
 

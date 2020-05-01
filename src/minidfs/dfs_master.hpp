@@ -63,12 +63,16 @@ class DFSMaster: public ClientProtocol, public ChunkserverProtocol{
   std::map<int, std::vector<int>> blkLocs;
   /// Maps from chunkserver id to \class  ChunkserverInfo
   std::map<int, ChunkserverInfo> chunkservers;
-  /// Maps from chunkserver id to \class  ChunkserverInfo
+  /// Maps from \class  ChunkserverInfo to chunkserver id
   std::map<ChunkserverInfo, int> chunkserverIDs;
   /// The max chunkserver ID that has been allocated
   int currentMaxChunkserverID;
+  /// alive chunkservers
+  std::map<int, bool> aliveChunkservers;
 
-
+  /// blks that need to be replicated.
+  /// The 1st is block id; the 2nd is replication factor.
+  std::map<int, int> blksToBeReplicated;
 
  public:
   /// \brief Construct the Master.
@@ -106,6 +110,9 @@ class DFSMaster: public ClientProtocol, public ChunkserverProtocol{
   /// Safe when there is at least one chunkserver alive for each blk. 
   bool isSafe();
 
+  /// \brief Check whether all chunkservers are still alive.
+  /// It runs as a daemon thread to find dead nodes.
+  void checkHeartbeat();
 
   ////////////////////////
   /// ClientProtocol
@@ -178,10 +185,19 @@ class DFSMaster: public ClientProtocol, public ChunkserverProtocol{
   int initMater();
 
  private:
- /// Utils function
+  /// Utils function
 
- /// Split the path to get the parent dir
- void splitPath(const string& path, string& dir);
+  /// Split the path to get the parent dir
+  void splitPath(const string& path, string& dir);
+
+  /// tranform chunkserverinfo into chunkserver id
+  int getChunkserverID(const ChunkserverInfo& chunkserverInfo);
+
+  /// find blocks to be replicated
+  void findBlksToBeReplicated(int chunkserverID);
+
+  /// distribute the blkTask
+  void distributeBlkTask(int blockID, int repFactor, BlockTask* blkTask);
 };
 
 

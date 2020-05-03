@@ -32,7 +32,14 @@ class OpCode {
 
   static const char OP_COPY;
   static const char OP_NO_BLK_TASK;
+
+  /////////////////////////////////
+  /// Op code for data transfer
+  /////////////////////////////////
   
+  static const char OP_READ;
+  static const char OP_WRITE;
+
 };
 
 const char OpCode::OP_SUCCESS = 0;
@@ -44,6 +51,9 @@ const char OpCode::OP_SAFE_MODE = 30;
 
 const char OpCode::OP_COPY = 40;
 const char OpCode::OP_NO_BLK_TASK = 41;
+
+const char OpCode::OP_READ = 60;
+const char OpCode::OP_WRITE = 61;
 } // namespace minidfs
 
 

@@ -10,6 +10,7 @@
 #include <dirent.h>
 #include <string>
 #include <thread>
+#include <fstream>
 
 #include <minidfs/chunkserver_protocol.hpp>
 #include <rpc/chunkserver_protocol_proxy.hpp>
@@ -26,6 +27,15 @@ namespace minidfs {
 /// The second thread serves at a specific port and waits the data request
 /// from clients/chunkservers. The second thread will fork a new thread
 /// each time to deal with the new-coming request.
+///
+/// Block writing request format:
+/// OP_WRITE : len(LocatedBlock) : LocatedBlock : len(data) : data
+/// 1 byte   : 2 bytes           : n bytes      : 8 bytes   : n bytes
+///
+/// Block reading request format:
+/// OP_READ  : len(Block) : Block 
+/// 1 byte   : 2 bytes    : n bytes
+///
 /// TODO: xiw, Thread pool will be used here, if time is available.
 class DFSChunkserver {
 
@@ -45,10 +55,16 @@ class DFSChunkserver {
   /// folder that stores the blocks
   string dataDir;
   /// store the block ids
-  std::set<int> servedBlks;
+  std::set<int> blksServed;
+
+  /// recently received blocks
+  std::set<int> blksRecved;
 
   /// block size
   long long blockSize;
+
+  /// data sending/recving buffer size
+  const int BUFFER_SIZE;
 
  public:
   /// \brief Create a DFSChunkserver.
@@ -61,7 +77,7 @@ class DFSChunkserver {
   DFSChunkserver(const string& masterIP, int masterPort,
                  const string& serverIP, int serverPort,
                  const string& dataDir, long long blkSize,
-                 int maxConnections);
+                 int maxConnections, int BUFFER_SIZE);
 
   /// \brief The chunkserver will run and exit only when this program is shut down.
   /// It provides services to clients to handle data writing/reading requests.
@@ -89,17 +105,54 @@ class DFSChunkserver {
 
   /// \brief Receive a block from client/chunkserver and forward it to other chunkservers
   /// if necessary.
-  int recvBlock();
+  ///
+  /// Block writing request format:
+  /// OP_WRITE : len(LocatedBlock) : LocatedBlock : len(data) : data
+  /// 1 byte   : 2 bytes           : n bytes      : 8 bytes   : n bytes
+  ///
+  /// Response format:
+  /// OpCode   :
+  /// 1 byte   :
+  ///
+  /// \param connfd the received socket fd
+  /// \return return 0 on success, -1 for errors
+  int recvBlock(int connfd);
 
   /// \brief Send a block back to client. 
-  int sendBlock();
+  ///
+  /// Block reading request format:
+  /// OP_READ  : len(Block) : Block 
+  /// 1 byte   : 2 bytes    : n bytes
+  ///
+  /// Response format:
+  /// OpCode   : len(data) : data
+  /// 1 byte   : 8 bytes   : n bytes
+  ///
+  /// \param connfd the received socket fd
+  /// \return return 0 on success, -1 for errors
+  int sendBlock(int connfd);
 
   /// \brief This method is called when the chunkserver gets a block copy task
   /// from master. It sends a block to the targeted chunkservers.
-  int replicateBlock();
-
+  ///
+  /// In this method, the chunkserver connects the target remote server firstly.
+  /// Then it sends the data writing request and data to the remote.
+  ///
+  /// Block writing request format:
+  /// OP_WRITE : len(LocatedBlock) : LocatedBlock : len(data) : data
+  /// 1 byte   : 2 bytes           : n bytes      : 8 bytes   : n bytes
+  ///
+  /// Response format:
+  /// OpCode   :
+  /// 1 byte   :
+  ///
+  /// \param locatedB contains info about the block and remote chunkserver
+  /// \return return 0 on success, -1 for errors
+  int replicateBlock(LocatedBlock& locatedB);
 
   /// \brief Send heartbeat to Master.
+  ///
+  /// \return return OpCode.
   int heartBeat();
 
   /// \brief Send block report to master. It is revoked as the start of chunkserver.
@@ -112,6 +165,25 @@ class DFSChunkserver {
 
   /// \brief Invoked when the chunkserver receives new blocks from clients/chunkservers.
   int recvedBlks();
+
+ private:
+  /// \brief Send block data to client/chunkserver through the connected socket.
+  ///
+  /// Block sending format:
+  /// len(data) : data
+  /// 8 bytes   : n bytes
+  ///
+  /// \param connfd connected socket fd, either from client or to another chunkserver
+  /// \param bID ID of the block to be sent
+  /// \return return 0 on success, -1 for errors
+  int sendBlkData(int connfd, int bID);
+
+  /// \brief Connect the remote Chunkserver.
+  ///
+  /// \param serverIP remote chunkserver ip
+  /// \param serverPort remote chunkserver port
+  /// \return return connected socket fd on success, -1 for errors.
+  int connectRemote(string serverIP, int serverPort);
 };
 
 

@@ -10,10 +10,73 @@ namespace minidfs {
 DFSChunkserver::DFSChunkserver(const string& masterIP, int masterPort,
                                const string& serverIP, int serverPort,
                                const string& dataDir, long long blkSize,
-                               int maxConnections, int BUFFER_SIZE)
+                               int maxConnections, int BUFFER_SIZE,
+                               long long HEART_BEAT_INTERVAL,
+                               long long BLOCK_REPORT_INTERVAL,
+                               long long BLK_TASK_STARTUP_INTERVAL)
     : master(new rpc::ChunkserverProtocolProxy(masterIP, masterPort)),
       serverIP(serverIP), serverPort(serverPort), dataDir(dataDir), blockSize(blkSize),
-      maxConnections(maxConnections), BUFFER_SIZE(BUFFER_SIZE){
+      maxConnections(maxConnections), BUFFER_SIZE(BUFFER_SIZE),
+      HEART_BEAT_INTERVAL(HEART_BEAT_INTERVAL), BLOCK_REPORT_INTERVAL(BLOCK_REPORT_INTERVAL),
+      BLK_TASK_STARTUP_INTERVAL(BLK_TASK_STARTUP_INTERVAL){
+}
+
+void DFSChunkserver::run() {
+  /// scan the block stored in local directory
+  int op = scanStoredBlocks();
+  if (op == OpCode::OP_FAILURE) {
+    return;
+  }
+  cerr << "[DFSChunkserver] "  << "Succeed to scan data dir\n";
+
+  /// start data service
+  std::thread dataServiceThread(&DFSChunkserver::dataService, this);
+  dataServiceThread.detach();
+
+  //
+  // Interact with master
+  //
+  using std::chrono::system_clock;
+  system_clock::time_point lastHeartbeat(std::chrono::milliseconds(0));
+  system_clock::time_point lastBlkReport(std::chrono::milliseconds(0));
+  auto startup = system_clock::now();
+  while(true) {
+    auto now = system_clock::now();
+    auto t = std::chrono::duration_cast<std::chrono::milliseconds>(now - lastHeartbeat);
+    /// heart beat
+    if (t.count() > HEART_BEAT_INTERVAL) {
+      heartBeat();
+      lastHeartbeat = now;
+    }
+
+    /// block report
+    now = system_clock::now();
+    t = std::chrono::duration_cast<std::chrono::milliseconds>(now - lastBlkReport);
+    if (t.count() > BLOCK_REPORT_INTERVAL) {
+      blkReport();
+      lastBlkReport = now;
+    }
+
+    /// inform the master about the received blocks
+    if (blksRecved.empty() == false) {
+      recvedBlks();
+    }
+
+    /// get block tasks
+    now = system_clock::now();
+    t = std::chrono::duration_cast<std::chrono::milliseconds>(now - startup);
+    if (t.count() > BLK_TASK_STARTUP_INTERVAL) {
+      getBlkTask();
+    }
+
+    /// sleep until next heart beat
+    now = system_clock::now();
+    t = std::chrono::duration_cast<std::chrono::milliseconds>(lastHeartbeat - now);
+    t += std::chrono::milliseconds(HEART_BEAT_INTERVAL);
+    if (t.count() > 0) {
+      std::this_thread::sleep_for(t);
+    }
+  }
 }
 
 void DFSChunkserver::dataService() {
@@ -63,7 +126,7 @@ int DFSChunkserver::scanStoredBlocks() {
   auto dir = opendir(dataDir.c_str());
   if (!dir) {
     cerr << "[DFSChunkserver] " << "Cannot open " << dataDir << std::endl;
-    return -1;
+    return OpCode::OP_FAILURE;
   }
 
   while ((blkFile = readdir(dir)) != nullptr) {
@@ -87,6 +150,7 @@ int DFSChunkserver::scanStoredBlocks() {
       blksServed.emplace(blkid);
     }
   }
+  return OpCode::OP_SUCCESS;
 }
 
 void DFSChunkserver::handleBlockRequest(int connfd) {
@@ -146,11 +210,11 @@ int DFSChunkserver::recvBlock(int connfd) {
   }
   dataLen += ntohl(halfLen);
 
-  string folder("/tmp/");
+  string folder("/tmp");
   string blkFileName("blk_");
   int bID = lb.block().blockid();
   blkFileName += std::to_string(bID);
-  std::fstream fOut(folder+blkFileName, std::ios::out | std::ios::app | std::ios::trunc | std::ios::binary);
+  std::fstream fOut(folder+"/"+blkFileName, std::ios::out | std::ios::app | std::ios::trunc | std::ios::binary);
 
   std::vector<char> dataBuffer(BUFFER_SIZE);
   long long byteLeft = dataLen;
@@ -167,7 +231,7 @@ int DFSChunkserver::recvBlock(int connfd) {
   }
   
   /// move to final folder
-  rename((folder+blkFileName).c_str(), (dataDir+blkFileName).c_str());
+  rename((folder+"/"+blkFileName).c_str(), (dataDir+"/"+blkFileName).c_str());
   blksServed.emplace(bID);
   blksRecved.emplace(bID);
 
@@ -220,7 +284,7 @@ int DFSChunkserver::sendBlock(int connfd) {
   return 0;
 }
 
-int DFSChunkserver::replicateBlock(LocatedBlock& locatedB) {
+int DFSChunkserver::replicateBlock(const LocatedBlock& locatedB) {
   int bID = locatedB.block().blockid();
 
   if (blksServed.find(bID) == blksServed.end()) {
@@ -277,7 +341,7 @@ int DFSChunkserver::replicateBlock(LocatedBlock& locatedB) {
 int DFSChunkserver::sendBlkData(int connfd, int bID) {
   string blkFileName("blk_");
   blkFileName += std::to_string(bID);
-  std::fstream fIn(dataDir+blkFileName, std::ios::in | std::ios::binary);
+  std::fstream fIn(dataDir+"/"+blkFileName, std::ios::in | std::ios::binary);
 
   /// send datalen
   long long blkLen = - fIn.tellg();
@@ -350,7 +414,58 @@ int DFSChunkserver::heartBeat() {
 int DFSChunkserver::blkReport() {
   std::vector<int> blks(blksServed.begin(), blksServed.end());
   std::vector<int> blksDeleted;
-  master->blkReport(chunkserverInfo, blks, blksDeleted);
+  int opRet = master->blkReport(chunkserverInfo, blks, blksDeleted);
+  if (opRet == OpCode::OP_FAILURE) {
+    return opRet;
+  }
+  for (int blkD : blksDeleted) {
+    if (blksServed.find(blkD) != blksServed.end()) {
+      blksServed.erase(blkD);
+
+      string blkFileName("blk_");
+      blkFileName += std::to_string(blkD);
+      if (remove((dataDir+"/"+blkFileName).c_str()) == 0) {
+        cerr << "[DFSChunkserver] " << "Succeed removing block: " << blkD << std::endl;
+      } else {
+        opRet = OpCode::OP_FAILURE;
+        cerr << "[DFSChunkserver] " << "Failed removing block: " << blkD << std::endl;
+      }
+    }
+  }
+  return opRet;
+}
+
+int DFSChunkserver::getBlkTask() {
+  BlockTasks blockTasks;
+  int opRet = master->getBlkTask(chunkserverInfo, &blockTasks);
+  if (opRet == OpCode::OP_FAILURE) {
+    return opRet;
+  }
+
+  for (int i = 0; i < blockTasks.blktasks_size(); ++i) {
+    const auto& task = blockTasks.blktasks(i);
+    if (task.operation() == OpCode::OP_COPY) {
+      if (0 == replicateBlock(task.locatedblk())) {
+        cerr << "[DFSChunkserver] " << "Succeed to replicate block: " << task.locatedblk().block().blockid() << std::endl;
+      } else {
+        opRet = OpCode::OP_FAILURE;
+      }
+    }
+  }
+  return opRet;
+}
+
+int DFSChunkserver::recvedBlks() {
+  if (blksRecved.size() == 0) {
+    return OpCode::OP_SUCCESS;
+  }
+
+  std::vector<int> blks(blksRecved.begin(), blksRecved.end());
+  int opRet = master->recvedBlks(chunkserverInfo, blks);
+  if (opRet == OpCode::OP_SUCCESS) {
+    blksRecved.clear();  
+  }
+  return opRet;
 }
 
 } // namespace minidfs

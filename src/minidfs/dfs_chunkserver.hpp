@@ -11,6 +11,7 @@
 #include <string>
 #include <thread>
 #include <fstream>
+#include <chrono>
 
 #include <minidfs/chunkserver_protocol.hpp>
 #include <rpc/chunkserver_protocol_proxy.hpp>
@@ -66,6 +67,15 @@ class DFSChunkserver {
   /// data sending/recving buffer size
   const int BUFFER_SIZE;
 
+  /// heart beat interval, in ms
+  const long long HEART_BEAT_INTERVAL;
+
+  /// block report interval, in ms
+  const long long BLOCK_REPORT_INTERVAL;
+
+  /// at the startup, don't retrieve block tasks from master, in ms
+  const long long BLK_TASK_STARTUP_INTERVAL;
+
  public:
   /// \brief Create a DFSChunkserver.
   ///
@@ -74,10 +84,19 @@ class DFSChunkserver {
   /// \param serverIP IP of the chunkserver's host
   /// \param serverPort port of chunkserver
   /// \param dataDir folder which contains the stored blocks
+  /// \param blkSize preferred block size
+  /// \param maxConnections the max connections from clients / other chunkservers
+  /// \param BUFFER_SIZE the data sending/receiving buffer size
+  /// \param HEART_BEAT_INTERVAL heartbeat interval
+  /// \param BLOCK_REPORT_INTERVAL block report interval
+  /// \param BLK_TASK_STARTUP_INTERVAL time period before it is available to fetch block tasks
   DFSChunkserver(const string& masterIP, int masterPort,
                  const string& serverIP, int serverPort,
                  const string& dataDir, long long blkSize,
-                 int maxConnections, int BUFFER_SIZE);
+                 int maxConnections, int BUFFER_SIZE,
+                 long long HEART_BEAT_INTERVAL,
+                 long long BLOCK_REPORT_INTERVAL,
+                 long long BLK_TASK_STARTUP_INTERVAL);
 
   /// \brief The chunkserver will run and exit only when this program is shut down.
   /// It provides services to clients to handle data writing/reading requests.
@@ -148,7 +167,7 @@ class DFSChunkserver {
   ///
   /// \param locatedB contains info about the block and remote chunkserver
   /// \return return 0 on success, -1 for errors
-  int replicateBlock(LocatedBlock& locatedB);
+  int replicateBlock(const LocatedBlock& locatedB);
 
   /// \brief Send heartbeat to Master.
   ///
@@ -156,14 +175,21 @@ class DFSChunkserver {
   int heartBeat();
 
   /// \brief Send block report to master. It is revoked as the start of chunkserver.
-  /// And it is revoked every BLOCK_REPORT_PERIOD.
+  /// And it is revoked every BLOCK_REPORT_PERIOD. It gets invalid blocks list and
+  /// delete them.
+  /// 
+  /// \return return OpCode.
   int blkReport();
 
   /// \brief Get block tasks from master. Usually, they are copy tasks because some blocks
   /// broke or some chunkservers died.
+  /// 
+  /// \return return OpCode.
   int getBlkTask();
 
   /// \brief Invoked when the chunkserver receives new blocks from clients/chunkservers.
+  /// 
+  /// \return return OpCode.
   int recvedBlks();
 
  private:

@@ -59,7 +59,7 @@ class RPCServer {
   int listenSockfd;
   int maxConnections;
 
-  std::map<int, std::function<int(int, const string&)>> rpcBindings;
+  std::unordered_map<int, std::function<int(int, const string&)>> rpcBindings;
 
  public:
   /// \brief When in safemode, only recv the block-report rpc calls from chunkserver.

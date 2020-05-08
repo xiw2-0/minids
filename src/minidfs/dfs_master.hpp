@@ -18,6 +18,41 @@
 
 namespace minidfs {
 
+/// \brief ChunkserverInfo Hasher is used when ChunkserverInfo is taken as
+/// the key of std::unordered_set/std::unordered_map
+class ChunkserverInfoHasher {
+ public:
+  std::size_t operator()(const ChunkserverInfo &key) const{
+		using std::size_t;
+		using std::hash;
+ 
+		return ((hash<string>()(key.chunkserverip())
+			     ^ (hash<int>()(key.chunkserverport()) << 1)) >> 1);
+	}
+};
+
+/// \brief ChunkserverInfo EqualTo is used when ChunkserverInfo is taken as
+/// the key of std::unordered_set/std::unordered_map
+class ChunkserverInfoEqualTo {
+ public:
+	bool operator()(const ChunkserverInfo &lhs, const ChunkserverInfo &rhs) const {
+		return lhs.chunkserverip()  == rhs.chunkserverip()
+			     && lhs.chunkserverport() == rhs.chunkserverport();
+	}
+};
+
+/// \brief ChunkserverInfo LessThan is used when ChunkserverInfo is taken as
+/// the key of std::set/std::map
+class ChunkserverInfoLessThan {
+ public:
+	bool operator()(const ChunkserverInfo &lhs, const ChunkserverInfo &rhs) const {
+    if (lhs.chunkserverip() == rhs.chunkserverip()) {
+      return lhs.chunkserverport() < rhs.chunkserverport();
+    }
+		return lhs.chunkserverip()  < rhs.chunkserverip();
+	}
+};
+
 /// \brief DFSMaster implements server-end of \interface ClientProtocol 
 /// and \interface ChunkserverProtocol. It responds to the rpc calls from
 /// \class DFSClient and \class DFSChunkserver.
@@ -41,38 +76,33 @@ class DFSMaster: public ClientProtocol, public ChunkserverProtocol{
   /// The string name here needs to be full name, e.g. "/data/dfs/file.txt".
   /// "file.txt" only is not allowed.
   /// This will be serialized to local disk.
-  std::map<string, int> dfIDs;
+  std::unordered_map<string, int> dfIDs;
   /// The max dfID that has been allocated
   int currentMaxDfID;
 
   /// \brief Maps from directory ID to subdirs'/files' ID
   ///
   /// This will be serialized to local disk.
-  std::map<int, std::vector<int>> dentries;
+  std::unordered_map<int, std::vector<int>> dentries;
 
   /// \brief Maps from file id to block ids. Dirs are not included here.
   ///
   /// This will be serialized to local disk.
-  std::map<int, std::vector<int>> inodes;
+  std::unordered_map<int, std::vector<int>> inodes;
   /// The max block ID that has been allocated
   int currentMaxBlkID;
   /// \brief Maps from block id to blocks.
-  std::map<int, Block> blks;
+  std::unordered_map<int, Block> blks;
 
   /// Maps from block id to chunkserver ids
-  std::map<int, std::vector<int>> blkLocs;
-  /// Maps from chunkserver id to \class  ChunkserverInfo
-  std::map<int, ChunkserverInfo> chunkservers;
-  /// Maps from \class  ChunkserverInfo to chunkserver id
-  std::map<ChunkserverInfo, int> chunkserverIDs;
-  /// The max chunkserver ID that has been allocated
-  int currentMaxChunkserverID;
+  std::unordered_map<int, std::vector<ChunkserverInfo>> blkLocs;
+
   /// alive chunkservers
-  std::map<int, bool> aliveChunkservers;
+  std::unordered_map<ChunkserverInfo, bool, ChunkserverInfoHasher, ChunkserverInfoEqualTo> aliveChunkservers;
 
   /// blks that need to be replicated.
   /// The 1st is block id; the 2nd is replication factor.
-  std::map<int, int> blksToBeReplicated;
+  std::unordered_map<int, int> blksToBeReplicated;
 
  public:
   /// \brief Construct the Master.
@@ -191,14 +221,16 @@ class DFSMaster: public ClientProtocol, public ChunkserverProtocol{
   void splitPath(const string& path, string& dir);
 
   /// tranform chunkserverinfo into chunkserver id
-  int getChunkserverID(const ChunkserverInfo& chunkserverInfo);
+  //int getChunkserverID(const ChunkserverInfo& chunkserverInfo);
 
   /// find blocks to be replicated
-  void findBlksToBeReplicated(int chunkserverID);
+  void findBlksToBeReplicated(const ChunkserverInfo& chunkserver);
 
   /// distribute the blkTask
   void distributeBlkTask(int blockID, int repFactor, BlockTask* blkTask);
 };
+
+
 
 
 

@@ -73,6 +73,15 @@ int RPCServer::bindRPCCalls() {
   /// Client protocol
   rpcBindings[1] = std::bind(&RPCServer::getBlockLocations, this, std::placeholders::_1, std::placeholders::_2);
   rpcBindings[2] = std::bind(&RPCServer::create, this, std::placeholders::_1, std::placeholders::_2);
+  rpcBindings[3] = std::bind(&RPCServer::addBlock, this, std::placeholders::_1, std::placeholders::_2);
+  rpcBindings[4] = std::bind(&RPCServer::blockAck, this, std::placeholders::_1, std::placeholders::_2);
+  rpcBindings[5] = std::bind(&RPCServer::complete, this, std::placeholders::_1, std::placeholders::_2);
+  
+  rpcBindings[11] = std::bind(&RPCServer::remove, this, std::placeholders::_1, std::placeholders::_2);
+  rpcBindings[12] = std::bind(&RPCServer::exists, this, std::placeholders::_1, std::placeholders::_2);
+  rpcBindings[13] = std::bind(&RPCServer::makeDir, this, std::placeholders::_1, std::placeholders::_2);
+  rpcBindings[14] = std::bind(&RPCServer::listDir, this, std::placeholders::_1, std::placeholders::_2);
+  
 
   /// Chunkserver protocol
   rpcBindings[101] = std::bind(&RPCServer::heartBeat, this, std::placeholders::_1, std::placeholders::_2);
@@ -121,7 +130,6 @@ void RPCServer::handleRequest(int connfd) {
 int RPCServer::getBlockLocations(int connfd, const string& request) {
   minidfs::LocatedBlocks locatedBlks;
   int status = master->getBlockLocations(request, &locatedBlks);
-  // TODO: use SerializeAsString or SerializeToString?
   string response = locatedBlks.SerializeAsString();
 
   /// reply to the client
@@ -135,6 +143,61 @@ int RPCServer::create(int connfd, const string& request) {
 
   return sendResponse(connfd, status, response);
 }
+
+int RPCServer::addBlock(int connfd, const string& request) {
+  minidfs::LocatedBlock locatedBlk;
+  int status = master->addBlock(request, &locatedBlk);
+  string response = locatedBlk.SerializeAsString();
+
+  return sendResponse(connfd, status, response);
+}
+
+int RPCServer::blockAck(int connfd, const string& request) {
+  minidfs::LocatedBlock locatedBlk;
+  locatedBlk.ParseFromString(request);
+  int status = master->blockAck(locatedBlk);
+  string response;
+
+  return sendResponse(connfd, status, response);
+}
+
+
+int RPCServer::complete(int connfd, const string& request) {
+  int status = master->complete(request);
+  string response;
+
+  return sendResponse(connfd, status, response);
+}
+
+int RPCServer::remove(int connfd, const string& request) {
+  int status = master->remove(request);
+  string response;
+
+  return sendResponse(connfd, status, response);
+}
+
+int RPCServer::exists(int connfd, const string& request) {
+  int status = master->exists(request);
+  string response;
+
+  return sendResponse(connfd, status, response);
+}
+
+int RPCServer::makeDir(int connfd, const string& request) {
+  int status = master->makeDir(request);
+  string response;
+
+  return sendResponse(connfd, status, response);
+}
+
+int RPCServer::listDir(int connfd, const string& request) {
+  minidfs::FileInfos items;
+  int status = master->listDir(request, items);
+  string response = items.SerializeAsString();
+
+  return sendResponse(connfd, status, response);
+}
+
 
 int RPCServer::heartBeat(int connfd, const string& request) {
   minidfs::ChunkserverInfo chunkserverInfo;

@@ -30,6 +30,14 @@ class DFSClient {
 
   ~DFSClient();
 
+  /// \brief Get a file's block location information from Master.
+  ///
+  /// \param file the file name stored in minidfs.
+  /// \param locatedBlks a list of locatedBlocks which maps from a block ID to chunkservers.
+  ///        It is the returning parameter. 
+  /// \return return OpCode.
+  int getBlockLocations(const string& file, LocatedBlocks* locatedBlks);
+
 
   /// \brief Put a local file to the distributed file system
   int putFile(const string& src, const string& dst);
@@ -65,11 +73,3 @@ class DFSClient {
   int create(const string& file, LocatedBlock* locatedBlk);
 
 };
-
-
-
-
-
-} // namespace minidfs
-
-#endif

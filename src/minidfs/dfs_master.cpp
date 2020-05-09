@@ -10,9 +10,9 @@
 namespace minidfs {
 
 DFSMaster::DFSMaster(const string& nameSysFile,
-                     int serverPort, int maxConns)
+                     int serverPort, int maxConns, int replicationFactor)
     : nameSysFile(nameSysFile),
-      server(serverPort, maxConns, this) {
+      server(serverPort, maxConns, this), replicationFactor(replicationFactor) {
 }
 
 DFSMaster::~DFSMaster() {
@@ -117,27 +117,45 @@ int DFSMaster::create(const string& file, LocatedBlock* locatedBlk) {
     return OpCode::OP_NO_SUCH_FILE;
   }
 
-  /// TODO: xiw, add a lock to guard currentMaxDfID
-  int newDfID = ++currentMaxDfID;
-  dfIDs[file] = newDfID;
+  /// if some other client is creating a file with the same name
+  if (filesInCreating.find(file) != filesInCreating.end()) {
+    cerr << "[DFSMaster] "  << "File is in creating\n";
+    return OpCode::OP_FILE_IN_CREATING;
+  }
 
-  dentries[dfIDs[dir]].push_back(newDfID);
-
+  /// When the client creates a file,
+  /// the master should add it to filesInCreating first.
+  /// When the master receives the complete() RPC call, it
+  /// finalizes the file into the namesystem and assigns a new
+  /// DfID to the newly created file.
+  
+  /// TODO: xiw, add lock to protect currentMaxBlkID
   int newBlkid = ++currentMaxBlkID;
-  inodes[newDfID].push_back(newBlkid);
+  filesInCreating[file] = std::vector<int>{newBlkid};
 
-  /// just in test
   auto retblock = locatedBlk->mutable_block();
   retblock->set_blockid(newBlkid);
-  retblock->set_blocklen(10);
+  retblock->set_blocklen(0);
 
-  auto chunkserverinfo = locatedBlk->add_chunkserverinfos();
-  chunkserverinfo->set_chunkserverip("ip_test");
-  chunkserverinfo->set_chunkserverport(18000);
+  std::vector<ChunkserverInfo> allocatedCS;
+  if (-1 == allocateChunkservers(allocatedCS)) {
+    cerr << "[DFSMaster] "  << "Chunkservers alive are fewer than replication factor\n";
+    return OpCode::OP_FAILURE;
+  }
 
-  cerr << "[DFSMaster] "  << "Created a file\n";
+  for (const auto& cs : allocatedCS) {
+    *locatedBlk->add_chunkserverinfos() = cs;
+  }
+
+  cerr << "[DFSMaster] "  << "A file is in creating\n";
   return OpCode::OP_SUCCESS;
 }
+
+int DFSMaster::addBlock(const string& file, LocatedBlock* locatedBlk) {
+  
+}
+
+
 
 int DFSMaster::heartBeat(const ChunkserverInfo& chunkserverInfo) {
   //int id = getChunkserverID(chunkserverInfo);
@@ -395,5 +413,22 @@ void DFSMaster::distributeBlkTask(int blockID, int repFactor, BlockTask* blkTask
   blksToBeReplicated.erase(blockID);
 }
 
+int DFSMaster::allocateChunkservers(std::vector<ChunkserverInfo>& cs) {
+  int nServers = aliveChunkservers.size();
+  if (nServers < replicationFactor) {
+    return -1;
+  }
+  std::vector<ChunkserverInfo> shuffleVec(nServers);
+
+  auto ics = aliveChunkservers.cbegin();
+  for (int i = 0; i < nServers && ics != aliveChunkservers.cend(); ++i, ++ics) {
+    shuffleVec[i] = ics->first;
+  }
+  std::random_shuffle(shuffleVec.begin(), shuffleVec.end());
+  for (int i = 0; i < replicationFactor; ++i) {
+    cs.emplace_back(shuffleVec[i]);
+  }
+  return 0;
+}
 
 } // namespace minidfs

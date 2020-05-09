@@ -86,3 +86,15 @@ message NameSystem {
     InodeSection inodeSection = 3;
     DentrySection  dentrySection = 4;
 }
+
+/// This is a summary of a file info.
+message FileInfo {
+    string name = 1;
+    bool isDir = 2;
+    int64 fileLen = 3;
+}
+
+/// Summary of files. Usually returned when client list the files in a given directory.
+message FileInfos {
+    repeated FileInfo fileInfos = 1;
+}

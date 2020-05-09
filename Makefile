@@ -31,7 +31,7 @@ CCFLAGS = ${INC_DIR} -std=c++11
 LDFLAGS = `pkg-config --cflags --libs protobuf` -lpthread
 
 
-all: ${BIN_MASTER} ${BIN_DFS_SHELL}
+all: ${BIN_MASTER} ${BIN_DFS_SHELL} ${BIN_CHUNKSERVER}
 .PHONY: all
 
 ${BIN_DFS_SHELL}: ${dfs_shell_obj} $(obj)

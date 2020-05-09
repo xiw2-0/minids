@@ -110,6 +110,9 @@ class RPCServer {
   ////////////////////////
 
 
+  ////////////////// File reading/writing
+
+
   /// \brief Get a file's block location information from Master. MethodID = 1.
   /// This method forwards the request to master and fetches the response.
   /// Then it sends the response back to client.
@@ -120,7 +123,6 @@ class RPCServer {
   int getBlockLocations(int connfd, const string& request);
 
   /// \brief Create a file. MethodID = 2.
-  /// This operation informs Master to create the meta info for the first block.
   /// This method forwards the request to master and fetches the response.
   /// Then it sends the response back to client.
   ///
@@ -128,6 +130,76 @@ class RPCServer {
   /// \param request the file name to be stored in minidfs.
   /// \return return 0 on success, -1 for errors.
   int create(int connfd, const string& request);
+
+  /// \brief Add a block when the client has finished the previous block. MethodID = 3.
+  /// This method forwards the request to master and fetches the response.
+  /// Then it sends the response back to client.
+  ///
+  /// \param connfd the connected sockfd
+  /// \param request the file name to be stored in minidfs.
+  /// \return return 0 on success, -1 for errors.
+  int addBlock(int connfd, const string& request);
+
+  /// \brief Confirm that a block has been written successfully. MethodID = 4.
+  ///
+  /// When the client create()/addBlock() successfully, it should send ack to
+  /// inform the master. This request will let the master know how much data the
+  /// client has written.
+  ///
+  /// \param connfd the connected sockfd
+  /// \param request the file name to be stored in minidfs.
+  /// \return return 0 on success, -1 for errors.
+  int blockAck(int connfd, const string& request);  
+
+  /// \brief Complete writing a file. It should be called when the client has completed writing. MethodID = 5.
+  /// This method forwards the request to master and fetches the response.
+  /// Then it sends the response back to client.
+  ///
+  /// \param connfd the connected sockfd
+  /// \param request the file name to be stored in minidfs.
+  /// \return return 0 on success, -1 for errors.
+  int complete(int connfd, const string& request);
+
+
+  /////////////////////////////// Name system operations
+
+
+  /// \brief Remove/Delete a file. MethodID = 11.
+  /// This method forwards the request to master and fetches the response.
+  /// Then it sends the response back to client.
+  ///
+  /// \param connfd the connected sockfd
+  /// \param request the file name to be stored in minidfs.
+  /// \return return 0 on success, -1 for errors.
+  int remove(int connfd, const string& request);
+
+  /// \brief To tell whether a file exists. MethodID = 12.
+  /// This method forwards the request to master and fetches the response.
+  /// Then it sends the response back to client.
+  ///
+  /// \param connfd the connected sockfd
+  /// \param request the file name to be stored in minidfs.
+  /// \return return 0 on success, -1 for errors.
+  int exists(int connfd, const string& request);
+
+  /// \brief Create a new folder. MethodID = 13.
+  /// This method forwards the request to master and fetches the response.
+  /// Then it sends the response back to client.
+  ///
+  /// \param connfd the connected sockfd
+  /// \param request the file name to be stored in minidfs.
+  /// \return return 0 on success, -1 for errors.
+  int makeDir(int connfd, const string& request);
+
+
+  /// \brief List items contained in a given folder. MethodID = 14.
+  /// This method forwards the request to master and fetches the response.
+  /// Then it sends the response back to client.
+  ///
+  /// \param connfd the connected sockfd
+  /// \param request the file name to be stored in minidfs.
+  /// \return return 0 on success, -1 for errors.
+  int listDir(int connfd, const string& request);
 
 
   ////////////////////////

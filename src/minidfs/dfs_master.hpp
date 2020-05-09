@@ -8,6 +8,7 @@
 #define DFS_MASTER_
 
 #include <fstream>
+#include <random>
 
 #include <minidfs/chunkserver_protocol.hpp>
 #include <minidfs/client_protocol.hpp>
@@ -94,7 +95,7 @@ class DFSMaster: public ClientProtocol, public ChunkserverProtocol{
   /// \brief Maps from block id to blocks.
   std::unordered_map<int, Block> blks;
 
-  /// Maps from block id to chunkserver ids
+  /// Maps from block id to chunkservers
   std::unordered_map<int, std::vector<ChunkserverInfo>> blkLocs;
 
   /// alive chunkservers
@@ -103,6 +104,20 @@ class DFSMaster: public ClientProtocol, public ChunkserverProtocol{
   /// blks that need to be replicated.
   /// The 1st is block id; the 2nd is replication factor.
   std::unordered_map<int, int> blksToBeReplicated;
+
+  /// record the set of file names still in creating process, not finish yet.
+  /// the 1st element is file name, the 2nd is a list of block ids
+  std::unordered_map<string, std::vector<int>> filesInCreating;
+
+  /// record the set of blocks still in creating process, not finish yet.
+  /// The associated chunkserver info is included
+  /// (block id, located block) pair
+  std::unordered_map<int, LocatedBlock> blocksInCreating;
+
+ private:
+  /// number of replicas
+  int replicationFactor;
+
 
  public:
   /// \brief Construct the Master.
@@ -113,7 +128,7 @@ class DFSMaster: public ClientProtocol, public ChunkserverProtocol{
   /// \param serverPort Master's serving port
   /// \param maxConns maximum number of connections
   DFSMaster(const string& nameSysFile,
-            int serverPort, int maxConns);
+            int serverPort, int maxConns, int replicationFactor);
 
   ~DFSMaster();
 
@@ -149,6 +164,9 @@ class DFSMaster: public ClientProtocol, public ChunkserverProtocol{
   ////////////////////////
 
 
+  ////////////////// File reading/writing
+
+
   /// \brief Get a file's block location information from Master. MethodID = 1.
   ///
   /// \param file the file name stored in minidfs.
@@ -159,12 +177,82 @@ class DFSMaster: public ClientProtocol, public ChunkserverProtocol{
 
   /// \brief Create a file. MethodID = 2.
   ///
-  /// This operation informs Master to create the meta info for the first block
+  /// This operation informs Master to create the meta info for the first block.
+  /// Generally, the client will call addBlock() and complete() after create() call.
+  /// When the client creates a file,
+  /// the master should add it to filesInCreating first.
+  /// When the master receives the complete() RPC call, it
+  /// finalizes the file into the namesystem and assigns a new
+  /// DfID to the newly created file.
+  ///
   /// \param file the file name stored in minidfs.
   /// \param locatedBlk contains chunkservers' information.
   ///        It is the returning parameter. 
   /// \return return OpCode.
   virtual int create(const string& file, LocatedBlock* locatedBlk) override;
+
+  /// \brief Add a block when the client has finished the previous block. MethodID = 3.
+  ///
+  /// When the client create() a file and finishes the 1st block, it calls addBlock()
+  /// to add a block to continue writing the rest of the file.
+  ///
+  /// \param file the file name stored in minidfs.
+  /// \param locatedBlk contains chunkservers' information.
+  ///        It is the returning parameter. 
+  /// \return return OpCode.
+  virtual int addBlock(const string& file, LocatedBlock* locatedBlk) override;
+
+  /// \brief Confirm that a block has been written successfully. MethodID = 4.
+  ///
+  /// When the client create()/addBlock() successfully, it should send ack to
+  /// inform the master. This request will let the master know how much data the
+  /// client has written.
+  ///
+  /// \param file the file name stored in minidfs.
+  /// \param locatedBlk contains chunkservers' information. It contains
+  ///        the information of written block.
+  /// \return return OpCode.
+  virtual int blockAck(const LocatedBlock& locatedBlk) override;  
+
+  /// \brief Complete writing a file. It should be called when the client has completed writing. MethodID = 5.
+  ///
+  /// calling order: create() [-> addBlock()] -> complete()
+  /// This is the last step when creating a file. It is called when the client has finished writing.
+  /// This operation will log the change of name system to the local disk.
+  ///
+  /// \param file the file name stored in minidfs.
+  /// \return return OpCode.
+  virtual int complete(const string& file) override;
+
+
+  /////////////////////////////// Name system operations
+
+
+  /// \brief Remove/Delete a file. MethodID = 11.
+  ///
+  /// \param file the file to be removed.
+  /// \return return OpCode.
+  virtual int remove(const string& file) override;
+
+  /// \brief To tell whether a file exists. MethodID = 12.
+  ///
+  /// \param file the query file.
+  /// \return return OpCode.
+  virtual int exists(const string& file) override;
+
+  /// \brief Create a new folder. MethodID = 13.
+  ///
+  /// \param dirName the folder name stored in minidfs.
+  /// \return return OpCode.
+  virtual int makeDir(const string& dirName) override;
+
+  /// \brief List items contained in a given folder. MethodID = 14.
+  ///
+  /// \param dirName the folder name stored in minidfs.
+  /// \param items items contained in dirName. Each item describes info about a file.
+  ///        It is the returning parameter.
+  /// \return return OpCode.
+  virtual int listDir(const string& dirName, FileInfos& items) override;
   
   
   ////////////////////////
@@ -228,6 +316,12 @@ class DFSMaster: public ClientProtocol, public ChunkserverProtocol{
 
   /// distribute the blkTask
   void distributeBlkTask(int blockID, int repFactor, BlockTask* blkTask);
+
+  /// allocate chunkservers for a block
+  ///
+  /// \param cs the returned servers
+  /// \return return 0 on success, -1 for errors
+  int allocateChunkservers(std::vector<ChunkserverInfo>& cs);
 };
 
 

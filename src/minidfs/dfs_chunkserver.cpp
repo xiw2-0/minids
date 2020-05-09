@@ -408,10 +408,12 @@ int DFSChunkserver::connectRemote(string serverIP, int serverPort) {
 }
 
 int DFSChunkserver::heartBeat() {
+  cerr << "[DFSChunkserver] " << "Heartbeating\n";
   return master->heartBeat(chunkserverInfo);
 }
 
 int DFSChunkserver::blkReport() {
+  cerr << "[DFSChunkserver] " << "Reporting blocks\n";
   std::vector<int> blks(blksServed.begin(), blksServed.end());
   std::vector<int> blksDeleted;
   int opRet = master->blkReport(chunkserverInfo, blks, blksDeleted);
@@ -436,6 +438,7 @@ int DFSChunkserver::blkReport() {
 }
 
 int DFSChunkserver::getBlkTask() {
+  cerr << "[DFSChunkserver] " << "Getting block tasks\n";
   BlockTasks blockTasks;
   int opRet = master->getBlkTask(chunkserverInfo, &blockTasks);
   if (opRet == OpCode::OP_FAILURE) {
@@ -456,6 +459,7 @@ int DFSChunkserver::getBlkTask() {
 }
 
 int DFSChunkserver::recvedBlks() {
+  cerr << "[DFSChunkserver] " << "Sending blocks received to master\n";
   if (blksRecved.size() == 0) {
     return OpCode::OP_SUCCESS;
   }

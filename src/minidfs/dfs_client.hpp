@@ -15,8 +15,20 @@ using std::string;
 
 namespace minidfs {
 
-/// \brief DFSClient is used to communicate with Master and Chunkserver.
+/// \brief DFSClient provides the interface for users to 
+/// read a file in dfs or to write a file to dfs. And it also
+/// provides the methods to manage the dfs name system, e.g.
+/// mkdir, ls.
 ///
+/// Recently, it has the following functions:
+/// 1) put a file from local to dfs
+/// 2) get a file from dfs
+/// 3) get a reader/writer of a file directly
+/// 4) remove a file
+/// 5) to know whether a file/directory exists
+/// 6) make a folder
+/// 7) list all the items in a folder
+///  
 /// It communicates with Master node to get/set the metadata of files/directories.
 /// It interacts with Chunkserver to send/recv chunk data.
 class DFSClient {
@@ -25,6 +37,7 @@ class DFSClient {
   std::unique_ptr<ClientProtocol> master;
 
  public:
+ 
   /// \brief Create a DFSClient given the Master's IP and port.
   DFSClient(const string& serverIP, int serverPort);
 
@@ -37,15 +50,20 @@ class DFSClient {
   /// \brief Copy a file in the distributed file system to the local fs
   int getFile(const string& src, const string& dst);
 
-  uint64_t read(const string& filename, void* buffer, uint64_t offset, uint64_t size);
+  /// \brief 
+  void getReader(const string& src);
+
+  void getWriter(const string& dst);
 
   /// 
   int remove(const string& filename);
 
+  int exists(const string& file);
+
   int mkdir(const string& dirname);
 
-  /// \brief List the 
-  int ls(const string& dirname, std::vector<string>& items);
+  /// \brief List the items contained in the dirname
+  int ls(const string& dirname, std::vector<FileInfo>& items);
 
 
 
@@ -55,14 +73,6 @@ class DFSClient {
 
 
  private:
-  /// \brief Create a file. MethodID = 2.
-  ///
-  /// This operation informs Master to create the meta info for the first block
-  /// \param file the file name stored in minidfs.
-  /// \param locatedBlk contains chunkservers' information.
-  ///        It is the returning parameter. 
-  /// \return return OpCode.
-  int create(const string& file, LocatedBlock* locatedBlk);
 
 };
 

@@ -23,6 +23,9 @@ int DFSMaster::format() {
   dfIDs["/"] = 0;
   currentMaxDfID = 0;
 
+  dfNames.clear();
+  dfNames[0] = "/";
+
   dentries.clear();
   dentries[0] = std::vector<int>();
 
@@ -152,10 +155,186 @@ int DFSMaster::create(const string& file, LocatedBlock* locatedBlk) {
 }
 
 int DFSMaster::addBlock(const string& file, LocatedBlock* locatedBlk) {
+  /// if the file isn't in creating process
+  if (filesInCreating.find(file) == filesInCreating.end()) {
+    cerr << "[DFSMaster] "  << file << " isn't in creating\n";
+    return OpCode::OP_NO_SUCH_FILE;
+  }
   
+  /// TODO: xiw, add lock to protect currentMaxBlkID
+  int newBlkid = ++currentMaxBlkID;
+  filesInCreating[file] = std::vector<int>{newBlkid};
+
+  auto retblock = locatedBlk->mutable_block();
+  retblock->set_blockid(newBlkid);
+  retblock->set_blocklen(0);
+
+  std::vector<ChunkserverInfo> allocatedCS;
+  if (-1 == allocateChunkservers(allocatedCS)) {
+    cerr << "[DFSMaster] "  << "Chunkservers alive are fewer than replication factor\n";
+    return OpCode::OP_FAILURE;
+  }
+
+  for (const auto& cs : allocatedCS) {
+    *locatedBlk->add_chunkserverinfos() = cs;
+  }
+
+  cerr << "[DFSMaster] "  << "A block is to be added to " << file << std::endl;
+  return OpCode::OP_SUCCESS;
 }
 
+int DFSMaster::blockAck(const LocatedBlock& locatedBlk) {
+  /// add the confirmed block into blocksInCreating
+  int blockID = locatedBlk.block().blockid();
+  blocksInCreating[blockID] = locatedBlk;
 
+  return OpCode::OP_SUCCESS;
+}
+
+int DFSMaster::complete(const string& file) {
+  /// if the file isn't in creating process
+  if (filesInCreating.find(file) == filesInCreating.end()) {
+    cerr << "[DFSMaster] "  << file << " isn't in creating\n";
+    return OpCode::OP_NO_SUCH_FILE;
+  }
+
+  /// assign dfID to this newly created file
+  int newDfID = ++currentMaxDfID;
+  dfIDs[file] = newDfID;
+  /// add it dfNames at the same time
+  dfNames[newDfID] = file;
+
+  /// add it to dentries
+  string dir;
+  splitPath(file, dir);
+  int dirID = dfIDs[dir];
+  dentries[dirID].push_back(newDfID);
+
+  /// add inode
+  const auto fileBlks = filesInCreating[file];
+  for (int b : fileBlks) {
+    if (blocksInCreating.find(b) == blocksInCreating.end()) {
+      continue;
+    }
+    inodes[newDfID].push_back(b);
+    const auto lb = blocksInCreating[b];
+    blks[b] = lb.block();    
+    /// blkLocs are reported by chunkservers
+
+    if (lb.chunkserverinfos_size() < replicationFactor) {
+      blksToBeReplicated[b] = replicationFactor - lb.chunkserverinfos_size();
+    }
+    /// the block is created successfully and is removed from
+    /// blocksInCreating
+    blocksInCreating.erase(b);
+  }
+
+  /// the file is created successfully and is removed from
+  /// filesInCreating
+  filesInCreating.erase(file);
+
+  return OpCode::OP_SUCCESS;
+}
+
+int DFSMaster::remove(const string& file) {
+  if (dfIDs.find(file) == dfIDs.end()) {
+    cerr << "[DFSMaster] "  << file << " doesn't exist!\n";
+    return OpCode::OP_NO_SUCH_FILE;
+  }
+
+  /// get dfID
+  int dfid = dfIDs[file];
+  dfIDs.erase(file);
+  /// remove dfNames at the same time
+  dfNames.erase(dfid);
+
+  /// remove it from its parent directory
+  string dir;
+  splitPath(file, dir);
+  int dirID = dfIDs[dir];
+
+  auto& vec = dentries[dirID];
+  for (auto ite = vec.begin(); ite != vec.end(); ++ite) {
+    if (*ite == dfid) {
+      vec.erase(ite);
+      break;
+    }
+  }
+
+  /// delete the corresponding inode
+  auto& blockvec = inodes[dfid];
+  for (int b : blockvec) {
+    blks.erase(b);
+  }
+  inodes.erase(dfid);
+
+  return OpCode::OP_SUCCESS;
+}
+
+int DFSMaster::exists(const string& file) {
+  if (dfIDs.find(file) == dfIDs.end()) {
+    cerr << "[DFSMaster] "  << file << " doesn't exist!\n";
+    return OpCode::OP_NO_SUCH_FILE;
+  }
+  return OpCode::OP_SUCCESS;
+}
+
+int DFSMaster::makeDir(const string& dirName) {
+  if (dfIDs.find(dirName) != dfIDs.end()) {
+    cerr << "[DFSMaster] "  << dirName << " existed!\n";
+    return OpCode::OP_FILE_ALREADY_EXISTED;
+  }
+
+  string dir;
+  splitPath(dirName, dir);
+
+  if (dfIDs.find(dir) == dfIDs.end()) {
+    cerr << "[DFSMaster] "  << "Dir " << dir << " does not exist!\n";
+    return OpCode::OP_NO_SUCH_FILE;
+  }
+  
+  /// assign dfID to this newly created folder
+  int newDfID = ++currentMaxDfID;
+  dfIDs[dirName] = newDfID;
+  /// add it to dfNames
+  dfNames[newDfID] = dirName;
+
+  /// add it to dentries
+  int dirID = dfIDs[dir];
+  dentries[dirID].push_back(newDfID);
+  dentries[newDfID] = std::vector<int>();
+
+  return OpCode::OP_SUCCESS;
+}
+
+int DFSMaster::listDir(const string& dirName, FileInfos& items) {
+  if (dfIDs.find(dirName) == dfIDs.end()) {
+    cerr << "[DFSMaster] "  << dirName << " doesn't exist!\n";
+    return OpCode::OP_NO_SUCH_FILE;
+  }
+  int id = dfIDs[dirName];
+  if (dentries.find(id) == dentries.end()) {
+    cerr << "[DFSMaster] "  << dirName << " isn't a directory!\n";
+    return OpCode::OP_NO_SUCH_FILE;
+  }
+  const auto& fileVec = dentries[id];
+  for (int f : fileVec) {
+    auto finfo = items.add_fileinfos();
+    string name = dfNames[f];
+    name = name.substr(name.find_last_of('/'));
+    finfo->set_name(name);
+    
+    int isDir = 0;
+    if (dentries.find(f) != dentries.end()) {
+      isDir = 1;
+    }
+    finfo->set_isdir(isDir);
+
+    finfo->set_filelen(getFileLength(f));
+  }
+  return OpCode::OP_SUCCESS;
+
+}
 
 int DFSMaster::heartBeat(const ChunkserverInfo& chunkserverInfo) {
   //int id = getChunkserverID(chunkserverInfo);
@@ -172,7 +351,25 @@ int DFSMaster::blkReport(const ChunkserverInfo& chunkserverInfo, const std::vect
     /// all valid blocks should appear in blks
     if (blks.find(blockid) == blks.end()) {
       deletedBlks.push_back(blockid);
+      continue;
     }
+    /// confirm the blkLocs
+    if (blkLocs.find(blockid) == blkLocs.end()) {
+      blkLocs[blockid].push_back(chunkserverInfo);
+    } else {
+      int contained = 0;
+      auto csEqualTo = ChunkserverInfoEqualTo();
+      for (const auto& cs : blkLocs[blockid]) {
+        if (csEqualTo(cs, chunkserverInfo)) {
+          contained = 1;
+          break;
+        }
+      }
+      if (contained == 0) {
+        blkLocs[blockid].push_back(chunkserverInfo);
+      }
+    }
+
   }
   return OpCode::OP_SUCCESS;
 }
@@ -294,6 +491,8 @@ int DFSMaster::parseNameSystem() {
     int inodeID = inode.id();
     /// dfID
     dfIDs[inode.name()] = inodeID;
+    /// dfName
+    dfNames[inodeID] = inode.name();
 
     if (inode.isdir() == true) {
       continue;
@@ -430,5 +629,20 @@ int DFSMaster::allocateChunkservers(std::vector<ChunkserverInfo>& cs) {
   }
   return 0;
 }
+
+long long DFSMaster::getFileLength(int fileID) {
+  if (inodes.find(fileID) == inodes.end()) {
+    return -1;
+  }
+
+  const auto& blkVec = inodes[fileID];
+  long long len = 0;
+  for (int b : blkVec) {
+    len += blks[b].blocklen();
+  }
+
+  return len;
+}
+
 
 } // namespace minidfs

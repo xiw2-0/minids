@@ -80,6 +80,8 @@ class DFSMaster: public ClientProtocol, public ChunkserverProtocol{
   std::unordered_map<string, int> dfIDs;
   /// The max dfID that has been allocated
   int currentMaxDfID;
+  /// inversion of dfIDs
+  std::unordered_map<int, string> dfNames;
 
   /// \brief Maps from directory ID to subdirs'/files' ID
   ///
@@ -317,11 +319,17 @@ class DFSMaster: public ClientProtocol, public ChunkserverProtocol{
   /// distribute the blkTask
   void distributeBlkTask(int blockID, int repFactor, BlockTask* blkTask);
 
-  /// allocate chunkservers for a block
+  /// Allocate chunkservers for a block
   ///
   /// \param cs the returned servers
   /// \return return 0 on success, -1 for errors
   int allocateChunkservers(std::vector<ChunkserverInfo>& cs);
+
+  /// Get the length of a given file
+  ///
+  /// \param fileID the ID of the given file
+  /// \return the total length of the given file; otherwise it returns -1
+  long long getFileLength(int fileID);
 };
 
 

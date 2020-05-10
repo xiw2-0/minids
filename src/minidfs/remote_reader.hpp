@@ -2,7 +2,7 @@
 ///
 /// MIT License
 /// \author Wang Xi
-/// \brief Header file for class DFSClient.
+/// \brief Header file for class RemoteReader.
 
 #ifndef REMOTE_READER_H_
 #define REMOTE_READER_H_
@@ -15,20 +15,23 @@ using std::string;
 
 namespace minidfs {
 
+
+/// RemoteReader opens a file in dfs and reads the data from it.
+
 class RemoteReader {
  private:
-  /// 
+  /// this is used to communicate with Master
   std::unique_ptr<ClientProtocol> master;
   
  public:
   RemoteReader(/* args */);
   ~RemoteReader();
 
-  void open(const string& filename);
-
-  uint64_t read(const string& filename, void* buffer, uint64_t offset, uint64_t size);
+  uint64_t read(void* buffer, uint64_t offset, uint64_t size);
 
  private:
+  void open(const string& filename);
+
 
   /// \brief Get a file's block location information from Master.
   ///

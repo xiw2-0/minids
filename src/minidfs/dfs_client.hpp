@@ -8,7 +8,9 @@
 #define DFS_CLIENT_H_
 
 #include <string>
+
 #include <minidfs/client_protocol.hpp>
+#include <minidfs/remote_reader.hpp>
 #include <rpc/client_protocol_proxy.hpp>
 
 using std::string;
@@ -33,13 +35,18 @@ namespace minidfs {
 /// It interacts with Chunkserver to send/recv chunk data.
 class DFSClient {
  private:
-  /// 
+  /// master is used to communicate with the Master
   std::unique_ptr<ClientProtocol> master;
+
+  string masterIP;
+  int masterPort;
+
+  const int BUFFER_SIZE;
 
  public:
  
   /// \brief Create a DFSClient given the Master's IP and port.
-  DFSClient(const string& serverIP, int serverPort);
+  DFSClient(const string& serverIP, int serverPort, int buf);
 
   ~DFSClient();
 
@@ -48,10 +55,18 @@ class DFSClient {
   int putFile(const string& src, const string& dst);
 
   /// \brief Copy a file in the distributed file system to the local fs
+  ///
+  /// \param src source file in dfs
+  /// \param dst target file in local fs
+  /// \return return 0 on success, -1 for errors
   int getFile(const string& src, const string& dst);
 
-  /// \brief 
-  void getReader(const string& src);
+  /// \brief Given the source file name, get a reader directly.
+  /// Call open() before using it!
+  ///
+  /// \param src source file in dfs
+  /// \return remote reader of src
+  RemoteReader getReader(const string& src);
 
   void getWriter(const string& dst);
 

@@ -221,6 +221,8 @@ int DFSChunkserver::recvBlock(int connfd) {
   while (byteLeft > 0) {
     int nRead = byteLeft < BUFFER_SIZE ? byteLeft : BUFFER_SIZE;
     if ((nRead = recv(connfd, dataBuffer.data(), nRead, 0)) == -1) {
+      fOut.clear();
+      fOut.close();
       return -1;
     }
     /// write to file
@@ -229,6 +231,8 @@ int DFSChunkserver::recvBlock(int connfd) {
 
     byteLeft -= nRead;
   }
+  fOut.clear();
+  fOut.close();
   
   /// move to final folder
   rename((folder+"/"+blkFileName).c_str(), (dataDir+"/"+blkFileName).c_str());
@@ -356,12 +360,16 @@ int DFSChunkserver::sendBlkData(int connfd, int bID) {
   /// send the first half
   halfLen = htonl(halfLen);
   if (send(connfd, &halfLen, 4, 0) < 0) {
+    fIn.clear();
+    fIn.close();
     return -1;
   }
   halfLen = dataLen;
   halfLen = htonl(halfLen);
   /// the second half
   if (recv(connfd, &halfLen, 4, 0) < 0) {
+    fIn.clear();
+    fIn.close();
     return -1;
   }
 
@@ -373,10 +381,14 @@ int DFSChunkserver::sendBlkData(int connfd, int bID) {
     /// read from file
     fIn.read(dataBuffer.data(), nRead);
     if (send(connfd, dataBuffer.data(), nRead, 0) == -1) {
+      fIn.clear();
+      fIn.close();
       return -1;
     }
     byteLeft -= nRead;
   }
+  fIn.clear();
+  fIn.close();
   cerr << "[DFSChunkserver] " << "Succeed sending block: " << bID << std::endl;
   return 0;
 }

@@ -11,6 +11,7 @@
 
 #include <minidfs/client_protocol.hpp>
 #include <minidfs/remote_reader.hpp>
+#include <minidfs/remote_writer.hpp>
 #include <rpc/client_protocol_proxy.hpp>
 
 using std::string;
@@ -42,16 +43,23 @@ class DFSClient {
   int masterPort;
 
   const int BUFFER_SIZE;
+  const string bufferBlkName;
+
+  const long long blockSize;
 
  public:
  
   /// \brief Create a DFSClient given the Master's IP and port.
-  DFSClient(const string& serverIP, int serverPort, int buf);
+  DFSClient(const string& serverIP, int serverPort, int buf,
+            const string& bufferBlkName, const long long blockSize);
 
   ~DFSClient();
 
 
   /// \brief Put a local file to the distributed file system
+  ///
+  /// \param src source file in local fs
+  /// \param dst target file in dfs
   int putFile(const string& src, const string& dst);
 
   /// \brief Copy a file in the distributed file system to the local fs
@@ -68,7 +76,12 @@ class DFSClient {
   /// \return remote reader of src
   RemoteReader getReader(const string& src);
 
-  void getWriter(const string& dst);
+  /// \brief Given the target file name, get a writer directly.
+  /// Call open() before using it and close() after using it!
+  ///
+  /// \param dst target file in dfs
+  /// \return remote writer of dst
+  RemoteWriter getWriter(const string& dst);
 
   /// 
   int remove(const string& filename);

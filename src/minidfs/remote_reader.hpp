@@ -52,7 +52,7 @@ class RemoteReader {
   /// end of the buffered block data. The end is contained in the buffer.
   int64_t bufferedEnd;
   /// filename used as the buffer of remote block data
-  string bufferBlkName;
+  const string bufferBlkName;
 
   
 
@@ -62,7 +62,8 @@ class RemoteReader {
   /// \param serverIP IP of master
   /// \param serverPort port of master
   /// \param file the file to be read
-  RemoteReader(const string& serverIP, int serverPort, const string& file, int bufferSize);
+  RemoteReader(const string& serverIP, int serverPort, const string& file, int bufferSize,
+               const string& bufferBlkName);
 
   ~RemoteReader();
   

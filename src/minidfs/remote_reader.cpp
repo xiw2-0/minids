@@ -11,9 +11,9 @@ namespace minidfs {
 
 
 RemoteReader::RemoteReader(const string& serverIP, int serverPort, const string& file, 
-                           int bufferSize)
+                           int bufferSize, const string& bufferBlkName)
     : master(new rpc::ClientProtocolProxy(serverIP, serverPort)),
-      filename(file), BUFFER_SIZE(bufferSize) {
+      filename(file), BUFFER_SIZE(bufferSize), bufferBlkName(bufferBlkName) {
   pos = 0;
   lbs.Clear();
 

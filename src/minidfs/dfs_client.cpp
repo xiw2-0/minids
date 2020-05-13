@@ -60,5 +60,55 @@ RemoteWriter DFSClient::getWriter(const string& dst) {
                       blockSize, bufferBlkName);
 }
 
+int DFSClient::remove(const string& filename) {
+  int retOp =  master->remove(filename);
+  if (retOp != OpCode::OP_SUCCESS) {
+    cerr << "[DFSClient] "  << "Failed to remove " << filename << std::endl
+         << "Error code "  << retOp << std::endl;
+    return -1;
+  }
+  return 0;
+}
+
+int DFSClient::exists(const string& file) {
+  int retOp =  master->exists(file);
+  if (retOp == OpCode::OP_FAILURE) {
+    cerr << "[DFSClient] "  << "Failed to query " << file << std::endl;
+    return -1;
+  }
+  if (retOp == OpCode::OP_EXIST) {
+    cerr << "[DFSClient] "  << file << "exists" << std::endl;
+  } else {
+    cerr << "[DFSClient] "  << file << "doesn't exist" << std::endl;
+  }
+  
+  return 0;
+}
+
+int DFSClient::mkdir(const string& dirname) {
+  int retOp =  master->makeDir(dirname);
+  if (retOp != OpCode::OP_SUCCESS) {
+    cerr << "[DFSClient] "  << "Failed to create " << dirname << std::endl
+         << "Error code "  << retOp << std::endl;
+    return -1;
+  }
+  return 0;
+}
+
+int DFSClient::ls(const string& dirname, std::vector<FileInfo>& items) {
+  FileInfos infos;
+  int retOp = master->listDir(dirname, infos);
+  if (retOp != OpCode::OP_SUCCESS) {
+    cerr << "[DFSClient] "  << "Failed to ls " << dirname << std::endl
+         << "Error code "  << retOp << std::endl;
+    return -1;
+  }
+
+  for(int i = 0; i < infos.fileinfos_size(); ++i) {
+    items.push_back(infos.fileinfos(i));
+  }
+  return 0;
+}
+
 } // namespace minidfs
 

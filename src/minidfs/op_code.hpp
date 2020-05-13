@@ -25,6 +25,8 @@ class OpCode {
   static constexpr char OP_NO_SUCH_FILE = 20;
   static constexpr char OP_FILE_ALREADY_EXISTED = 21;
   static constexpr char OP_FILE_IN_CREATING = 22;
+  static constexpr char OP_EXIST = 23;
+  static constexpr char OP_NOT_EXIST = 24;
   static constexpr char OP_SAFE_MODE = 30;
 
   /////////////////////////////////

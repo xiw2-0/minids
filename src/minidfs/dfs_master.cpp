@@ -274,9 +274,9 @@ int DFSMaster::remove(const string& file) {
 int DFSMaster::exists(const string& file) {
   if (dfIDs.find(file) == dfIDs.end()) {
     cerr << "[DFSMaster] "  << file << " doesn't exist!\n";
-    return OpCode::OP_NO_SUCH_FILE;
+    return OpCode::OP_NOT_EXIST;
   }
-  return OpCode::OP_SUCCESS;
+  return OpCode::OP_EXIST;
 }
 
 int DFSMaster::makeDir(const string& dirName) {

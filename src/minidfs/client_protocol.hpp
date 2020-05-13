@@ -90,7 +90,7 @@ class ClientProtocol {
   /// \brief To tell whether a file exists. MethodID = 12.
   ///
   /// \param file the query file.
-  /// \return return OpCode.
+  /// \return return OpCode. OpCode::OP_EXIST, OpCode::OP_NOT_EXIST, OpCode::OP_FAILURE.
   virtual int exists(const string& file) = 0;
 
   /// \brief Create a new folder. MethodID = 13.

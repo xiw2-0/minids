@@ -64,7 +64,7 @@ class RemoteReader {
   /// \param file the file to be read
   RemoteReader(const string& serverIP, int serverPort, const string& file, int bufferSize,
                const string& bufferBlkName);
-
+  RemoteReader(RemoteReader&& reader);
   ~RemoteReader();
   
   /// \brief Connect the master to get the block information.

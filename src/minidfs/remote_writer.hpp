@@ -24,6 +24,8 @@ namespace minidfs {
 /// When writing data to dfs, client caches the data in a local file
 /// firstly. When the file size reaches BLOCK_SIZE or the write is done,
 /// send the whole block to remote chunkserver. 
+/// TODO: xiw, don't use write() and writeAll() together!!! Some bugs are
+/// remained to be solved, e.g. pos pointer.
 class RemoteWriter {
  private:
   /// this is used to communicate with Master
@@ -64,6 +66,7 @@ class RemoteWriter {
   RemoteWriter(const string& serverIP, int serverPort, const string& file,
                int bufferSize, int nTrial, long long blockSize,
                const string& bufferBlkName);
+  RemoteWriter(RemoteWriter&& writer);
   ~RemoteWriter();
   
   /// \brief Connect the master to get the 1st block information

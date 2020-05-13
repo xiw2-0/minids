@@ -21,6 +21,15 @@ RemoteWriter::RemoteWriter(const string& serverIP, int serverPort, const string&
   bufferEnd = BLOCK_SIZE;
 }
 
+RemoteWriter::RemoteWriter(RemoteWriter&& writer)
+    : master(std::move(writer.master)), filename(writer.filename),
+      BUFFER_SIZE(writer.BUFFER_SIZE), nTrial(writer.nTrial), BLOCK_SIZE(writer.BLOCK_SIZE),
+      bufferBlkName(writer.bufferBlkName) {
+  pos = 0;
+  bufferStart = 0;
+  bufferEnd = BLOCK_SIZE;
+}
+
 RemoteWriter::~RemoteWriter() {
 }
 

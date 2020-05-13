@@ -10,13 +10,13 @@
 const string nameSysFile("./data/namesys");
 const int serverPort = 12345;
 const int maxConn = 3;
-
+const int replicationFactor = 1;
 
 /// Start Master and provide services endlessly.
 int main(int argc, char const *argv[])
 {
   std::cout << "Start Master...\n";
-  auto master = minidfs::DFSMaster(nameSysFile, serverPort, maxConn);
+  auto master = minidfs::DFSMaster(nameSysFile, serverPort, maxConn, replicationFactor);
   
   if (argc == 2 && 0 == strcmp(argv[1], "-format")) {
     master.format();

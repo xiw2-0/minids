@@ -60,6 +60,7 @@ class DFSClient {
   ///
   /// \param src source file in local fs
   /// \param dst target file in dfs
+  /// \return return 0 on success, -1 for errors
   int putFile(const string& src, const string& dst);
 
   /// \brief Copy a file in the distributed file system to the local fs
@@ -83,24 +84,31 @@ class DFSClient {
   /// \return remote writer of dst
   RemoteWriter getWriter(const string& dst);
 
-  /// 
+  /// \brief Remove a file from dfs. 
+  ///
+  /// \param filename the name of the file to be deleted
+  /// \return return 0 on success, -1 for errors
   int remove(const string& filename);
 
+  /// \brief Check whether a file is in dfs. 
+  ///
+  /// \param file the name of the file to be checked
+  /// \return return 0 on success, -1 for errors
   int exists(const string& file);
 
+  /// \brief Make a directory in dfs. The parent folder should
+  /// exist.
+  ///
+  /// \param dirname the name of the directory to be created
+  /// \return return 0 on success, -1 for errors
   int mkdir(const string& dirname);
 
   /// \brief List the items contained in the dirname
+  ///
+  /// \param dirname the query folder name
+  /// \param items contains all the items in dirname
+  /// \return return 0 on success, -1 for errors
   int ls(const string& dirname, std::vector<FileInfo>& items);
-
-
-
-
-
-
-
-
- private:
 
 };
 

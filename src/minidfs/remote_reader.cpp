@@ -21,6 +21,16 @@ RemoteReader::RemoteReader(const string& serverIP, int serverPort, const string&
   bufferedEnd = -1;
 }
 
+RemoteReader::RemoteReader(RemoteReader&& reader)
+    : master(std::move(reader.master)), filename(reader.filename),
+      BUFFER_SIZE(reader.BUFFER_SIZE), bufferBlkName(reader.bufferBlkName) {
+  pos = 0;
+  lbs.Clear();
+
+  bufferedStart = -1;
+  bufferedEnd = -1;
+}
+
 RemoteReader::~RemoteReader(){
 }
 

@@ -43,7 +43,7 @@ class RemoteWriter {
   /// keep track of the file pointer. It is the position to be write next.
   uint64_t pos;
 
-  /// buffer size
+  /// buffer size in memory
   const int BUFFER_SIZE;
   /// the 1st writing buffer
   ///std::vector<char> globalBuf;
@@ -51,10 +51,13 @@ class RemoteWriter {
   /// When the buffer is empty, globalBufPos = 0.
   ///int globalBufPos;
 
-  /// start of the block data buffer. The start is contained in the buffer.
-  int64_t bufferStart;
-  /// end of the block data buffer. The end is contained in the buffer.
-  int64_t bufferEnd;
+  /// start of the block data buffer file. The start is contained in the buffer.
+  /// It indicates the start position of the current cached block in the whole file.
+  int64_t blockStart;
+
+  /// current position of the buffered block data file. The pos is not contained in the buffer.
+  /// It is the next position to be written. Relative position. Range from 0~BLOCK_SIZE
+  int64_t blockPos;
 
   /// filename used as the buffer of remote block data
   const string bufferBlkName;
@@ -76,7 +79,7 @@ class RemoteWriter {
   int open();
 
   /// \brief Write size bytes of data with offset from buffer into the file in dfs.
-  /// The default offset means to append data to the file. Call open() first and close() at last!
+  /// The default offset means to append data to the file. Call open() first and remoteClose() at last!
   ///
   /// \param buffer data buffer to be written
   /// \param size size of data to be written
@@ -84,7 +87,7 @@ class RemoteWriter {
   int64_t write(const void* buffer, uint64_t size);
 
 
-  /// \brief Write all the data from f to dfs. Call open() first and close() at last!
+  /// \brief Write all the data from f to dfs. Call open() first and remoteClose() at last!
   ///
   /// \param f input local file stream
   /// \return size of data written
@@ -92,8 +95,8 @@ class RemoteWriter {
 
   
   /// \brief Flush the data first and send complete rpc call to Master.
-  /// The file is completed until close() is called!
-  int close();
+  /// The file is completed until remoteClose() is called!
+  int remoteClose();
 
 
  private:
@@ -123,43 +126,13 @@ class RemoteWriter {
   /// \brief Get a new LocatedBlock after the current one is finished.
   /// Send addBlock() rpc to Master. After getting response from Master,
   /// this method will set currentLB to the returned value.
-  /// And this method will set bufferStart and bufferEnd
+  /// And this method will set blockStart and blockPos
   ///
   /// \return return 0 on success, -1 for errors.
   int addBlk();
 
   /// \brief Flush the remaining cached data to remote chunkservers if any.
   int remoteFlush();
-
-
-
-
-
-
-
-
-
-  /// \brief Change the file pointer to offset. And this
-  /// operation will update pos and currentLB.
-  ///
-  /// \param offset 
-  /// \return return 0 on success, -1 for errors
-  int remoteSeek(uint64_t offset);
-
-  /// \brief Read a block from remote chunkserver and update bufferedStart
-  /// and bufferedEnd. The block will be stored in bufferBlkName.
-  ///
-  /// \param lb located block info
-  /// \return return 0 on success, -1 for errors.
-  int bufferOneBlk(const LocatedBlock& lb);
-
-
-
-
-
-
-
-
 
 
 };

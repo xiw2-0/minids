@@ -77,6 +77,8 @@ void DFSChunkserver::run() {
       std::this_thread::sleep_for(t);
     }
   }
+
+  //dataServiceThread.join();
 }
 
 void DFSChunkserver::dataService() {
@@ -160,6 +162,8 @@ void DFSChunkserver::handleBlockRequest(int connfd) {
     return;
   }
 
+  cerr << "[DFSChunkserver] " << "One request " << (int)opcode << "\n";
+
   switch (opcode) {
     case OpCode::OP_WRITE :
       recvBlock(connfd);
@@ -185,6 +189,8 @@ int DFSChunkserver::recvBlock(int connfd) {
   }
   len = ntohs(len);
 
+  cerr << "[DFSChunkserver] " << "Succeed recving lb length: " << (int)len << std::endl;
+
   std::vector<char> lbBuf(len, 0);
   /// read located block
   if (recv(connfd, lbBuf.data(), len, 0) < 0) {
@@ -192,6 +198,7 @@ int DFSChunkserver::recvBlock(int connfd) {
   }
   LocatedBlock lb;
   lb.ParseFromArray(lbBuf.data(), len);
+  cerr << "[DFSChunkserver] " << "Succeed recving lb: " << lb.DebugString() << std::endl;
 
   //
   // read data from remote and write to local/another remote
@@ -200,25 +207,36 @@ int DFSChunkserver::recvBlock(int connfd) {
   uint32_t halfLen = 0;
   /// read the first half
   if (recv(connfd, &halfLen, 4, 0) < 0) {
+    cerr << "[DFSChunkserver] " << "Failed recving " << (int)halfLen;
     return -1;
   }
   dataLen = ntohl(halfLen);
   dataLen <<= 32;
   /// the second half
   if (recv(connfd, &halfLen, 4, 0) < 0) {
+    cerr << "[DFSChunkserver] " << "Failed recving " << (int)halfLen;
     return -1;
   }
   dataLen += ntohl(halfLen);
+  cerr << "[DFSChunkserver] " << "Succeed recving data length: " << (int)dataLen << std::endl;
 
   string folder("/tmp");
   string blkFileName("blk_");
   int bID = lb.block().blockid();
   blkFileName += std::to_string(bID);
-  std::fstream fOut(folder+"/"+blkFileName, std::ios::out | std::ios::app | std::ios::trunc | std::ios::binary);
+  std::fstream fOut(folder+"/"+blkFileName, std::ios::out | std::ios::trunc | std::ios::binary);
+  if (fOut.is_open() == false) {
+    cerr << "[DFSChunkserver] " << "Failed to open " << folder+"/"+blkFileName << std::endl;
+    fOut.clear();
+    fOut.close();
+    return -1;
+  }
 
   std::vector<char> dataBuffer(BUFFER_SIZE);
   long long byteLeft = dataLen;
   while (byteLeft > 0) {
+    cerr << "[DFSChunkserver] " << "Byte left: " << byteLeft << std::endl;
+
     int nRead = byteLeft < BUFFER_SIZE ? byteLeft : BUFFER_SIZE;
     if ((nRead = recv(connfd, dataBuffer.data(), nRead, 0)) == -1) {
       fOut.clear();
@@ -242,6 +260,7 @@ int DFSChunkserver::recvBlock(int connfd) {
   /// send response
   char retOp = OpCode::OP_SUCCESS;
   int ret = send(connfd, &retOp, 1, 0);
+  cerr << "[DFSChunkserver] " << "Succeed recving block: " << bID << std::endl;
   return ret;
 }
 
@@ -255,6 +274,7 @@ int DFSChunkserver::sendBlock(int connfd) {
     return -1;
   }
   len = ntohs(len);
+  cerr << "[DFSChunkserver] " << "Succeed recving b length: " << (int)len << std::endl;
 
   std::vector<char> bBuf(len, 0);
   /// read located block
@@ -263,7 +283,7 @@ int DFSChunkserver::sendBlock(int connfd) {
   }
   Block b;
   b.ParseFromArray(bBuf.data(), len);
-
+  cerr << "[DFSChunkserver] " << "Succeed recving b: " << b.DebugString() << std::endl;
   //
   // response: send data to client
   //
@@ -278,13 +298,13 @@ int DFSChunkserver::sendBlock(int connfd) {
   }
   op = OpCode::OP_SUCCESS;
   send(connfd, &op, 1, 0);
-
+  cerr << "[DFSChunkserver] " << "Succeed sending ret op " << std::endl;
   /// send block data
   if ( sendBlkData(connfd, bID) == -1) {
     cerr << "[DFSChunkserver] " << "Failed sending block: " << bID << std::endl;
     return -1;
   }
-  
+  cerr << "[DFSChunkserver] " << "Succeed sending block data "<< std::endl;
   return 0;
 }
 
@@ -346,6 +366,12 @@ int DFSChunkserver::sendBlkData(int connfd, int bID) {
   string blkFileName("blk_");
   blkFileName += std::to_string(bID);
   std::fstream fIn(dataDir+"/"+blkFileName, std::ios::in | std::ios::binary);
+  if (fIn.is_open() == false) {
+    cerr << "[DFSChunkserver] " << "Failed to open " << dataDir+"/"+blkFileName << std::endl;
+    fIn.clear();
+    fIn.close();
+    return -1;
+  }
 
   /// send datalen
   long long blkLen = - fIn.tellg();
@@ -367,7 +393,7 @@ int DFSChunkserver::sendBlkData(int connfd, int bID) {
   halfLen = dataLen;
   halfLen = htonl(halfLen);
   /// the second half
-  if (recv(connfd, &halfLen, 4, 0) < 0) {
+  if (send(connfd, &halfLen, 4, 0) < 0) {
     fIn.clear();
     fIn.close();
     return -1;
@@ -415,7 +441,7 @@ int DFSChunkserver::connectRemote(string serverIP, int serverPort) {
     cerr << "[DFSChunkserver] "  << "Cannot connect to " << serverIP << std::endl;
     return -1;
   }
-  cerr << "[DFSChunkserver] "  << "Succeed to connect Master:\n" << serverIP << ":" << serverPort << std::endl;
+  //cerr << "[DFSChunkserver] "  << "Succeed to connect Master:\n" << serverIP << ":" << serverPort << std::endl;
   return sockfd;
 }
 
@@ -425,7 +451,7 @@ int DFSChunkserver::heartBeat() {
 }
 
 int DFSChunkserver::blkReport() {
-  cerr << "[DFSChunkserver] " << "Reporting blocks\n";
+  //cerr << "[DFSChunkserver] " << "Reporting blocks\n";
   std::vector<int> blks(blksServed.begin(), blksServed.end());
   std::vector<int> blksDeleted;
   int opRet = master->blkReport(chunkserverInfo, blks, blksDeleted);
@@ -450,7 +476,7 @@ int DFSChunkserver::blkReport() {
 }
 
 int DFSChunkserver::getBlkTask() {
-  cerr << "[DFSChunkserver] " << "Getting block tasks\n";
+  //cerr << "[DFSChunkserver] " << "Getting block tasks\n";
   BlockTasks blockTasks;
   int opRet = master->getBlkTask(chunkserverInfo, &blockTasks);
   if (opRet == OpCode::OP_FAILURE) {
@@ -471,7 +497,7 @@ int DFSChunkserver::getBlkTask() {
 }
 
 int DFSChunkserver::recvedBlks() {
-  cerr << "[DFSChunkserver] " << "Sending blocks received to master\n";
+  //cerr << "[DFSChunkserver] " << "Sending blocks received to master\n";
   if (blksRecved.size() == 0) {
     return OpCode::OP_SUCCESS;
   }

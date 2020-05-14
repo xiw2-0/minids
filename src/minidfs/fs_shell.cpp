@@ -44,53 +44,55 @@ int main(int argc, char const *argv[]) {
     string path(argv[2]);
     std::vector<minidfs::FileInfo> items;
     if (-1 == client.ls(path, items)) {
-      return -1;
+      return 0;
     }
+    cout << "Name \t IsDir \t Length\n";
     for (const auto& i : items) {
-      printf("Name \t IsDir \t Length\n");
       cout << i.name() << "\t" << i.isdir() << "\t" << i.filelen() << std::endl;
     }
   } else if (strcmp("-put", argv[1]) == 0) {
     if (argc != 4) {
       cout << "[DFSShell] " << "Wrong number of arguments.\n";
       usage();
+      return 0;
     }
     string src(argv[2]), dst(argv[3]);
     if (-1 == client.putFile(src, dst)) {
       cout << "[DFSShell] " << "Failed to put a file\n";
-      return -1;
+      return 0;
     }
     cout << "[DFSShell] " << "Succeed to put a file\n";
   } else if (strcmp("-get", argv[1]) == 0) {
     if (argc != 4) {
       cout << "[DFSShell] " << "Wrong number of arguments.\n";
       usage();
+      return 0;
     }
     string src(argv[2]), dst(argv[3]);
     if (-1 == client.getFile(src, dst)) {
       cout << "[DFSShell] " << "Failed to get a file\n";
-      return -1;
+      return 0;
     }
     cout << "[DFSShell] " << "Succeed to get a file\n";
   } else if (strcmp("-rm", argv[1]) == 0) {
     string filename(argv[2]);
     if (-1 == client.remove(filename)) {
       cout << "[DFSShell] " << "Failed to remove a file\n";
-      return -1;
+      return 0;
     }
     cout << "[DFSShell] " << "Succeed to remove a file\n";
   } else if (strcmp("-exists", argv[1]) == 0) {
     string file(argv[2]);
     if (-1 == client.exists(file)) {
       cout << "[DFSShell] " << "Failed to query a file\n";
-      return -1;
+      return 0;
     }
     cout << "[DFSShell] " << "Succeed to query a file\n";
   } else if (strcmp("-mkdir", argv[1]) == 0) {
     string path(argv[2]);
     if (-1 == client.mkdir(path)) {
       cout << "[DFSShell] " << "Failed to make a directory\n";
-      return -1;
+      return 0;
     }
     cout << "[DFSShell] " << "Succeed to make a directory\n";
   } else {

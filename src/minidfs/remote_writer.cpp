@@ -17,8 +17,8 @@ RemoteWriter::RemoteWriter(const string& serverIP, int serverPort, const string&
       filename(file), BUFFER_SIZE(bufferSize), nTrial(nTrial), BLOCK_SIZE(blockSize),
       bufferBlkName(bufferBlkName) {
   pos = 0;
-  bufferStart = 0;
-  bufferEnd = BLOCK_SIZE;
+  blockStart = 0;
+  blockPos = 0;
 }
 
 RemoteWriter::RemoteWriter(RemoteWriter&& writer)
@@ -26,8 +26,8 @@ RemoteWriter::RemoteWriter(RemoteWriter&& writer)
       BUFFER_SIZE(writer.BUFFER_SIZE), nTrial(writer.nTrial), BLOCK_SIZE(writer.BLOCK_SIZE),
       bufferBlkName(writer.bufferBlkName) {
   pos = 0;
-  bufferStart = 0;
-  bufferEnd = BLOCK_SIZE;
+  blockStart = 0;
+  blockPos = 0;
 }
 
 RemoteWriter::~RemoteWriter() {
@@ -36,26 +36,31 @@ RemoteWriter::~RemoteWriter() {
 int RemoteWriter::open() {
   int retOp = master->create(filename, &currentLB);
   if (retOp != OpCode::OP_SUCCESS) {
-    cerr << "[RemoteWriter] "  << "Failed to open " << filename << std::endl
+    cerr << "[RemoteWriter] "  << "Failed to create " << filename << std::endl
          << "Error code: "  << retOp << std::endl;
     return -1;
   }
   pos = 0;
-  bufferStart = 0;
-  bufferEnd = BLOCK_SIZE;
+  blockStart = 0;
+  blockPos = 0;
   return 0;
 }
 
 int64_t RemoteWriter::write(const void* buffer, uint64_t size) {
   long long byteLeft = size;
-  long long byteWritten = 0;
   while (byteLeft > 0) {
     /// the buffer in local fs is full
-    if (pos > bufferEnd) {
+    if (blockPos >= BLOCK_SIZE) {
       /// set block size befor sending it to chunkserver
-      currentLB.mutable_block()->set_blocklen(bufferEnd - bufferStart + 1);
+      currentLB.mutable_block()->set_blocklen(blockPos);
 
       std::ifstream fIn(bufferBlkName, std::ios::in | std::ios::binary);
+      if (fIn.is_open() == false) {
+        cerr << "[RemoteWriter] " << "Failed to open " << bufferBlkName << std::endl;
+        fIn.clear();
+        fIn.close();
+        return -1;
+      }
       int writtenSize = writeBlk(fIn, currentLB);
       if (writtenSize == -1) {
         fIn.clear();
@@ -75,23 +80,29 @@ int64_t RemoteWriter::write(const void* buffer, uint64_t size) {
       }
     }
 
-    long long nWrite = std::min(byteLeft, bufferEnd - (long long)pos + 1);
+    long long nWrite = std::min(byteLeft, (long long)BLOCK_SIZE - blockPos);
     std::ofstream fOut(bufferBlkName, std::ios::out | std::ios::binary | std::ios::trunc);
+    if (fOut.is_open() == false) {
+      cerr << "[RemoteWriter] " << "Failed to open " << bufferBlkName << std::endl;
+      fOut.clear();
+      fOut.close();
+      return -1;
+    }
     fOut.write((char*)buffer + pos, nWrite);
     pos += nWrite;
+    blockPos += nWrite;
   
     byteLeft -= nWrite;
-    byteWritten += nWrite;
 
     fOut.clear();
     fOut.close();
   }
 
-  return byteWritten;
+  return size;
 }
 
 int64_t RemoteWriter::writeAll(std::ifstream& f) {
-  /// send datalen
+  /// calculate the total file length
   long long fileLen = - f.tellg();
   f.seekg(0, std::ios::end);
   fileLen += f.tellg();
@@ -119,7 +130,7 @@ int64_t RemoteWriter::writeAll(std::ifstream& f) {
 }
 
 
-int RemoteWriter::close() {
+int RemoteWriter::remoteClose() {
   /// flush the remaining data if any
   if (-1 == remoteFlush()) {
     return -1;
@@ -145,6 +156,13 @@ int64_t RemoteWriter::writeBlk(std::ifstream& f, const LocatedBlock& lb) const {
     return -1;
   }
 
+  /// send write request
+  if (-1 == blkWriteRequest(sockfd, lb)) {
+    cerr << "[RemoteWriter] " << "Failed to send block writing request\n";
+    close(sockfd);
+    return -1;
+  }
+
   //
   // send data to remote chunkserver
   //
@@ -156,15 +174,19 @@ int64_t RemoteWriter::writeBlk(std::ifstream& f, const LocatedBlock& lb) const {
   /// send the first half
   halfLen = htonl(halfLen);
   if (send(sockfd, &halfLen, 4, 0) < 0) {
+    cerr << "[DFSChunkserver] " << "Failed recving " << (int)halfLen;
+    close(sockfd);
     return -1;
   }
   halfLen = dataLen;
   halfLen = htonl(halfLen);
   /// the second half
-  if (recv(sockfd, &halfLen, 4, 0) < 0) {
+  if (send(sockfd, &halfLen, 4, 0) < 0) {
+    cerr << "[DFSChunkserver] " << "Failed recving " << (int)halfLen;
+    close(sockfd);
     return -1;
   }
-
+  cerr << "[RemoteWriter] " << "Succeed to send block writing request and block len\n";
   /// send data
   std::vector<char> dataBuffer(BUFFER_SIZE);
   long long byteLeft = dataLen;
@@ -173,6 +195,7 @@ int64_t RemoteWriter::writeBlk(std::ifstream& f, const LocatedBlock& lb) const {
     /// read from file
     f.read(dataBuffer.data(), nRead);
     if (send(sockfd, dataBuffer.data(), nRead, 0) == -1) {
+      close(sockfd);
       return -1;
     }
     byteLeft -= nRead;
@@ -181,11 +204,13 @@ int64_t RemoteWriter::writeBlk(std::ifstream& f, const LocatedBlock& lb) const {
   /// wait for response from chunkserver
   char retOp =0;
   if (recv(sockfd, &retOp, 1, 0) == -1) {
+    close(sockfd);
     return -1;
   }
   if (retOp != OpCode::OP_SUCCESS) {
     cerr << "[RemoteWriter] "  << "Failed to write block " << lb.block().blockid() << std::endl
          << "Error code: "  << retOp << std::endl;
+    close(sockfd);
     return -1;
   }
 
@@ -194,11 +219,13 @@ int64_t RemoteWriter::writeBlk(std::ifstream& f, const LocatedBlock& lb) const {
   if (opFromMaster != OpCode::OP_SUCCESS) {
     cerr << "[RemoteWriter] "  << "Failed to send ack of block " << lb.block().blockid() << std::endl
          << "Error code: "  << retOp << std::endl;
+    close(sockfd);
     return -1;
   }
 
 
   cerr << "[RemoteWriter] "  << "Succeed sending block: " << lb.block().blockid() << std::endl;
+  close(sockfd);
   return dataLen;
 }
 
@@ -262,7 +289,7 @@ int RemoteWriter::blkWriteRequest(int sockfd, const LocatedBlock& lb) const {
     return -1;
   }
 
-  cerr << "[RemoteReader] " << "Succeed to send request\n";
+  cerr << "[RemoteWriter] " << "Succeed to send request\n";
   return 0;
 }
 
@@ -273,26 +300,32 @@ int RemoteWriter::addBlk() {
          << "Error code: "  << retOp << std::endl;
     return -1;
   }
-  bufferStart = bufferEnd + 1;
-  bufferEnd += BLOCK_SIZE;
+  blockStart += blockPos;
+  blockPos = 0;
   return 0;
 }
 
 int RemoteWriter::remoteFlush() {
-  if (pos == bufferStart) {
+  if (blockPos == 0) {
     return 0;
   }
   /// set block size befor sending it to chunkserver
-  currentLB.mutable_block()->set_blocklen(pos - bufferStart);
+  currentLB.mutable_block()->set_blocklen(blockPos);
 
   std::ifstream fIn(bufferBlkName, std::ios::in | std::ios::binary);
+  if (fIn.is_open() == false) {
+    cerr << "[RemoteWriter] " << "Failed to open " << bufferBlkName << std::endl;
+    fIn.clear();
+    fIn.close();
+    return -1;
+  }
   int writtenSize = writeBlk(fIn, currentLB);
   if (writtenSize == -1) {
     fIn.clear();
     fIn.close();
     return -1;
   }
-
+  blockPos = 0;
   fIn.clear();
   fIn.close();
   return 0;

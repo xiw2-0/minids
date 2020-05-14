@@ -163,7 +163,7 @@ int DFSMaster::addBlock(const string& file, LocatedBlock* locatedBlk) {
   
   /// TODO: xiw, add lock to protect currentMaxBlkID
   int newBlkid = ++currentMaxBlkID;
-  filesInCreating[file] = std::vector<int>{newBlkid};
+  filesInCreating[file].push_back(newBlkid);
 
   auto retblock = locatedBlk->mutable_block();
   retblock->set_blockid(newBlkid);
@@ -232,7 +232,7 @@ int DFSMaster::complete(const string& file) {
   /// the file is created successfully and is removed from
   /// filesInCreating
   filesInCreating.erase(file);
-
+  cerr << "[DFSMaster] "  << file << " created\n";
   return OpCode::OP_SUCCESS;
 }
 

@@ -125,12 +125,12 @@ class RemoteReader {
   /// \return return 0 on success, -1 for errors.
   int blkReadRequest(int sockfd, const Block& blk) const;
 
-  /// \brief Get the required LocatedBlock corresponding to the offset.
+  /// \brief Set the required LocatedBlock corresponding to the offset.
   ///
   /// \param offset offset
   /// \param lb located block corresponding to the offset
   /// \return return 0 on success, -1 for errors.
-  int getLocatedBlk(int64_t offset, LocatedBlock& lb);
+  int setLocatedBlk(int64_t offset, LocatedBlock& lb);
 };
 
 

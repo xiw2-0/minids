@@ -36,7 +36,7 @@ int RPCClient::connectMaster() {
     cerr << "[RPCClient] "  << "Cannot connect to " << serverIP << std::endl;
     return -1;
   }
-  cerr << "[RPCClient] "  << "Succeed to connect Master:\n" << serverIP << ":" << serverPort << std::endl;
+  //cerr << "[RPCClient] "  << "Succeed to connect Master:\n" << serverIP << ":" << serverPort << std::endl;
   return 0;
 }
 
@@ -60,7 +60,7 @@ int RPCClient::sendRequest(int methodID, const string& request) {
   /// Send request
   int ret = send(sockfd, request.c_str(), request.size(), 0);
   if (ret == 0) {
-    cerr << "[RPCClient] " << "Succeed to send request\n";
+    //cerr << "[RPCClient] " << "Succeed to send request\n";
   }
   return ret;
 }

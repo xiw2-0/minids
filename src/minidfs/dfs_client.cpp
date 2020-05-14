@@ -25,10 +25,17 @@ int DFSClient::putFile(const string& src, const string& dst) {
     return -1;
   }
   std::ifstream f(src, std::ios::in | std::ios::binary);
+  if (f.is_open() == false) {
+    cerr << "[DFSClient] " << "Failed to open " << src << std::endl;
+    f.clear();
+    f.close();
+    return -1;
+  }
+
   if (-1 == writer.writeAll(f)) {
     return -1;
   }
-  if (-1 == writer.close()) {
+  if (-1 == writer.remoteClose()) {
     return -1;
   }
 
@@ -43,8 +50,18 @@ int DFSClient::getFile(const string& src, const string& dst) {
     return -1;
   }
 
-  std::ofstream f(src, std::ios::out | std::ios::binary | std::ios::trunc);
-  reader.readAll(f);
+  std::ofstream f(dst, std::ios::out | std::ios::binary | std::ios::trunc);
+  if (f.is_open() == false) {
+    cerr << "[DFSClient] " << "Failed to open " << dst << std::endl;
+    f.clear();
+    f.close();
+    return -1;
+  }
+  if (-1 == reader.readAll(f)) {
+    f.clear();
+    f.close();
+    return -1;
+  }
 
   f.clear();
   f.close();
@@ -77,9 +94,9 @@ int DFSClient::exists(const string& file) {
     return -1;
   }
   if (retOp == OpCode::OP_EXIST) {
-    cerr << "[DFSClient] "  << file << "exists" << std::endl;
+    cerr << "[DFSClient] "  << file << " exists" << std::endl;
   } else {
-    cerr << "[DFSClient] "  << file << "doesn't exist" << std::endl;
+    cerr << "[DFSClient] "  << file << " doesn't exist" << std::endl;
   }
   
   return 0;

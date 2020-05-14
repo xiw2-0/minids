@@ -58,6 +58,13 @@ int64_t RemoteReader::read(void* buffer, uint64_t size) {
     long long nRead = byteLeft < (bufferedEnd-pos+1) ? byteLeft : (bufferedEnd-pos+1);
     
     std::ifstream fIn(bufferBlkName, std::ios::in | std::ios::binary);
+    if (fIn.is_open() == false) {
+      cerr << "[RemoteReader] " << "Failed to open " << bufferBlkName << std::endl;
+      fIn.clear();
+      fIn.close();
+      return -1;
+    }
+
     fIn.seekg(pos - bufferedStart);
 
     fIn.read((char*)buffer+byteWritten, nRead);
@@ -87,7 +94,7 @@ int64_t RemoteReader::readAll(std::ofstream& f) {
 }
 
 int RemoteReader::remoteSeek(uint64_t offset) {
-  if (-1 == getLocatedBlk(offset, currentLB)) {
+  if (-1 == setLocatedBlk(offset, currentLB)) {
     return -1;
   }
   pos = offset;
@@ -96,6 +103,12 @@ int RemoteReader::remoteSeek(uint64_t offset) {
 
 int RemoteReader::bufferOneBlk(const LocatedBlock& lb) {
   std::ofstream f(bufferBlkName, std::ios::out | std::ios::binary | std::ios::trunc);
+  if (f.is_open() == false) {
+    cerr << "[RemoteReader] " << "Failed to open " << bufferBlkName << std::endl;
+    f.clear();
+    f.close();
+    return -1;
+  }
   auto readSize = readBlk(f, lb);
 
   if (readSize == -1) {
@@ -178,7 +191,7 @@ int64_t RemoteReader::readBlk(std::ofstream& f, const LocatedBlock& lb) const {
   }
 
   close(sockfd);
-  return 0;
+  return dataLen;
 }
 
 int RemoteReader::connChunkserver(const LocatedBlock& lb) const {
@@ -246,11 +259,11 @@ int RemoteReader::blkReadRequest(int sockfd, const Block& blk) const {
   return 0;
 }
 
-int RemoteReader::getLocatedBlk(int64_t offset, LocatedBlock& lb){
+int RemoteReader::setLocatedBlk(int64_t offset, LocatedBlock& lb){
   int64_t totalLength = 0;
   for (int i = 0; i < lbs.locatedblks_size(); ++i) {
     int64_t blkLen = lbs.locatedblks(i).block().blocklen();
-    if (totalLength + blkLen >= offset) {
+    if (totalLength + blkLen > offset) {
       lb = lbs.locatedblks(i);
       return 0;
     }

@@ -121,7 +121,7 @@ void RPCServer::handleRequest(int connfd) {
     close(connfd);
     return;
   }
-  cerr << "[RPCServer] "  << "Succeed to process one request\n";
+  //cerr << "[RPCServer] "  << "Succeed to process one request\n";
   /// close client sock
   close(connfd);
 }
@@ -276,7 +276,7 @@ int RPCServer::recvRequest(int connfd, int& methodID, string& request) {
     return -1;
   }
   request = string(buf.begin(), buf.end());
-  cerr << "[RPCServer] " << "Succeed to recv request\n";
+  //cerr << "[RPCServer] " << "Succeed to recv request\n";
   return 0;
 }
 
@@ -297,7 +297,7 @@ int RPCServer::sendResponse(int connfd, int status, const string& response) {
   if (send(connfd, response.data(), response.size(), 0) < 0) {
     return -1;
   }
-  cerr << "[RPCServer] " << "Succeed to send response\n";
+  //cerr << "[RPCServer] " << "Succeed to send response\n";
   return 0;
 }
 

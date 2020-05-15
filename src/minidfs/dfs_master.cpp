@@ -19,22 +19,33 @@ DFSMaster::~DFSMaster() {
 }
 
 int DFSMaster::format() {
-  dfIDs.clear();
-  dfIDs["/"] = 0;
-  currentMaxDfID = 0;
+  {
+    std::unique_lock<std::recursive_mutex> lockFileNameSys(mutexFileNameSys, std::defer_lock);
+    std::unique_lock<std::recursive_mutex> lockMemoryNameSys(mutexMemoryNameSys, std::defer_lock);
 
-  dfNames.clear();
-  dfNames[0] = "/";
+    std::unique_lock<std::recursive_mutex> lockCurrentMaxDfID(mutexCurrentMaxDfID, std::defer_lock);
+    std::unique_lock<std::recursive_mutex> lockCurrentBlkID(mutexCurrentMaxBlkID, std::defer_lock);
+    std::unique_lock<std::recursive_mutex> lockChunkserverBlock(mutexChunkserverBlock, std::defer_lock);
+    std::lock(lockFileNameSys, lockMemoryNameSys, lockCurrentMaxDfID, lockCurrentBlkID, lockChunkserverBlock);
 
-  dentries.clear();
-  dentries[0] = std::vector<int>();
+    dfIDs.clear();
+    dfIDs["/"] = 0;
+    currentMaxDfID = 0;
 
-  inodes.clear();
-  /// block id starts from 1
-  currentMaxBlkID = 0;
+    dfNames.clear();
+    dfNames[0] = "/";
 
-  blks.clear();
-  blkLocs.clear();
+    dentries.clear();
+    dentries[0] = std::vector<int>();
+
+    inodes.clear();
+    /// block id starts from 1
+    currentMaxBlkID = 0;
+
+    blks.clear();
+    blkLocs.clear();
+  }
+
 
   if (serializeNameSystem() == -1) {
     cerr << "[DFSMaster] " << "Failed to format name system!\n";
@@ -61,6 +72,10 @@ int DFSMaster::checkpoint() {
 }
 
 bool DFSMaster::isSafe() {
+  std::unique_lock<std::recursive_mutex> lockMemoryNameSys(mutexMemoryNameSys, std::defer_lock);
+  std::unique_lock<std::recursive_mutex> lockChunkserverBlock(mutexChunkserverBlock, std::defer_lock);
+  std::lock(lockMemoryNameSys, lockChunkserverBlock);
+
   if (blkLocs.size() < blks.size()) {
     return false;
   }
@@ -68,6 +83,8 @@ bool DFSMaster::isSafe() {
 }
 
 void DFSMaster::checkHeartbeat() {
+  std::unique_lock<std::recursive_mutex> lockChunkserverBlock(mutexChunkserverBlock);
+
   for (auto i = aliveChunkservers.begin(); i != aliveChunkservers.end();) {
     if (i->second == true) {
       i->second = false;
@@ -80,6 +97,10 @@ void DFSMaster::checkHeartbeat() {
 }
 
 int DFSMaster::getBlockLocations(const string& file, minidfs::LocatedBlocks* locatedBlks) {
+  std::unique_lock<std::recursive_mutex> lockMemoryNameSys(mutexMemoryNameSys, std::defer_lock);
+  std::unique_lock<std::recursive_mutex> lockChunkserverBlock(mutexChunkserverBlock, std::defer_lock);
+  std::lock(lockMemoryNameSys, lockChunkserverBlock);
+
   if (dfIDs.find(file) == dfIDs.end()) {
     cerr << "[DFSMaster] "  << "No such a file/dir\n";
     return OpCode::OP_NO_SUCH_FILE;
@@ -107,6 +128,13 @@ int DFSMaster::getBlockLocations(const string& file, minidfs::LocatedBlocks* loc
 }
 
 int DFSMaster::create(const string& file, LocatedBlock* locatedBlk) {
+  std::unique_lock<std::recursive_mutex> lockMemoryNameSys(mutexMemoryNameSys, std::defer_lock);
+  std::unique_lock<std::recursive_mutex> lockCurrentBlkID(mutexCurrentMaxBlkID, std::defer_lock);
+
+  std::unique_lock<std::recursive_mutex> lockChunkserverBlock(mutexChunkserverBlock, std::defer_lock);
+  std::unique_lock<std::recursive_mutex> lockInCreating(mutexInCreating, std::defer_lock);
+
+  std::lock(lockMemoryNameSys, lockCurrentBlkID, lockChunkserverBlock, lockInCreating);
   if (dfIDs.find(file) != dfIDs.end()) {
     cerr << "[DFSMaster] "  << file << " existed!\n";
     return OpCode::OP_FILE_ALREADY_EXISTED;
@@ -132,7 +160,6 @@ int DFSMaster::create(const string& file, LocatedBlock* locatedBlk) {
   /// finalizes the file into the namesystem and assigns a new
   /// DfID to the newly created file.
   
-  /// TODO: xiw, add lock to protect currentMaxBlkID
   int newBlkid = ++currentMaxBlkID;
   filesInCreating[file] = std::vector<int>{newBlkid};
 
@@ -155,13 +182,19 @@ int DFSMaster::create(const string& file, LocatedBlock* locatedBlk) {
 }
 
 int DFSMaster::addBlock(const string& file, LocatedBlock* locatedBlk) {
+  std::unique_lock<std::recursive_mutex> lockCurrentBlkID(mutexCurrentMaxBlkID, std::defer_lock);
+
+  std::unique_lock<std::recursive_mutex> lockChunkserverBlock(mutexChunkserverBlock, std::defer_lock);
+  std::unique_lock<std::recursive_mutex> lockInCreating(mutexInCreating, std::defer_lock);
+
+  std::lock(lockCurrentBlkID, lockChunkserverBlock, lockInCreating);
+
   /// if the file isn't in creating process
   if (filesInCreating.find(file) == filesInCreating.end()) {
     cerr << "[DFSMaster] "  << file << " isn't in creating\n";
     return OpCode::OP_NO_SUCH_FILE;
   }
   
-  /// TODO: xiw, add lock to protect currentMaxBlkID
   int newBlkid = ++currentMaxBlkID;
   filesInCreating[file].push_back(newBlkid);
 
@@ -184,6 +217,8 @@ int DFSMaster::addBlock(const string& file, LocatedBlock* locatedBlk) {
 }
 
 int DFSMaster::blockAck(const LocatedBlock& locatedBlk) {
+  std::unique_lock<std::recursive_mutex> lockInCreating(mutexInCreating);
+
   /// add the confirmed block into blocksInCreating
   int blockID = locatedBlk.block().blockid();
   blocksInCreating[blockID] = locatedBlk;
@@ -192,6 +227,14 @@ int DFSMaster::blockAck(const LocatedBlock& locatedBlk) {
 }
 
 int DFSMaster::complete(const string& file) {
+  std::unique_lock<std::recursive_mutex> lockMemoryNameSys(mutexMemoryNameSys, std::defer_lock);
+
+  std::unique_lock<std::recursive_mutex> lockCurrentMaxDfID(mutexCurrentMaxDfID, std::defer_lock);
+  
+  std::unique_lock<std::recursive_mutex> lockChunkserverBlock(mutexChunkserverBlock, std::defer_lock);
+  std::unique_lock<std::recursive_mutex> lockInCreating(mutexInCreating, std::defer_lock);
+
+  std::lock(lockMemoryNameSys, lockCurrentMaxDfID, lockChunkserverBlock, lockInCreating);
   /// if the file isn't in creating process
   if (filesInCreating.find(file) == filesInCreating.end()) {
     cerr << "[DFSMaster] "  << file << " isn't in creating\n";
@@ -237,6 +280,8 @@ int DFSMaster::complete(const string& file) {
 }
 
 int DFSMaster::remove(const string& file) {
+  std::unique_lock<std::recursive_mutex> lockMemoryNameSys(mutexMemoryNameSys);
+
   if (dfIDs.find(file) == dfIDs.end()) {
     cerr << "[DFSMaster] "  << file << " doesn't exist!\n";
     return OpCode::OP_NO_SUCH_FILE;
@@ -272,6 +317,8 @@ int DFSMaster::remove(const string& file) {
 }
 
 int DFSMaster::exists(const string& file) {
+  std::unique_lock<std::recursive_mutex> lockMemoryNameSys(mutexMemoryNameSys);
+
   if (dfIDs.find(file) == dfIDs.end()) {
     cerr << "[DFSMaster] "  << file << " doesn't exist!\n";
     return OpCode::OP_NOT_EXIST;
@@ -280,6 +327,11 @@ int DFSMaster::exists(const string& file) {
 }
 
 int DFSMaster::makeDir(const string& dirName) {
+  std::unique_lock<std::recursive_mutex> lockMemoryNameSys(mutexMemoryNameSys, std::defer_lock);
+
+  std::unique_lock<std::recursive_mutex> lockCurrentMaxDfID(mutexCurrentMaxDfID, std::defer_lock);
+  std::lock(lockMemoryNameSys, lockCurrentMaxDfID);
+
   if (dfIDs.find(dirName) != dfIDs.end()) {
     cerr << "[DFSMaster] "  << dirName << " existed!\n";
     return OpCode::OP_FILE_ALREADY_EXISTED;
@@ -308,6 +360,8 @@ int DFSMaster::makeDir(const string& dirName) {
 }
 
 int DFSMaster::listDir(const string& dirName, FileInfos& items) {
+  std::unique_lock<std::recursive_mutex> lockMemoryNameSys(mutexMemoryNameSys);
+
   if (dfIDs.find(dirName) == dfIDs.end()) {
     cerr << "[DFSMaster] "  << dirName << " doesn't exist!\n";
     return OpCode::OP_NO_SUCH_FILE;
@@ -337,6 +391,7 @@ int DFSMaster::listDir(const string& dirName, FileInfos& items) {
 }
 
 int DFSMaster::heartBeat(const ChunkserverInfo& chunkserverInfo) {
+  std::unique_lock<std::recursive_mutex> lockChunkserverBlock(mutexChunkserverBlock);
   //int id = getChunkserverID(chunkserverInfo);
 
   aliveChunkservers[chunkserverInfo] = true;
@@ -345,6 +400,11 @@ int DFSMaster::heartBeat(const ChunkserverInfo& chunkserverInfo) {
 }
 
 int DFSMaster::blkReport(const ChunkserverInfo& chunkserverInfo, const std::vector<int>& blkIDs, std::vector<int>& deletedBlks) {
+  std::unique_lock<std::recursive_mutex> lockMemoryNameSys(mutexMemoryNameSys, std::defer_lock);
+
+  std::unique_lock<std::recursive_mutex> lockChunkserverBlock(mutexChunkserverBlock, std::defer_lock);
+  std::lock(lockMemoryNameSys, lockChunkserverBlock);
+
   //int id = getChunkserverID(chunkserverInfo);
   aliveChunkservers[chunkserverInfo] = true;
   for (int blockid : blkIDs) {
@@ -375,6 +435,7 @@ int DFSMaster::blkReport(const ChunkserverInfo& chunkserverInfo, const std::vect
 }
 
 int DFSMaster::getBlkTask(const ChunkserverInfo& chunkserverInfo, BlockTasks* blkTasks) {
+  std::unique_lock<std::recursive_mutex> lockChunkserverBlock(mutexChunkserverBlock);
   //int id = getChunkserverID(chunkserverInfo);
   auto csEqualTo = ChunkserverInfoEqualTo();
   bool hasTask = false;
@@ -391,6 +452,11 @@ int DFSMaster::getBlkTask(const ChunkserverInfo& chunkserverInfo, BlockTasks* bl
 }
 
 int DFSMaster::recvedBlks(const ChunkserverInfo& chunkserverInfo, const std::vector<int>& blkIDs) {
+  std::unique_lock<std::recursive_mutex> lockMemoryNameSys(mutexMemoryNameSys, std::defer_lock);
+
+  std::unique_lock<std::recursive_mutex> lockChunkserverBlock(mutexChunkserverBlock, std::defer_lock);
+  std::lock(lockMemoryNameSys, lockChunkserverBlock);
+
   //int id = getChunkserverID(chunkserverInfo);
   auto csEqualTo = ChunkserverInfoEqualTo();
   aliveChunkservers[chunkserverInfo] = true;
@@ -417,6 +483,13 @@ int DFSMaster::recvedBlks(const ChunkserverInfo& chunkserverInfo, const std::vec
 }
 
 int DFSMaster::serializeNameSystem() {
+  std::unique_lock<std::recursive_mutex> lockFileNameSys(mutexFileNameSys, std::defer_lock);
+  std::unique_lock<std::recursive_mutex> lockMemoryNameSys(mutexMemoryNameSys, std::defer_lock);
+
+  std::unique_lock<std::recursive_mutex> lockCurrentMaxDfID(mutexCurrentMaxDfID, std::defer_lock);
+  std::unique_lock<std::recursive_mutex> lockCurrentBlkID(mutexCurrentMaxBlkID, std::defer_lock);
+  std::lock(lockFileNameSys, lockMemoryNameSys, lockCurrentMaxDfID, lockCurrentBlkID);
+
   std::ofstream fs(nameSysFile, std::ios::out|std::ios::binary);
   if (!fs.is_open()) {
     cerr << "[DFSMaster] "  << "Failed to open Name system file: " << nameSysFile << std::endl;
@@ -470,6 +543,13 @@ int DFSMaster::serializeNameSystem() {
 }
 
 int DFSMaster::parseNameSystem() {
+  std::unique_lock<std::recursive_mutex> lockFileNameSys(mutexFileNameSys, std::defer_lock);
+  std::unique_lock<std::recursive_mutex> lockMemoryNameSys(mutexMemoryNameSys, std::defer_lock);
+
+  std::unique_lock<std::recursive_mutex> lockCurrentMaxDfID(mutexCurrentMaxDfID, std::defer_lock);
+  std::unique_lock<std::recursive_mutex> lockCurrentBlkID(mutexCurrentMaxBlkID, std::defer_lock);
+  std::lock(lockFileNameSys, lockMemoryNameSys, lockCurrentMaxDfID, lockCurrentBlkID);
+
   std::ifstream fs(nameSysFile, std::ios::in|std::ios::binary);
   if (!fs.is_open()) {
     cerr << "[DFSMaster] "  << "Failed to open Name system file: " << nameSysFile << std::endl;
@@ -526,6 +606,14 @@ int DFSMaster::parseNameSystem() {
 }
 
 int DFSMaster::initMater() {
+  std::unique_lock<std::recursive_mutex> lockFileNameSys(mutexFileNameSys, std::defer_lock);
+  std::unique_lock<std::recursive_mutex> lockMemoryNameSys(mutexMemoryNameSys, std::defer_lock);
+
+  std::unique_lock<std::recursive_mutex> lockCurrentMaxDfID(mutexCurrentMaxDfID, std::defer_lock);
+  std::unique_lock<std::recursive_mutex> lockCurrentBlkID(mutexCurrentMaxBlkID, std::defer_lock);
+  std::unique_lock<std::recursive_mutex> lockChunkserverBlock(mutexChunkserverBlock, std::defer_lock);
+  std::lock(lockFileNameSys, lockMemoryNameSys, lockCurrentMaxDfID, lockCurrentBlkID, lockChunkserverBlock);
+
   /// chunkserver
   blkLocs.clear();
   //chunkservers = std::unordered_map<int, ChunkserverInfo>();
@@ -566,6 +654,8 @@ int DFSMaster::getChunkserverID(const ChunkserverInfo& chunkserverInfo) {
 */
 
 void DFSMaster::findBlksToBeReplicated(const ChunkserverInfo& chunkserver) {
+  std::unique_lock<std::recursive_mutex> lockChunkserverBlock(mutexChunkserverBlock);
+
   auto csEqualTo = ChunkserverInfoEqualTo();
   for (auto& bl : blkLocs) {
     for (const auto& blChunkserver : bl.second) {
@@ -581,6 +671,8 @@ void DFSMaster::findBlksToBeReplicated(const ChunkserverInfo& chunkserver) {
 }
 
 void DFSMaster::distributeBlkTask(int blockID, int repFactor, BlockTask* blkTask) {
+  std::unique_lock<std::recursive_mutex> lockChunkserverBlock(mutexChunkserverBlock);
+
   blkTask->set_operation(OpCode::OP_COPY);
 
   auto csEqualTo = ChunkserverInfoEqualTo();
@@ -613,6 +705,8 @@ void DFSMaster::distributeBlkTask(int blockID, int repFactor, BlockTask* blkTask
 }
 
 int DFSMaster::allocateChunkservers(std::vector<ChunkserverInfo>& cs) {
+  std::unique_lock<std::recursive_mutex> lockChunkserverBlock(mutexChunkserverBlock);
+
   int nServers = aliveChunkservers.size();
   if (nServers < replicationFactor) {
     return -1;
@@ -631,6 +725,7 @@ int DFSMaster::allocateChunkservers(std::vector<ChunkserverInfo>& cs) {
 }
 
 long long DFSMaster::getFileLength(int fileID) {
+  std::unique_lock<std::recursive_mutex> lockMemoryNameSys(mutexMemoryNameSys);
   if (inodes.find(fileID) == inodes.end()) {
     return -1;
   }

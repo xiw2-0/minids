@@ -37,9 +37,9 @@ void DFSChunkserver::run() {
   // Interact with master
   //
   using std::chrono::system_clock;
-  system_clock::time_point lastHeartbeat(std::chrono::milliseconds(0));
-  system_clock::time_point lastBlkReport(std::chrono::milliseconds(0));
-  auto startup = system_clock::now();
+  auto lastHeartbeat = system_clock::now();
+  auto lastBlkReport = lastHeartbeat;
+  auto startup = lastHeartbeat;
   while(true) {
     auto now = system_clock::now();
     auto t = std::chrono::duration_cast<std::chrono::milliseconds>(now - lastHeartbeat);
@@ -50,7 +50,7 @@ void DFSChunkserver::run() {
     }
 
     /// block report
-    now = system_clock::now();
+    //now = system_clock::now();
     t = std::chrono::duration_cast<std::chrono::milliseconds>(now - lastBlkReport);
     if (t.count() > BLOCK_REPORT_INTERVAL) {
       blkReport();
@@ -63,7 +63,7 @@ void DFSChunkserver::run() {
     }
 
     /// get block tasks
-    now = system_clock::now();
+    //now = system_clock::now();
     t = std::chrono::duration_cast<std::chrono::milliseconds>(now - startup);
     if (t.count() > BLK_TASK_STARTUP_INTERVAL) {
       getBlkTask();
@@ -149,6 +149,7 @@ int DFSChunkserver::scanStoredBlocks() {
 
       idPos = idPos + 4;
       int blkid = atoi(blkname.substr(idPos).c_str());
+      std::lock_guard<std::mutex> lockBlksServed(mutexBlksServed);
       blksServed.emplace(blkid);
     }
   }
@@ -254,9 +255,12 @@ int DFSChunkserver::recvBlock(int connfd) {
   
   /// move to final folder
   rename((folder+"/"+blkFileName).c_str(), (dataDir+"/"+blkFileName).c_str());
-  blksServed.emplace(bID);
-  blksRecved.emplace(bID);
-
+  {
+    std::lock_guard<std::mutex> lockBlksServed(mutexBlksServed);
+    std::lock_guard<std::mutex> lockBlksRecved(mutexBlksRecved);
+    blksServed.emplace(bID);
+    blksRecved.emplace(bID);
+  }
   /// send response
   char retOp = OpCode::OP_SUCCESS;
   int ret = send(connfd, &retOp, 1, 0);
@@ -290,11 +294,14 @@ int DFSChunkserver::sendBlock(int connfd) {
   char op = 0;
   int bID = b.blockid();
   /// send OpCode
-  if (blksServed.find(bID) == blksServed.end()) {
-    cerr << "[DFSChunkserver] " << "Invalid block: " << bID << std::endl;
-    op = OpCode::OP_FAILURE;
-    send(connfd, &op, 1, 0);
-    return -1;
+  {
+    std::lock_guard<std::mutex> lockBlksServed(mutexBlksServed);
+    if (blksServed.find(bID) == blksServed.end()) {
+      cerr << "[DFSChunkserver] " << "Invalid block: " << bID << std::endl;
+      op = OpCode::OP_FAILURE;
+      send(connfd, &op, 1, 0);
+      return -1;
+    }
   }
   op = OpCode::OP_SUCCESS;
   send(connfd, &op, 1, 0);
@@ -310,11 +317,14 @@ int DFSChunkserver::sendBlock(int connfd) {
 
 int DFSChunkserver::replicateBlock(const LocatedBlock& locatedB) {
   int bID = locatedB.block().blockid();
-
-  if (blksServed.find(bID) == blksServed.end()) {
-    cerr << "[DFSChunkserver] " << "Invalid block: " << bID << std::endl;
-    return -1;
+  {
+    std::lock_guard<std::mutex> lockBlksServed(mutexBlksServed);
+    if (blksServed.find(bID) == blksServed.end()) {
+      cerr << "[DFSChunkserver] " << "Invalid block: " << bID << std::endl;
+      return -1;
+    }
   }
+
 
   //
   // connect target chunkserver
@@ -452,6 +462,7 @@ int DFSChunkserver::heartBeat() {
 
 int DFSChunkserver::blkReport() {
   //cerr << "[DFSChunkserver] " << "Reporting blocks\n";
+  std::lock_guard<std::mutex> lockBlksServed(mutexBlksServed);
   std::vector<int> blks(blksServed.begin(), blksServed.end());
   std::vector<int> blksDeleted;
   int opRet = master->blkReport(chunkserverInfo, blks, blksDeleted);
@@ -498,6 +509,7 @@ int DFSChunkserver::getBlkTask() {
 
 int DFSChunkserver::recvedBlks() {
   //cerr << "[DFSChunkserver] " << "Sending blocks received to master\n";
+  std::lock_guard<std::mutex> lockBlksRecved(mutexBlksRecved);
   if (blksRecved.size() == 0) {
     return OpCode::OP_SUCCESS;
   }

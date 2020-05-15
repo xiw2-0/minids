@@ -61,16 +61,22 @@ class ChunkserverInfoLessThan {
 /// Master receives rpc calls from dfs client and dfs chunkservers.
 /// When master receives a new socket, it generates a new thread to handle
 /// this request.
-/// TODO: xiW add read/write lock to avoid concurrent errors and thus to support concurrence.
+/// Locking orders: mutexFileNameSys > mutexMemoryNameSys > mutexCurrentMaxDfID >
+///                 mutexCurrentMaxBlkID > mutexChunkserverBlock > mutexInCreating
 class DFSMaster: public ClientProtocol, public ChunkserverProtocol{
  private:
 
   /// namesystem file
   string nameSysFile;
 
+  ///#1 mutex for name system in disk
+  std::recursive_mutex mutexFileNameSys;
 
   /// Server waits for the rpcs call and forwards the calls to master.
   rpc::RPCServer server;
+
+  ///#2 mutex for name system in memory
+  std::recursive_mutex mutexMemoryNameSys;
 
   /// \brief Maps from directory/file name string to dfID (directory/file id)
   ///
@@ -78,8 +84,12 @@ class DFSMaster: public ClientProtocol, public ChunkserverProtocol{
   /// "file.txt" only is not allowed.
   /// This will be serialized to local disk.
   std::unordered_map<string, int> dfIDs;
+
   /// The max dfID that has been allocated
   int currentMaxDfID;
+  /// mutex for currentMaxDfId
+  std::recursive_mutex mutexCurrentMaxDfID;
+
   /// inversion of dfIDs
   std::unordered_map<int, string> dfNames;
 
@@ -92,10 +102,17 @@ class DFSMaster: public ClientProtocol, public ChunkserverProtocol{
   ///
   /// This will be serialized to local disk.
   std::unordered_map<int, std::vector<int>> inodes;
+
   /// The max block ID that has been allocated
   int currentMaxBlkID;
+  /// mutex for currentMaxBlkID
+  std::recursive_mutex mutexCurrentMaxBlkID;
+
   /// \brief Maps from block id to blocks.
   std::unordered_map<int, Block> blks;
+
+  ///#3 mutex for chunkserver-block related information
+  std::recursive_mutex mutexChunkserverBlock;
 
   /// Maps from block id to chunkservers
   std::unordered_map<int, std::vector<ChunkserverInfo>> blkLocs;
@@ -106,6 +123,9 @@ class DFSMaster: public ClientProtocol, public ChunkserverProtocol{
   /// blks that need to be replicated.
   /// The 1st is block id; the 2nd is replication factor.
   std::unordered_map<int, int> blksToBeReplicated;
+
+  ///#4 mutex for files/blocks in creating status
+  std::recursive_mutex mutexInCreating;
 
   /// record the set of file names still in creating process, not finish yet.
   /// the 1st element is file name, the 2nd is a list of block ids

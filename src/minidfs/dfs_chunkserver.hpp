@@ -12,6 +12,7 @@
 #include <thread>
 #include <fstream>
 #include <chrono>
+#include <mutex>
 
 #include <minidfs/chunkserver_protocol.hpp>
 #include <rpc/chunkserver_protocol_proxy.hpp>
@@ -57,9 +58,13 @@ class DFSChunkserver {
   string dataDir;
   /// store the block ids
   std::set<int> blksServed;
+  /// a mutex for blksServed
+  std::mutex mutexBlksServed;
 
   /// recently received blocks
   std::set<int> blksRecved;
+  /// a mutex for blksRecved
+  std::mutex mutexBlksRecved;
 
   /// block size
   long long blockSize;

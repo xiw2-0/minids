@@ -9,10 +9,11 @@
 
 namespace minidfs {
 
-DFSMaster::DFSMaster(const string& nameSysFile,
+DFSMaster::DFSMaster(const string& nameSysFile, const string& editLogFile,
                      int serverPort, int maxConns, int replicationFactor)
-    : nameSysFile(nameSysFile),
+    : nameSysFile(nameSysFile), editLogFile(editLogFile),
       server(serverPort, maxConns, this), replicationFactor(replicationFactor) {
+  editlogID = 0;
 }
 
 DFSMaster::~DFSMaster() {
@@ -23,10 +24,8 @@ int DFSMaster::format() {
     std::unique_lock<std::recursive_mutex> lockFileNameSys(mutexFileNameSys, std::defer_lock);
     std::unique_lock<std::recursive_mutex> lockMemoryNameSys(mutexMemoryNameSys, std::defer_lock);
 
-    std::unique_lock<std::recursive_mutex> lockCurrentMaxDfID(mutexCurrentMaxDfID, std::defer_lock);
-    std::unique_lock<std::recursive_mutex> lockCurrentBlkID(mutexCurrentMaxBlkID, std::defer_lock);
     std::unique_lock<std::recursive_mutex> lockChunkserverBlock(mutexChunkserverBlock, std::defer_lock);
-    std::lock(lockFileNameSys, lockMemoryNameSys, lockCurrentMaxDfID, lockCurrentBlkID, lockChunkserverBlock);
+    std::lock(lockFileNameSys, lockMemoryNameSys, lockChunkserverBlock);
 
     dfIDs.clear();
     dfIDs["/"] = 0;
@@ -44,6 +43,16 @@ int DFSMaster::format() {
 
     blks.clear();
     blkLocs.clear();
+
+    /// clear editlog
+    editlogID = 0;
+    std::ofstream f(editLogFile, std::ios::trunc | std::ios::out | std::ios::binary);
+    if (f.is_open() == false){
+      cerr << "[DFSMaster] " << "Failed to open edit log!\n";
+      return -1;
+    }
+    f.clear();
+    f.close();
   }
 
 
@@ -64,10 +73,22 @@ void DFSMaster::startRun() {
     cerr << "[DFSMaster] "  << "Init server of master failure\n";
     return;
   }
+  std::thread checkerThread(&DFSMaster::statusChecker, this);
+  checkerThread.detach();
+
   server.run();
 }
 
 int DFSMaster::checkpoint() {
+  {
+    std::unique_lock<std::recursive_mutex> lockFileNameSys(mutexFileNameSys);
+    /// clear editlog
+    editlogID = 0;
+    std::ofstream f(editLogFile, std::ios::trunc | std::ios::out | std::ios::binary);
+    f.clear();
+    f.close();  
+  }
+
   return serializeNameSystem();
 }
 
@@ -82,18 +103,45 @@ bool DFSMaster::isSafe() {
   return true;
 }
 
-void DFSMaster::checkHeartbeat() {
-  std::unique_lock<std::recursive_mutex> lockChunkserverBlock(mutexChunkserverBlock);
+void DFSMaster::statusChecker() {
+  auto lastCheck = std::chrono::system_clock::now();
+  while(true) {
+    auto now = std::chrono::system_clock::now();
+    auto dur = std::chrono::duration_cast<std::chrono::milliseconds>(now - lastCheck);
+    if (dur.count() >= STATUS_CHECK_INTERVAL) {
+      lastCheck = std::chrono::system_clock::now();
+      /// check whether a chunkserver is still alive
+      {
+        cerr << "[DFSMaster] " << "Checking active chunkservers\n";
+        std::unique_lock<std::recursive_mutex> lockChunkserverBlock(mutexChunkserverBlock);
+        for (auto i = aliveChunkservers.begin(); i != aliveChunkservers.end();) {
+          if (i->second == true) {
+            i->second = false;
+            ++i;
+          } else {
+            findBlksToBeReplicated(i->first);
+            i = aliveChunkservers.erase(i);
+          }
+        }
+      }
 
-  for (auto i = aliveChunkservers.begin(); i != aliveChunkservers.end();) {
-    if (i->second == true) {
-      i->second = false;
-      ++i;
-    } else {
-      findBlksToBeReplicated(i->first);
-      i = aliveChunkservers.erase(i);
+      /// check the edit log size
+      {
+        cerr << "[DFSMaster] " << "Checking edit log length " << editlogID << " " << maxEditLogEntry << std::endl;
+        if (editlogID > maxEditLogEntry) {
+          if (-1 == checkpoint()){
+            cerr << "[DFSMaster] " << "Failed to take a checkpoint\n";
+          } else {
+            cerr << "[DFSMaster] " << "Succeeded to take a checkpoint\n";
+          }
+        }
+      }
     }
+    now = std::chrono::system_clock::now();
+    dur = std::chrono::duration_cast<std::chrono::milliseconds>(now - lastCheck);
+    std::this_thread::sleep_for(std::chrono::milliseconds(STATUS_CHECK_INTERVAL)-dur);
   }
+  
 }
 
 int DFSMaster::getBlockLocations(const string& file, minidfs::LocatedBlocks* locatedBlks) {
@@ -129,12 +177,11 @@ int DFSMaster::getBlockLocations(const string& file, minidfs::LocatedBlocks* loc
 
 int DFSMaster::create(const string& file, LocatedBlock* locatedBlk) {
   std::unique_lock<std::recursive_mutex> lockMemoryNameSys(mutexMemoryNameSys, std::defer_lock);
-  std::unique_lock<std::recursive_mutex> lockCurrentBlkID(mutexCurrentMaxBlkID, std::defer_lock);
 
   std::unique_lock<std::recursive_mutex> lockChunkserverBlock(mutexChunkserverBlock, std::defer_lock);
   std::unique_lock<std::recursive_mutex> lockInCreating(mutexInCreating, std::defer_lock);
 
-  std::lock(lockMemoryNameSys, lockCurrentBlkID, lockChunkserverBlock, lockInCreating);
+  std::lock(lockMemoryNameSys, lockChunkserverBlock, lockInCreating);
   if (dfIDs.find(file) != dfIDs.end()) {
     cerr << "[DFSMaster] "  << file << " existed!\n";
     return OpCode::OP_FILE_ALREADY_EXISTED;
@@ -182,12 +229,10 @@ int DFSMaster::create(const string& file, LocatedBlock* locatedBlk) {
 }
 
 int DFSMaster::addBlock(const string& file, LocatedBlock* locatedBlk) {
-  std::unique_lock<std::recursive_mutex> lockCurrentBlkID(mutexCurrentMaxBlkID, std::defer_lock);
-
   std::unique_lock<std::recursive_mutex> lockChunkserverBlock(mutexChunkserverBlock, std::defer_lock);
   std::unique_lock<std::recursive_mutex> lockInCreating(mutexInCreating, std::defer_lock);
 
-  std::lock(lockCurrentBlkID, lockChunkserverBlock, lockInCreating);
+  std::lock(lockChunkserverBlock, lockInCreating);
 
   /// if the file isn't in creating process
   if (filesInCreating.find(file) == filesInCreating.end()) {
@@ -227,14 +272,13 @@ int DFSMaster::blockAck(const LocatedBlock& locatedBlk) {
 }
 
 int DFSMaster::complete(const string& file) {
+  std::unique_lock<std::recursive_mutex> lockFileNameSys(mutexFileNameSys, std::defer_lock);
   std::unique_lock<std::recursive_mutex> lockMemoryNameSys(mutexMemoryNameSys, std::defer_lock);
-
-  std::unique_lock<std::recursive_mutex> lockCurrentMaxDfID(mutexCurrentMaxDfID, std::defer_lock);
   
   std::unique_lock<std::recursive_mutex> lockChunkserverBlock(mutexChunkserverBlock, std::defer_lock);
   std::unique_lock<std::recursive_mutex> lockInCreating(mutexInCreating, std::defer_lock);
 
-  std::lock(lockMemoryNameSys, lockCurrentMaxDfID, lockChunkserverBlock, lockInCreating);
+  std::lock(lockFileNameSys, lockMemoryNameSys, lockChunkserverBlock, lockInCreating);
   /// if the file isn't in creating process
   if (filesInCreating.find(file) == filesInCreating.end()) {
     cerr << "[DFSMaster] "  << file << " isn't in creating\n";
@@ -275,6 +319,20 @@ int DFSMaster::complete(const string& file) {
   /// the file is created successfully and is removed from
   /// filesInCreating
   filesInCreating.erase(file);
+
+  /// log the edit to disk
+  EditLog editlog;
+  editlog.set_op(OpCode::OP_CREATE);
+  editlog.set_src(file);
+  editlog.set_dfid(newDfID);
+  for (int b : inodes[newDfID]) {
+    *editlog.add_blks() = blks[b];
+  }
+  if (-1 == logEdit(editlog.SerializeAsString())) {
+    cerr << "[DFSMaster] " << "Failed to create " << file << std::endl;
+    return OpCode::OP_LOG_FAILURE;
+  }
+  editlogID++;
   cerr << "[DFSMaster] "  << file << " created\n";
   return OpCode::OP_SUCCESS;
 }
@@ -289,6 +347,14 @@ int DFSMaster::remove(const string& file) {
 
   /// get dfID
   int dfid = dfIDs[file];
+
+  /// check whether it is a file or dir
+  /// currently, minidfs doesn't support remove a directory.
+  if (dentries.find(dfid) != dentries.end()) {
+    cerr << "[DFSMaster] "  << file << " is a directory!\n";
+    return OpCode::OP_FAILURE;
+  }
+
   dfIDs.erase(file);
   /// remove dfNames at the same time
   dfNames.erase(dfid);
@@ -313,6 +379,17 @@ int DFSMaster::remove(const string& file) {
   }
   inodes.erase(dfid);
 
+  /// log the edit to disk
+  EditLog editlog;
+  editlog.set_op(OpCode::OP_REMOVE);
+  editlog.set_src(file);
+  editlog.set_dfid(dirID);
+
+  if (-1 == logEdit(editlog.SerializeAsString())) {
+    cerr << "[DFSMaster] " << "Failed to remove " << file << std::endl;
+    return OpCode::OP_LOG_FAILURE;
+  }
+  editlogID++;
   return OpCode::OP_SUCCESS;
 }
 
@@ -327,10 +404,7 @@ int DFSMaster::exists(const string& file) {
 }
 
 int DFSMaster::makeDir(const string& dirName) {
-  std::unique_lock<std::recursive_mutex> lockMemoryNameSys(mutexMemoryNameSys, std::defer_lock);
-
-  std::unique_lock<std::recursive_mutex> lockCurrentMaxDfID(mutexCurrentMaxDfID, std::defer_lock);
-  std::lock(lockMemoryNameSys, lockCurrentMaxDfID);
+  std::unique_lock<std::recursive_mutex> lockMemoryNameSys(mutexMemoryNameSys);
 
   if (dfIDs.find(dirName) != dfIDs.end()) {
     cerr << "[DFSMaster] "  << dirName << " existed!\n";
@@ -356,6 +430,16 @@ int DFSMaster::makeDir(const string& dirName) {
   dentries[dirID].push_back(newDfID);
   dentries[newDfID] = std::vector<int>();
 
+  /// log the edit to disk
+  EditLog editlog;
+  editlog.set_op(OpCode::OP_MKDIR);
+  editlog.set_src(dirName);
+  editlog.set_dfid(dirID);
+  if (-1 == logEdit(editlog.SerializeAsString())) {
+    cerr << "[DFSMaster] " << "Failed to mkdir " << dirName << std::endl;
+    return OpCode::OP_LOG_FAILURE;
+  }
+  editlogID++;
   return OpCode::OP_SUCCESS;
 }
 
@@ -486,9 +570,7 @@ int DFSMaster::serializeNameSystem() {
   std::unique_lock<std::recursive_mutex> lockFileNameSys(mutexFileNameSys, std::defer_lock);
   std::unique_lock<std::recursive_mutex> lockMemoryNameSys(mutexMemoryNameSys, std::defer_lock);
 
-  std::unique_lock<std::recursive_mutex> lockCurrentMaxDfID(mutexCurrentMaxDfID, std::defer_lock);
-  std::unique_lock<std::recursive_mutex> lockCurrentBlkID(mutexCurrentMaxBlkID, std::defer_lock);
-  std::lock(lockFileNameSys, lockMemoryNameSys, lockCurrentMaxDfID, lockCurrentBlkID);
+  std::lock(lockFileNameSys, lockMemoryNameSys);
 
   std::ofstream fs(nameSysFile, std::ios::out|std::ios::binary);
   if (!fs.is_open()) {
@@ -546,9 +628,7 @@ int DFSMaster::parseNameSystem() {
   std::unique_lock<std::recursive_mutex> lockFileNameSys(mutexFileNameSys, std::defer_lock);
   std::unique_lock<std::recursive_mutex> lockMemoryNameSys(mutexMemoryNameSys, std::defer_lock);
 
-  std::unique_lock<std::recursive_mutex> lockCurrentMaxDfID(mutexCurrentMaxDfID, std::defer_lock);
-  std::unique_lock<std::recursive_mutex> lockCurrentBlkID(mutexCurrentMaxBlkID, std::defer_lock);
-  std::lock(lockFileNameSys, lockMemoryNameSys, lockCurrentMaxDfID, lockCurrentBlkID);
+  std::lock(lockFileNameSys, lockMemoryNameSys);
 
   std::ifstream fs(nameSysFile, std::ios::in|std::ios::binary);
   if (!fs.is_open()) {
@@ -609,10 +689,8 @@ int DFSMaster::initMater() {
   std::unique_lock<std::recursive_mutex> lockFileNameSys(mutexFileNameSys, std::defer_lock);
   std::unique_lock<std::recursive_mutex> lockMemoryNameSys(mutexMemoryNameSys, std::defer_lock);
 
-  std::unique_lock<std::recursive_mutex> lockCurrentMaxDfID(mutexCurrentMaxDfID, std::defer_lock);
-  std::unique_lock<std::recursive_mutex> lockCurrentBlkID(mutexCurrentMaxBlkID, std::defer_lock);
   std::unique_lock<std::recursive_mutex> lockChunkserverBlock(mutexChunkserverBlock, std::defer_lock);
-  std::lock(lockFileNameSys, lockMemoryNameSys, lockCurrentMaxDfID, lockCurrentBlkID, lockChunkserverBlock);
+  std::lock(lockFileNameSys, lockMemoryNameSys, lockChunkserverBlock);
 
   /// chunkserver
   blkLocs.clear();
@@ -624,7 +702,14 @@ int DFSMaster::initMater() {
   blksToBeReplicated.clear();
   
   /// name system
-  return parseNameSystem();
+  if(-1 == parseNameSystem()){
+    return -1;
+  }
+  /// replay the edit log
+  if (-1 == replayEditLog()){
+    return -1;
+  }
+  return 0;
 }
 
 void DFSMaster::splitPath(const string& path, string& dir) {
@@ -739,5 +824,150 @@ long long DFSMaster::getFileLength(int fileID) {
   return len;
 }
 
+int DFSMaster::logEdit(const string& editString) {
+  cerr << "[DFSMaster] " << editString << std::endl;
+  std::unique_lock<std::recursive_mutex> lockEdit(mutexFileNameSys);
+  int fd = ::open(editLogFile.c_str(), O_WRONLY | O_APPEND);
+  if (fd < 0) {
+    cerr << "[DFSMaster] " << "Failed to open editlog file\n";
+    return -1;
+  }
+  {
+    google::protobuf::io::FileOutputStream outRaw(fd);
+    google::protobuf::io::CodedOutputStream outCoded(&outRaw);
+
+    outCoded.WriteLittleEndian32(editlogMagicCode);
+    outCoded.WriteVarint32(editString.size());
+    outCoded.WriteString(editString);
+  }
+  
+  ::close(fd);
+  cerr << "[DFSMaster] " << "Succeeded to append to editlog file\n";
+  return 0;
+}
+
+int DFSMaster::replayEditLog(){
+  std::unique_lock<std::recursive_mutex> lockFileNameSys(mutexFileNameSys, std::defer_lock);
+  std::unique_lock<std::recursive_mutex> lockMemoryNameSys(mutexMemoryNameSys, std::defer_lock);
+  std::lock(lockFileNameSys, lockMemoryNameSys);
+
+  int fd = ::open(editLogFile.c_str(), O_RDONLY);
+  if (fd < 0) {
+    cerr << "[DFSMaster] " << "Failed to open editlog file\n";
+    return -1;
+  }
+  {
+    google::protobuf::io::FileInputStream inRaw(fd);
+    google::protobuf::io::CodedInputStream inCoded(&inRaw);
+
+    u_int32_t magic = 0;
+    editlogID = 0;
+    uint len = 0;
+    while (true == inCoded.ReadLittleEndian32(&magic) && magic == editlogMagicCode) {
+      if (false == inCoded.ReadVarint32(&len)){
+        cerr << "[DFSMaster] " << "Failed to read editlog file\n";
+        ::close(fd);
+        return -1;
+      }
+      std::vector<char> buf(len, 0);
+      if (false == inCoded.ReadRaw(buf.data(), len)) {
+        cerr << "[DFSMaster] " << "Failed to read editlog file\n";
+        ::close(fd);
+        return -1;
+      }
+      EditLog editlog;
+      editlog.ParseFromArray(buf.data(), len);
+      if (editlog.op() == OpCode::OP_CREATE) {
+        int newDfID = editlog.dfid();
+        if (currentMaxDfID < newDfID){
+          currentMaxDfID = newDfID;
+        }
+        string file = editlog.src();
+        
+        /// add an entry to dfIDs
+        dfIDs[file] = newDfID;
+        /// add it dfNames at the same time
+        dfNames[newDfID] = file;
+
+        /// add it to dentries
+        string dir;
+        splitPath(file, dir);
+        int dirID = dfIDs[dir];
+        dentries[dirID].push_back(newDfID);
+
+        /// add it to inode
+        for (int i = 0; i < editlog.blks_size(); ++i) {
+          int newBlkID = editlog.blks(i).blockid();
+          if (currentMaxBlkID < newBlkID) {
+            currentMaxBlkID = newBlkID;
+          }
+          inodes[newDfID].push_back(newBlkID);
+          blks[newBlkID] = editlog.blks(i);
+        }
+      } else if (editlog.op() == OpCode::OP_MKDIR) {
+        string dirName = editlog.src();
+        string dir;
+        splitPath(dirName, dir);
+
+        /// assign dfID
+        int newDfID = editlog.dfid();
+        if (currentMaxDfID < newDfID){
+          currentMaxDfID = newDfID;
+        }
+        /// add it to dfIDs
+        dfIDs[dirName] = newDfID;
+        /// add it to dfNames
+        dfNames[newDfID] = dirName;
+
+        /// add it to dentries
+        int dirID = dfIDs[dir];
+        dentries[dirID].push_back(newDfID);
+        dentries[newDfID] = std::vector<int>();
+      } else if (editlog.op() == OpCode::OP_REMOVE) {
+        string file = editlog.src();
+
+        /// assign dfID
+        int newDfID = editlog.dfid();
+        if (currentMaxDfID < newDfID){
+          currentMaxDfID = newDfID;
+        }
+
+        /// get dfID
+        int dfid = dfIDs[file];
+        dfIDs.erase(file);
+        /// remove dfNames at the same time
+        dfNames.erase(dfid);
+
+        /// remove it from its parent directory
+        string dir;
+        splitPath(file, dir);
+        int dirID = dfIDs[dir];
+
+        auto& vec = dentries[dirID];
+        for (auto ite = vec.begin(); ite != vec.end(); ++ite) {
+          if (*ite == dfid) {
+            vec.erase(ite);
+            break;
+          }
+        }
+
+        /// delete the corresponding inode
+        auto& blockvec = inodes[dfid];
+        for (int b : blockvec) {
+          blks.erase(b);
+        }
+        inodes.erase(dfid);
+      } else{
+        cerr << "[DFSMaster] " << "Invalid opcode in editlog file\n";
+        ::close(fd);
+        return -1;
+      }
+      editlogID++;
+    }
+  }
+  
+  ::close(fd);
+  return 0;
+}
 
 } // namespace minidfs

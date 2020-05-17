@@ -8,6 +8,7 @@
 #include <minidfs/dfs_master.hpp>
 
 const string nameSysFile("./data/namesys");
+const string editLogFile("./data/editlog");
 const int serverPort = 12345;
 const int maxConn = 3;
 const int replicationFactor = 1;
@@ -16,7 +17,7 @@ const int replicationFactor = 1;
 int main(int argc, char const *argv[])
 {
   std::cout << "Start Master...\n";
-  auto master = minidfs::DFSMaster(nameSysFile, serverPort, maxConn, replicationFactor);
+  minidfs::DFSMaster master(nameSysFile, editLogFile,serverPort, maxConn, replicationFactor);
   
   if (argc == 2 && 0 == strcmp(argv[1], "-format")) {
     master.format();

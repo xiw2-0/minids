@@ -43,6 +43,14 @@ class OpCode {
   static constexpr char OP_READ = 60;
   static constexpr char OP_WRITE = 61;
 
+
+  /////////////////////////////////
+  /// Op code for edit log
+  /////////////////////////////////
+  static constexpr char OP_CREATE = 80;
+  static constexpr char OP_MKDIR = 81;
+  static constexpr char OP_REMOVE = 82;
+  static constexpr char OP_LOG_FAILURE = 90;
 };
 
 

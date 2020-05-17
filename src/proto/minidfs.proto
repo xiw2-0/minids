@@ -87,6 +87,19 @@ message NameSystem {
     DentrySection  dentrySection = 4;
 }
 
+/// \brief Every change to name system will be logged into editlog
+message EditLog {
+    /// create, mkdir, remove
+    int32 op = 1;
+    /// name of a file/dir
+    string src = 2;
+    /// dfID of src
+    int32 dfID = 3;
+
+    /// create operation will need blocks' info
+    repeated Block blks = 6;
+}
+
 /// This is a summary of a file info.
 message FileInfo {
     string name = 1;

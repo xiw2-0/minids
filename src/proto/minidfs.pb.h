@@ -47,7 +47,7 @@ struct TableStruct_minidfs_2eproto {
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::AuxillaryParseTableField aux[]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
-  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[15]
+  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[16]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::FieldMetadata field_metadata[];
   static const ::PROTOBUF_NAMESPACE_ID::internal::SerializationTable serialization_table[];
@@ -79,6 +79,9 @@ extern DentryDefaultTypeInternal _Dentry_default_instance_;
 class DentrySection;
 class DentrySectionDefaultTypeInternal;
 extern DentrySectionDefaultTypeInternal _DentrySection_default_instance_;
+class EditLog;
+class EditLogDefaultTypeInternal;
+extern EditLogDefaultTypeInternal _EditLog_default_instance_;
 class FileInfo;
 class FileInfoDefaultTypeInternal;
 extern FileInfoDefaultTypeInternal _FileInfo_default_instance_;
@@ -110,6 +113,7 @@ template<> ::minidfs::BlockTasks* Arena::CreateMaybeMessage<::minidfs::BlockTask
 template<> ::minidfs::ChunkserverInfo* Arena::CreateMaybeMessage<::minidfs::ChunkserverInfo>(Arena*);
 template<> ::minidfs::Dentry* Arena::CreateMaybeMessage<::minidfs::Dentry>(Arena*);
 template<> ::minidfs::DentrySection* Arena::CreateMaybeMessage<::minidfs::DentrySection>(Arena*);
+template<> ::minidfs::EditLog* Arena::CreateMaybeMessage<::minidfs::EditLog>(Arena*);
 template<> ::minidfs::FileInfo* Arena::CreateMaybeMessage<::minidfs::FileInfo>(Arena*);
 template<> ::minidfs::FileInfos* Arena::CreateMaybeMessage<::minidfs::FileInfos>(Arena*);
 template<> ::minidfs::Inode* Arena::CreateMaybeMessage<::minidfs::Inode>(Arena*);
@@ -1993,6 +1997,170 @@ class NameSystem :
 };
 // -------------------------------------------------------------------
 
+class EditLog :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:minidfs.EditLog) */ {
+ public:
+  EditLog();
+  virtual ~EditLog();
+
+  EditLog(const EditLog& from);
+  EditLog(EditLog&& from) noexcept
+    : EditLog() {
+    *this = ::std::move(from);
+  }
+
+  inline EditLog& operator=(const EditLog& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline EditLog& operator=(EditLog&& from) noexcept {
+    if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
+      if (this != &from) InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return GetMetadataStatic().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return GetMetadataStatic().reflection;
+  }
+  static const EditLog& default_instance();
+
+  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
+  static inline const EditLog* internal_default_instance() {
+    return reinterpret_cast<const EditLog*>(
+               &_EditLog_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    13;
+
+  friend void swap(EditLog& a, EditLog& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(EditLog* other) {
+    if (other == this) return;
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline EditLog* New() const final {
+    return CreateMaybeMessage<EditLog>(nullptr);
+  }
+
+  EditLog* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<EditLog>(arena);
+  }
+  void CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void CopyFrom(const EditLog& from);
+  void MergeFrom(const EditLog& from);
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  #if GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  #else
+  bool MergePartialFromCodedStream(
+      ::PROTOBUF_NAMESPACE_ID::io::CodedInputStream* input) final;
+  #endif  // GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
+  void SerializeWithCachedSizes(
+      ::PROTOBUF_NAMESPACE_ID::io::CodedOutputStream* output) const final;
+  ::PROTOBUF_NAMESPACE_ID::uint8* InternalSerializeWithCachedSizesToArray(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  inline void SharedCtor();
+  inline void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(EditLog* other);
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "minidfs.EditLog";
+  }
+  private:
+  inline ::PROTOBUF_NAMESPACE_ID::Arena* GetArenaNoVirtual() const {
+    return nullptr;
+  }
+  inline void* MaybeArenaPtr() const {
+    return nullptr;
+  }
+  public:
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+  private:
+  static ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadataStatic() {
+    ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&::descriptor_table_minidfs_2eproto);
+    return ::descriptor_table_minidfs_2eproto.file_level_metadata[kIndexInFileMessages];
+  }
+
+  public:
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kBlksFieldNumber = 6,
+    kSrcFieldNumber = 2,
+    kOpFieldNumber = 1,
+    kDfIDFieldNumber = 3,
+  };
+  // repeated .minidfs.Block blks = 6;
+  int blks_size() const;
+  void clear_blks();
+  ::minidfs::Block* mutable_blks(int index);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::minidfs::Block >*
+      mutable_blks();
+  const ::minidfs::Block& blks(int index) const;
+  ::minidfs::Block* add_blks();
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::minidfs::Block >&
+      blks() const;
+
+  // string src = 2;
+  void clear_src();
+  const std::string& src() const;
+  void set_src(const std::string& value);
+  void set_src(std::string&& value);
+  void set_src(const char* value);
+  void set_src(const char* value, size_t size);
+  std::string* mutable_src();
+  std::string* release_src();
+  void set_allocated_src(std::string* src);
+
+  // int32 op = 1;
+  void clear_op();
+  ::PROTOBUF_NAMESPACE_ID::int32 op() const;
+  void set_op(::PROTOBUF_NAMESPACE_ID::int32 value);
+
+  // int32 dfID = 3;
+  void clear_dfid();
+  ::PROTOBUF_NAMESPACE_ID::int32 dfid() const;
+  void set_dfid(::PROTOBUF_NAMESPACE_ID::int32 value);
+
+  // @@protoc_insertion_point(class_scope:minidfs.EditLog)
+ private:
+  class _Internal;
+
+  ::PROTOBUF_NAMESPACE_ID::internal::InternalMetadataWithArena _internal_metadata_;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::minidfs::Block > blks_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr src_;
+  ::PROTOBUF_NAMESPACE_ID::int32 op_;
+  ::PROTOBUF_NAMESPACE_ID::int32 dfid_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_minidfs_2eproto;
+};
+// -------------------------------------------------------------------
+
 class FileInfo :
     public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:minidfs.FileInfo) */ {
  public:
@@ -2035,7 +2203,7 @@ class FileInfo :
                &_FileInfo_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    13;
+    14;
 
   friend void swap(FileInfo& a, FileInfo& b) {
     a.Swap(&b);
@@ -2186,7 +2354,7 @@ class FileInfos :
                &_FileInfos_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    14;
+    15;
 
   friend void swap(FileInfos& a, FileInfos& b) {
     a.Swap(&b);
@@ -3093,6 +3261,119 @@ inline void NameSystem::set_allocated_dentrysection(::minidfs::DentrySection* de
 
 // -------------------------------------------------------------------
 
+// EditLog
+
+// int32 op = 1;
+inline void EditLog::clear_op() {
+  op_ = 0;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 EditLog::op() const {
+  // @@protoc_insertion_point(field_get:minidfs.EditLog.op)
+  return op_;
+}
+inline void EditLog::set_op(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  
+  op_ = value;
+  // @@protoc_insertion_point(field_set:minidfs.EditLog.op)
+}
+
+// string src = 2;
+inline void EditLog::clear_src() {
+  src_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline const std::string& EditLog::src() const {
+  // @@protoc_insertion_point(field_get:minidfs.EditLog.src)
+  return src_.GetNoArena();
+}
+inline void EditLog::set_src(const std::string& value) {
+  
+  src_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:minidfs.EditLog.src)
+}
+inline void EditLog::set_src(std::string&& value) {
+  
+  src_.SetNoArena(
+    &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:minidfs.EditLog.src)
+}
+inline void EditLog::set_src(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  
+  src_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:minidfs.EditLog.src)
+}
+inline void EditLog::set_src(const char* value, size_t size) {
+  
+  src_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:minidfs.EditLog.src)
+}
+inline std::string* EditLog::mutable_src() {
+  
+  // @@protoc_insertion_point(field_mutable:minidfs.EditLog.src)
+  return src_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline std::string* EditLog::release_src() {
+  // @@protoc_insertion_point(field_release:minidfs.EditLog.src)
+  
+  return src_.ReleaseNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+inline void EditLog::set_allocated_src(std::string* src) {
+  if (src != nullptr) {
+    
+  } else {
+    
+  }
+  src_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), src);
+  // @@protoc_insertion_point(field_set_allocated:minidfs.EditLog.src)
+}
+
+// int32 dfID = 3;
+inline void EditLog::clear_dfid() {
+  dfid_ = 0;
+}
+inline ::PROTOBUF_NAMESPACE_ID::int32 EditLog::dfid() const {
+  // @@protoc_insertion_point(field_get:minidfs.EditLog.dfID)
+  return dfid_;
+}
+inline void EditLog::set_dfid(::PROTOBUF_NAMESPACE_ID::int32 value) {
+  
+  dfid_ = value;
+  // @@protoc_insertion_point(field_set:minidfs.EditLog.dfID)
+}
+
+// repeated .minidfs.Block blks = 6;
+inline int EditLog::blks_size() const {
+  return blks_.size();
+}
+inline void EditLog::clear_blks() {
+  blks_.Clear();
+}
+inline ::minidfs::Block* EditLog::mutable_blks(int index) {
+  // @@protoc_insertion_point(field_mutable:minidfs.EditLog.blks)
+  return blks_.Mutable(index);
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::minidfs::Block >*
+EditLog::mutable_blks() {
+  // @@protoc_insertion_point(field_mutable_list:minidfs.EditLog.blks)
+  return &blks_;
+}
+inline const ::minidfs::Block& EditLog::blks(int index) const {
+  // @@protoc_insertion_point(field_get:minidfs.EditLog.blks)
+  return blks_.Get(index);
+}
+inline ::minidfs::Block* EditLog::add_blks() {
+  // @@protoc_insertion_point(field_add:minidfs.EditLog.blks)
+  return blks_.Add();
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::minidfs::Block >&
+EditLog::blks() const {
+  // @@protoc_insertion_point(field_list:minidfs.EditLog.blks)
+  return blks_;
+}
+
+// -------------------------------------------------------------------
+
 // FileInfo
 
 // string name = 1;
@@ -3211,6 +3492,8 @@ FileInfos::fileinfos() const {
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

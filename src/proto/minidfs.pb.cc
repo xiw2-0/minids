@@ -77,6 +77,10 @@ class NameSystemDefaultTypeInternal {
  public:
   ::PROTOBUF_NAMESPACE_ID::internal::ExplicitlyConstructed<NameSystem> _instance;
 } _NameSystem_default_instance_;
+class EditLogDefaultTypeInternal {
+ public:
+  ::PROTOBUF_NAMESPACE_ID::internal::ExplicitlyConstructed<EditLog> _instance;
+} _EditLog_default_instance_;
 class FileInfoDefaultTypeInternal {
  public:
   ::PROTOBUF_NAMESPACE_ID::internal::ExplicitlyConstructed<FileInfo> _instance;
@@ -202,6 +206,21 @@ static void InitDefaultsscc_info_DentrySection_minidfs_2eproto() {
     {{ATOMIC_VAR_INIT(::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase::kUninitialized), 1, InitDefaultsscc_info_DentrySection_minidfs_2eproto}, {
       &scc_info_Dentry_minidfs_2eproto.base,}};
 
+static void InitDefaultsscc_info_EditLog_minidfs_2eproto() {
+  GOOGLE_PROTOBUF_VERIFY_VERSION;
+
+  {
+    void* ptr = &::minidfs::_EditLog_default_instance_;
+    new (ptr) ::minidfs::EditLog();
+    ::PROTOBUF_NAMESPACE_ID::internal::OnShutdownDestroyMessage(ptr);
+  }
+  ::minidfs::EditLog::InitAsDefaultInstance();
+}
+
+::PROTOBUF_NAMESPACE_ID::internal::SCCInfo<1> scc_info_EditLog_minidfs_2eproto =
+    {{ATOMIC_VAR_INIT(::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase::kUninitialized), 1, InitDefaultsscc_info_EditLog_minidfs_2eproto}, {
+      &scc_info_Block_minidfs_2eproto.base,}};
+
 static void InitDefaultsscc_info_FileInfo_minidfs_2eproto() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
@@ -308,7 +327,7 @@ static void InitDefaultsscc_info_NameSystem_minidfs_2eproto() {
       &scc_info_InodeSection_minidfs_2eproto.base,
       &scc_info_DentrySection_minidfs_2eproto.base,}};
 
-static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_minidfs_2eproto[15];
+static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_minidfs_2eproto[16];
 static constexpr ::PROTOBUF_NAMESPACE_ID::EnumDescriptor const** file_level_enum_descriptors_minidfs_2eproto = nullptr;
 static constexpr ::PROTOBUF_NAMESPACE_ID::ServiceDescriptor const** file_level_service_descriptors_minidfs_2eproto = nullptr;
 
@@ -404,6 +423,15 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_minidfs_2eproto::offsets[] PRO
   PROTOBUF_FIELD_OFFSET(::minidfs::NameSystem, inodesection_),
   PROTOBUF_FIELD_OFFSET(::minidfs::NameSystem, dentrysection_),
   ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::minidfs::EditLog, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  PROTOBUF_FIELD_OFFSET(::minidfs::EditLog, op_),
+  PROTOBUF_FIELD_OFFSET(::minidfs::EditLog, src_),
+  PROTOBUF_FIELD_OFFSET(::minidfs::EditLog, dfid_),
+  PROTOBUF_FIELD_OFFSET(::minidfs::EditLog, blks_),
+  ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::minidfs::FileInfo, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
@@ -432,8 +460,9 @@ static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOB
   { 68, -1, sizeof(::minidfs::Dentry)},
   { 75, -1, sizeof(::minidfs::DentrySection)},
   { 81, -1, sizeof(::minidfs::NameSystem)},
-  { 90, -1, sizeof(::minidfs::FileInfo)},
-  { 98, -1, sizeof(::minidfs::FileInfos)},
+  { 90, -1, sizeof(::minidfs::EditLog)},
+  { 99, -1, sizeof(::minidfs::FileInfo)},
+  { 107, -1, sizeof(::minidfs::FileInfos)},
 };
 
 static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
@@ -450,6 +479,7 @@ static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] =
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::minidfs::_Dentry_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::minidfs::_DentrySection_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::minidfs::_NameSystem_default_instance_),
+  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::minidfs::_EditLog_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::minidfs::_FileInfo_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::minidfs::_FileInfos_default_instance_),
 };
@@ -477,14 +507,16 @@ const char descriptor_table_protodef_minidfs_2eproto[] PROTOBUF_SECTION_VARIABLE
   "meSystem\022\017\n\007maxDfID\030\001 \001(\005\022\020\n\010maxBlkID\030\002 "
   "\001(\005\022+\n\014inodeSection\030\003 \001(\0132\025.minidfs.Inod"
   "eSection\022-\n\rdentrySection\030\004 \001(\0132\026.minidf"
-  "s.DentrySection\"8\n\010FileInfo\022\014\n\004name\030\001 \001("
+  "s.DentrySection\"N\n\007EditLog\022\n\n\002op\030\001 \001(\005\022\013"
+  "\n\003src\030\002 \001(\t\022\014\n\004dfID\030\003 \001(\005\022\034\n\004blks\030\006 \003(\0132"
+  "\016.minidfs.Block\"8\n\010FileInfo\022\014\n\004name\030\001 \001("
   "\t\022\r\n\005isDir\030\002 \001(\010\022\017\n\007fileLen\030\003 \001(\003\"1\n\tFil"
   "eInfos\022$\n\tfileInfos\030\001 \003(\0132\021.minidfs.File"
   "Infob\006proto3"
   ;
 static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_minidfs_2eproto_deps[1] = {
 };
-static ::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase*const descriptor_table_minidfs_2eproto_sccs[15] = {
+static ::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase*const descriptor_table_minidfs_2eproto_sccs[16] = {
   &scc_info_BlkIDs_minidfs_2eproto.base,
   &scc_info_Block_minidfs_2eproto.base,
   &scc_info_BlockReport_minidfs_2eproto.base,
@@ -493,6 +525,7 @@ static ::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase*const descriptor_table_min
   &scc_info_ChunkserverInfo_minidfs_2eproto.base,
   &scc_info_Dentry_minidfs_2eproto.base,
   &scc_info_DentrySection_minidfs_2eproto.base,
+  &scc_info_EditLog_minidfs_2eproto.base,
   &scc_info_FileInfo_minidfs_2eproto.base,
   &scc_info_FileInfos_minidfs_2eproto.base,
   &scc_info_Inode_minidfs_2eproto.base,
@@ -504,10 +537,10 @@ static ::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase*const descriptor_table_min
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_minidfs_2eproto_once;
 static bool descriptor_table_minidfs_2eproto_initialized = false;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_minidfs_2eproto = {
-  &descriptor_table_minidfs_2eproto_initialized, descriptor_table_protodef_minidfs_2eproto, "minidfs.proto", 1012,
-  &descriptor_table_minidfs_2eproto_once, descriptor_table_minidfs_2eproto_sccs, descriptor_table_minidfs_2eproto_deps, 15, 0,
+  &descriptor_table_minidfs_2eproto_initialized, descriptor_table_protodef_minidfs_2eproto, "minidfs.proto", 1092,
+  &descriptor_table_minidfs_2eproto_once, descriptor_table_minidfs_2eproto_sccs, descriptor_table_minidfs_2eproto_deps, 16, 0,
   schemas, file_default_instances, TableStruct_minidfs_2eproto::offsets,
-  file_level_metadata_minidfs_2eproto, 15, file_level_enum_descriptors_minidfs_2eproto, file_level_service_descriptors_minidfs_2eproto,
+  file_level_metadata_minidfs_2eproto, 16, file_level_enum_descriptors_minidfs_2eproto, file_level_service_descriptors_minidfs_2eproto,
 };
 
 // Force running AddDescriptors() at dynamic initialization time.
@@ -4556,6 +4589,421 @@ void NameSystem::InternalSwap(NameSystem* other) {
 
 // ===================================================================
 
+void EditLog::InitAsDefaultInstance() {
+}
+class EditLog::_Internal {
+ public:
+};
+
+EditLog::EditLog()
+  : ::PROTOBUF_NAMESPACE_ID::Message(), _internal_metadata_(nullptr) {
+  SharedCtor();
+  // @@protoc_insertion_point(constructor:minidfs.EditLog)
+}
+EditLog::EditLog(const EditLog& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message(),
+      _internal_metadata_(nullptr),
+      blks_(from.blks_) {
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  src_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  if (!from.src().empty()) {
+    src_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.src_);
+  }
+  ::memcpy(&op_, &from.op_,
+    static_cast<size_t>(reinterpret_cast<char*>(&dfid_) -
+    reinterpret_cast<char*>(&op_)) + sizeof(dfid_));
+  // @@protoc_insertion_point(copy_constructor:minidfs.EditLog)
+}
+
+void EditLog::SharedCtor() {
+  ::PROTOBUF_NAMESPACE_ID::internal::InitSCC(&scc_info_EditLog_minidfs_2eproto.base);
+  src_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  ::memset(&op_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&dfid_) -
+      reinterpret_cast<char*>(&op_)) + sizeof(dfid_));
+}
+
+EditLog::~EditLog() {
+  // @@protoc_insertion_point(destructor:minidfs.EditLog)
+  SharedDtor();
+}
+
+void EditLog::SharedDtor() {
+  src_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+
+void EditLog::SetCachedSize(int size) const {
+  _cached_size_.Set(size);
+}
+const EditLog& EditLog::default_instance() {
+  ::PROTOBUF_NAMESPACE_ID::internal::InitSCC(&::scc_info_EditLog_minidfs_2eproto.base);
+  return *internal_default_instance();
+}
+
+
+void EditLog::Clear() {
+// @@protoc_insertion_point(message_clear_start:minidfs.EditLog)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  blks_.Clear();
+  src_.ClearToEmptyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  ::memset(&op_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&dfid_) -
+      reinterpret_cast<char*>(&op_)) + sizeof(dfid_));
+  _internal_metadata_.Clear();
+}
+
+#if GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
+const char* EditLog::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  while (!ctx->Done(&ptr)) {
+    ::PROTOBUF_NAMESPACE_ID::uint32 tag;
+    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    CHK_(ptr);
+    switch (tag >> 3) {
+      // int32 op = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 8)) {
+          op_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint(&ptr);
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      // string src = 2;
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 18)) {
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParserUTF8(mutable_src(), ptr, ctx, "minidfs.EditLog.src");
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      // int32 dfID = 3;
+      case 3:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 24)) {
+          dfid_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint(&ptr);
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      // repeated .minidfs.Block blks = 6;
+      case 6:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 50)) {
+          ptr -= 1;
+          do {
+            ptr += 1;
+            ptr = ctx->ParseMessage(add_blks(), ptr);
+            CHK_(ptr);
+            if (!ctx->DataAvailable(ptr)) break;
+          } while (::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<::PROTOBUF_NAMESPACE_ID::uint8>(ptr) == 50);
+        } else goto handle_unusual;
+        continue;
+      default: {
+      handle_unusual:
+        if ((tag & 7) == 4 || tag == 0) {
+          ctx->SetLastTag(tag);
+          goto success;
+        }
+        ptr = UnknownFieldParse(tag, &_internal_metadata_, ptr, ctx);
+        CHK_(ptr != nullptr);
+        continue;
+      }
+    }  // switch
+  }  // while
+success:
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto success;
+#undef CHK_
+}
+#else  // GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
+bool EditLog::MergePartialFromCodedStream(
+    ::PROTOBUF_NAMESPACE_ID::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!PROTOBUF_PREDICT_TRUE(EXPRESSION)) goto failure
+  ::PROTOBUF_NAMESPACE_ID::uint32 tag;
+  // @@protoc_insertion_point(parse_start:minidfs.EditLog)
+  for (;;) {
+    ::std::pair<::PROTOBUF_NAMESPACE_ID::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
+    tag = p.first;
+    if (!p.second) goto handle_unusual;
+    switch (::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // int32 op = 1;
+      case 1: {
+        if (static_cast< ::PROTOBUF_NAMESPACE_ID::uint8>(tag) == (8 & 0xFF)) {
+
+          DO_((::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::ReadPrimitive<
+                   ::PROTOBUF_NAMESPACE_ID::int32, ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::TYPE_INT32>(
+                 input, &op_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // string src = 2;
+      case 2: {
+        if (static_cast< ::PROTOBUF_NAMESPACE_ID::uint8>(tag) == (18 & 0xFF)) {
+          DO_(::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::ReadString(
+                input, this->mutable_src()));
+          DO_(::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+            this->src().data(), static_cast<int>(this->src().length()),
+            ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::PARSE,
+            "minidfs.EditLog.src"));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // int32 dfID = 3;
+      case 3: {
+        if (static_cast< ::PROTOBUF_NAMESPACE_ID::uint8>(tag) == (24 & 0xFF)) {
+
+          DO_((::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::ReadPrimitive<
+                   ::PROTOBUF_NAMESPACE_ID::int32, ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::TYPE_INT32>(
+                 input, &dfid_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // repeated .minidfs.Block blks = 6;
+      case 6: {
+        if (static_cast< ::PROTOBUF_NAMESPACE_ID::uint8>(tag) == (50 & 0xFF)) {
+          DO_(::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::ReadMessage(
+                input, add_blks()));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      default: {
+      handle_unusual:
+        if (tag == 0) {
+          goto success;
+        }
+        DO_(::PROTOBUF_NAMESPACE_ID::internal::WireFormat::SkipField(
+              input, tag, _internal_metadata_.mutable_unknown_fields()));
+        break;
+      }
+    }
+  }
+success:
+  // @@protoc_insertion_point(parse_success:minidfs.EditLog)
+  return true;
+failure:
+  // @@protoc_insertion_point(parse_failure:minidfs.EditLog)
+  return false;
+#undef DO_
+}
+#endif  // GOOGLE_PROTOBUF_ENABLE_EXPERIMENTAL_PARSER
+
+void EditLog::SerializeWithCachedSizes(
+    ::PROTOBUF_NAMESPACE_ID::io::CodedOutputStream* output) const {
+  // @@protoc_insertion_point(serialize_start:minidfs.EditLog)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // int32 op = 1;
+  if (this->op() != 0) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32(1, this->op(), output);
+  }
+
+  // string src = 2;
+  if (this->src().size() > 0) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->src().data(), static_cast<int>(this->src().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "minidfs.EditLog.src");
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteStringMaybeAliased(
+      2, this->src(), output);
+  }
+
+  // int32 dfID = 3;
+  if (this->dfid() != 0) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32(3, this->dfid(), output);
+  }
+
+  // repeated .minidfs.Block blks = 6;
+  for (unsigned int i = 0,
+      n = static_cast<unsigned int>(this->blks_size()); i < n; i++) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteMessageMaybeToArray(
+      6,
+      this->blks(static_cast<int>(i)),
+      output);
+  }
+
+  if (_internal_metadata_.have_unknown_fields()) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::SerializeUnknownFields(
+        _internal_metadata_.unknown_fields(), output);
+  }
+  // @@protoc_insertion_point(serialize_end:minidfs.EditLog)
+}
+
+::PROTOBUF_NAMESPACE_ID::uint8* EditLog::InternalSerializeWithCachedSizesToArray(
+    ::PROTOBUF_NAMESPACE_ID::uint8* target) const {
+  // @@protoc_insertion_point(serialize_to_array_start:minidfs.EditLog)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // int32 op = 1;
+  if (this->op() != 0) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(1, this->op(), target);
+  }
+
+  // string src = 2;
+  if (this->src().size() > 0) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->src().data(), static_cast<int>(this->src().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "minidfs.EditLog.src");
+    target =
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteStringToArray(
+        2, this->src(), target);
+  }
+
+  // int32 dfID = 3;
+  if (this->dfid() != 0) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(3, this->dfid(), target);
+  }
+
+  // repeated .minidfs.Block blks = 6;
+  for (unsigned int i = 0,
+      n = static_cast<unsigned int>(this->blks_size()); i < n; i++) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+      InternalWriteMessageToArray(
+        6, this->blks(static_cast<int>(i)), target);
+  }
+
+  if (_internal_metadata_.have_unknown_fields()) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::SerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields(), target);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:minidfs.EditLog)
+  return target;
+}
+
+size_t EditLog::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:minidfs.EditLog)
+  size_t total_size = 0;
+
+  if (_internal_metadata_.have_unknown_fields()) {
+    total_size +=
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::ComputeUnknownFieldsSize(
+        _internal_metadata_.unknown_fields());
+  }
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // repeated .minidfs.Block blks = 6;
+  {
+    unsigned int count = static_cast<unsigned int>(this->blks_size());
+    total_size += 1UL * count;
+    for (unsigned int i = 0; i < count; i++) {
+      total_size +=
+        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
+          this->blks(static_cast<int>(i)));
+    }
+  }
+
+  // string src = 2;
+  if (this->src().size() > 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->src());
+  }
+
+  // int32 op = 1;
+  if (this->op() != 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32Size(
+        this->op());
+  }
+
+  // int32 dfID = 3;
+  if (this->dfid() != 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32Size(
+        this->dfid());
+  }
+
+  int cached_size = ::PROTOBUF_NAMESPACE_ID::internal::ToCachedSize(total_size);
+  SetCachedSize(cached_size);
+  return total_size;
+}
+
+void EditLog::MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+// @@protoc_insertion_point(generalized_merge_from_start:minidfs.EditLog)
+  GOOGLE_DCHECK_NE(&from, this);
+  const EditLog* source =
+      ::PROTOBUF_NAMESPACE_ID::DynamicCastToGenerated<EditLog>(
+          &from);
+  if (source == nullptr) {
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:minidfs.EditLog)
+    ::PROTOBUF_NAMESPACE_ID::internal::ReflectionOps::Merge(from, this);
+  } else {
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:minidfs.EditLog)
+    MergeFrom(*source);
+  }
+}
+
+void EditLog::MergeFrom(const EditLog& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:minidfs.EditLog)
+  GOOGLE_DCHECK_NE(&from, this);
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  blks_.MergeFrom(from.blks_);
+  if (from.src().size() > 0) {
+
+    src_.AssignWithDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), from.src_);
+  }
+  if (from.op() != 0) {
+    set_op(from.op());
+  }
+  if (from.dfid() != 0) {
+    set_dfid(from.dfid());
+  }
+}
+
+void EditLog::CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:minidfs.EditLog)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void EditLog::CopyFrom(const EditLog& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:minidfs.EditLog)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool EditLog::IsInitialized() const {
+  return true;
+}
+
+void EditLog::InternalSwap(EditLog* other) {
+  using std::swap;
+  _internal_metadata_.Swap(&other->_internal_metadata_);
+  CastToBase(&blks_)->InternalSwap(CastToBase(&other->blks_));
+  src_.Swap(&other->src_, &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+    GetArenaNoVirtual());
+  swap(op_, other->op_);
+  swap(dfid_, other->dfid_);
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata EditLog::GetMetadata() const {
+  return GetMetadataStatic();
+}
+
+
+// ===================================================================
+
 void FileInfo::InitAsDefaultInstance() {
 }
 class FileInfo::_Internal {
@@ -5214,6 +5662,9 @@ template<> PROTOBUF_NOINLINE ::minidfs::DentrySection* Arena::CreateMaybeMessage
 }
 template<> PROTOBUF_NOINLINE ::minidfs::NameSystem* Arena::CreateMaybeMessage< ::minidfs::NameSystem >(Arena* arena) {
   return Arena::CreateInternal< ::minidfs::NameSystem >(arena);
+}
+template<> PROTOBUF_NOINLINE ::minidfs::EditLog* Arena::CreateMaybeMessage< ::minidfs::EditLog >(Arena* arena) {
+  return Arena::CreateInternal< ::minidfs::EditLog >(arena);
 }
 template<> PROTOBUF_NOINLINE ::minidfs::FileInfo* Arena::CreateMaybeMessage< ::minidfs::FileInfo >(Arena* arena) {
   return Arena::CreateInternal< ::minidfs::FileInfo >(arena);

@@ -7,8 +7,16 @@
 #ifndef DFS_MASTER_
 #define DFS_MASTER_
 
+#include <stdio.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 #include <fstream>
 #include <random>
+#include <atomic>
+
+#include <google/protobuf/io/coded_stream.h>
+#include <google/protobuf/io/zero_copy_stream_impl.h>
 
 #include <minidfs/chunkserver_protocol.hpp>
 #include <minidfs/client_protocol.hpp>
@@ -61,13 +69,20 @@ class ChunkserverInfoLessThan {
 /// Master receives rpc calls from dfs client and dfs chunkservers.
 /// When master receives a new socket, it generates a new thread to handle
 /// this request.
-/// Locking orders: mutexFileNameSys > mutexMemoryNameSys > mutexCurrentMaxDfID >
-///                 mutexCurrentMaxBlkID > mutexChunkserverBlock > mutexInCreating
+/// Locking orders: mutexFileNameSys > mutexMemoryNameSys > 
+///                 mutexChunkserverBlock > mutexInCreating
+/// currentMaxDfID and currentMaxBlkID use atomic int
 class DFSMaster: public ClientProtocol, public ChunkserverProtocol{
  private:
 
   /// namesystem file
   string nameSysFile;
+
+  /// editlog file
+  string editLogFile;
+
+  /// current editlog id
+  std::atomic<int> editlogID;
 
   ///#1 mutex for name system in disk
   std::recursive_mutex mutexFileNameSys;
@@ -86,9 +101,7 @@ class DFSMaster: public ClientProtocol, public ChunkserverProtocol{
   std::unordered_map<string, int> dfIDs;
 
   /// The max dfID that has been allocated
-  int currentMaxDfID;
-  /// mutex for currentMaxDfId
-  std::recursive_mutex mutexCurrentMaxDfID;
+  std::atomic<int> currentMaxDfID;
 
   /// inversion of dfIDs
   std::unordered_map<int, string> dfNames;
@@ -104,9 +117,7 @@ class DFSMaster: public ClientProtocol, public ChunkserverProtocol{
   std::unordered_map<int, std::vector<int>> inodes;
 
   /// The max block ID that has been allocated
-  int currentMaxBlkID;
-  /// mutex for currentMaxBlkID
-  std::recursive_mutex mutexCurrentMaxBlkID;
+  std::atomic<int> currentMaxBlkID;
 
   /// \brief Maps from block id to blocks.
   std::unordered_map<int, Block> blks;
@@ -140,16 +151,25 @@ class DFSMaster: public ClientProtocol, public ChunkserverProtocol{
   /// number of replicas
   int replicationFactor;
 
+  /// magic code of edit log
+  const int editlogMagicCode = 1234;
+
+  /// max number of edit log
+  const int maxEditLogEntry = 5;
+
+  /// status checking interval, in ms
+  const int STATUS_CHECK_INTERVAL = 7000;
+
 
  public:
   /// \brief Construct the Master.
   ///
-  /// \param dfIDFile
-  /// \param dentryFile
-  /// \param inodeFile
+  /// \param nameSysFile file name of name system
+  /// \param editLogFile file name of edit log
   /// \param serverPort Master's serving port
   /// \param maxConns maximum number of connections
-  DFSMaster(const string& nameSysFile,
+  /// \param replicationFactor number of replicas for every block
+  DFSMaster(const string& nameSysFile, const string& editLogFile,
             int serverPort, int maxConns, int replicationFactor);
 
   ~DFSMaster();
@@ -171,6 +191,7 @@ class DFSMaster: public ClientProtocol, public ChunkserverProtocol{
   void startRun();
 
   /// \brief Take a snapshot of the name system and store it to local disk.
+  /// At the same time, edit log is reset to empty file.
   int checkpoint();
 
   /// \brief Is it safe to recv requests from clients?
@@ -178,8 +199,9 @@ class DFSMaster: public ClientProtocol, public ChunkserverProtocol{
   bool isSafe();
 
   /// \brief Check whether all chunkservers are still alive.
+  /// Check the edit log size. Check the status every STATUS_CHECK_INTERVAL.
   /// It runs as a daemon thread to find dead nodes.
-  void checkHeartbeat();
+  void statusChecker();
 
   ////////////////////////
   /// ClientProtocol
@@ -350,6 +372,17 @@ class DFSMaster: public ClientProtocol, public ChunkserverProtocol{
   /// \param fileID the ID of the given file
   /// \return the total length of the given file; otherwise it returns -1
   long long getFileLength(int fileID);
+
+  /// Log the edit into logeditFile.
+  ///
+  /// \param editString serialized EditLog
+  /// \return return 0 on success, -1 for errors
+  int logEdit(const string& editString);
+
+  /// Replay the edit logs to recover the name system.
+  ///
+  /// \return return 0 on success, -1 for errors
+  int replayEditLog();
 };
 
 

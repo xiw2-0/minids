@@ -12,12 +12,13 @@ const string editLogFile("./data/editlog");
 const int serverPort = 12345;
 const int maxConn = 3;
 const int replicationFactor = 1;
+const int nThread = 2;
 
 /// Start Master and provide services endlessly.
 int main(int argc, char const *argv[])
 {
   std::cout << "Start Master...\n";
-  minidfs::DFSMaster master(nameSysFile, editLogFile,serverPort, maxConn, replicationFactor);
+  minidfs::DFSMaster master(nameSysFile, editLogFile,serverPort, maxConn, replicationFactor, nThread);
   
   if (argc == 2 && 0 == strcmp(argv[1], "-format")) {
     master.format();

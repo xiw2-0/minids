@@ -10,8 +10,9 @@
 
 namespace rpc {
 /// TODO: xiw, isSafe should be true. False here is used to test rpc b/w client and master.
-RPCServer::RPCServer(int serverPort, int maxConns, minidfs::DFSMaster* master)
-    : serverPort(serverPort), maxConnections(maxConns), master(master), isSafeMode(false) {
+RPCServer::RPCServer(int serverPort, int maxConns, minidfs::DFSMaster* master, size_t nThread)
+    : serverPort(serverPort), maxConnections(maxConns), master(master), isSafeMode(false),
+      threadPool(nThread) {
 }
 
 RPCServer::~RPCServer() {
@@ -38,9 +39,8 @@ void RPCServer::run() {
       cerr << "[RPCServer] "  << "Failed to accept socket " << strerror(errno) << std::endl;
       continue;
     }
-    /// TODO: xiw, use thread pool maybe?
-    std::thread handleThread(&RPCServer::handleRequest, this, connfd);
-    handleThread.detach();
+    std::function<void()> func = std::bind(&RPCServer::handleRequest, this, connfd);
+    threadPool.enqueue(func);
   }
 }
 

@@ -16,6 +16,7 @@
 
 #include <minidfs/chunkserver_protocol.hpp>
 #include <rpc/chunkserver_protocol_proxy.hpp>
+#include <threadpool/thread_pool.hpp>
 
 using std::string;
 
@@ -37,8 +38,6 @@ namespace minidfs {
 /// Block reading request format:
 /// OP_READ  : len(Block) : Block 
 /// 1 byte   : 2 bytes    : n bytes
-///
-/// TODO: xiw, Thread pool will be used here, if time is available.
 class DFSChunkserver {
 
  private:
@@ -81,6 +80,9 @@ class DFSChunkserver {
   /// at the startup, don't retrieve block tasks from master, in ms
   const long long BLK_TASK_STARTUP_INTERVAL;
 
+  /// thread pool
+  ThreadPool threadPool;
+
  public:
   /// \brief Create a DFSChunkserver.
   ///
@@ -92,6 +94,7 @@ class DFSChunkserver {
   /// \param blkSize preferred block size
   /// \param maxConnections the max connections from clients / other chunkservers
   /// \param BUFFER_SIZE the data sending/receiving buffer size
+  /// \param nThread number of threads used by chunkserver to respond to clients
   /// \param HEART_BEAT_INTERVAL heartbeat interval
   /// \param BLOCK_REPORT_INTERVAL block report interval
   /// \param BLK_TASK_STARTUP_INTERVAL time period before it is available to fetch block tasks
@@ -99,6 +102,7 @@ class DFSChunkserver {
                  const string& serverIP, int serverPort,
                  const string& dataDir, long long blkSize,
                  int maxConnections, int BUFFER_SIZE,
+                 size_t nThread,
                  long long HEART_BEAT_INTERVAL,
                  long long BLOCK_REPORT_INTERVAL,
                  long long BLK_TASK_STARTUP_INTERVAL);

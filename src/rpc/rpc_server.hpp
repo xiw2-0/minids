@@ -20,6 +20,7 @@
 
 #include <proto/minidfs.pb.h>
 #include <minidfs/op_code.hpp>
+#include <threadpool/thread_pool.hpp>
 
 using std::string;
 using std::cerr;
@@ -61,9 +62,11 @@ class RPCServer {
 
   std::unordered_map<int, std::function<int(int, const string&)>> rpcBindings;
 
- public:
   /// \brief When in safemode, only recv the block-report rpc calls from chunkserver.
   bool isSafeMode;
+
+  /// thread pool
+  ::minidfs::ThreadPool threadPool;
 
  public:
 
@@ -71,7 +74,7 @@ class RPCServer {
   ///
   /// \param serverPort Master's serving port
   /// \param maxConns maximum number of connections
-  RPCServer(int serverPort, int maxConns, minidfs::DFSMaster* master);
+  RPCServer(int serverPort, int maxConns, minidfs::DFSMaster* master, size_t nThread);
 
   ~RPCServer();
 

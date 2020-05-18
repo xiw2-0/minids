@@ -10,9 +10,9 @@
 namespace minidfs {
 
 DFSMaster::DFSMaster(const string& nameSysFile, const string& editLogFile,
-                     int serverPort, int maxConns, int replicationFactor)
+                     int serverPort, int maxConns, int replicationFactor, size_t nThread)
     : nameSysFile(nameSysFile), editLogFile(editLogFile),
-      server(serverPort, maxConns, this), replicationFactor(replicationFactor) {
+      server(serverPort, maxConns, this, nThread), replicationFactor(replicationFactor) {
   editlogID = 0;
 }
 

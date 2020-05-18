@@ -25,6 +25,8 @@ const string dataDir = "./data/chunkserver";
 /// block size
 const long long blockSize = 2 * 1024 * 1024;
 
+const size_t nThread = 2;
+
 /// data sending/recving buffer size
 const int BUFFER_SIZE = 2 * 1024;
 
@@ -42,8 +44,9 @@ const long long BLK_TASK_STARTUP_INTERVAL = 13000;
 int main(int argc, char const *argv[])
 {
   std::cout << "Start Chunkserver...\n";
-  auto chunkserver = minidfs::DFSChunkserver(masterIP, masterPort, serverIP, serverPort,
+  minidfs::DFSChunkserver chunkserver(masterIP, masterPort, serverIP, serverPort,
                                         dataDir, blockSize, maxConnections, BUFFER_SIZE,
+                                        nThread,
                                         HEART_BEAT_INTERVAL, BLOCK_REPORT_INTERVAL,
                                         BLK_TASK_STARTUP_INTERVAL);
   

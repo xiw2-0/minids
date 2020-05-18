@@ -5,7 +5,8 @@ BIN_DIR = ./bin
 protosrc = ${wildcard ${SRC_DIR}/proto/*.proto}
 
 cppsrc = ${wildcard ${SRC_DIR}/minidfs/*.cpp} \
-				 ${wildcard ${SRC_DIR}/rpc/*.cpp}
+				 ${wildcard ${SRC_DIR}/rpc/*.cpp} \
+				 ${wildcard ${SRC_DIR}/threadpool/*.cpp}
 ccsrc = ${wildcard ${SRC_DIR}/proto/*.cc}
 
 cppobj = ${patsubst ${SRC_DIR}%, ${BUILD_DIR}%, ${cppsrc:.cpp=.o}}
@@ -27,7 +28,7 @@ chunkserver_obj = ${BUILD_DIR}/minidfs/chunkserver.o
 BIN_CHUNKSERVER = ${BIN_DIR}/${CHUNKSERVER}
 
 INC_DIR = -I${SRC_DIR} -I${SRC_DIR}/proto
-CCFLAGS = ${INC_DIR} -std=c++11
+CCFLAGS = ${INC_DIR} -std=c++11 -g
 LDFLAGS = `pkg-config --cflags --libs protobuf` -lpthread
 
 
@@ -47,6 +48,9 @@ ${BUILD_DIR}/minidfs/%.o: ${SRC_DIR}/minidfs/%.cpp
 	$(CXX) -c $< -o $@ ${CCFLAGS}
 
 ${BUILD_DIR}/rpc/%.o: ${SRC_DIR}/rpc/%.cpp
+	$(CXX) -c $< -o $@ ${CCFLAGS}
+
+${BUILD_DIR}/threadpool/%.o: ${SRC_DIR}/threadpool/%.cpp
 	$(CXX) -c $< -o $@ ${CCFLAGS}
 
 ${BUILD_DIR}/proto/%.o: ${SRC_DIR}/proto/%.cc

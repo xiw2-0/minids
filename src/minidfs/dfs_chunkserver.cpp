@@ -11,12 +11,14 @@ DFSChunkserver::DFSChunkserver(const string& masterIP, int masterPort,
                                const string& serverIP, int serverPort,
                                const string& dataDir, long long blkSize,
                                int maxConnections, int BUFFER_SIZE,
+                               size_t nThread,
                                long long HEART_BEAT_INTERVAL,
                                long long BLOCK_REPORT_INTERVAL,
                                long long BLK_TASK_STARTUP_INTERVAL)
     : master(new rpc::ChunkserverProtocolProxy(masterIP, masterPort)),
       serverIP(serverIP), serverPort(serverPort), dataDir(dataDir), blockSize(blkSize),
       maxConnections(maxConnections), BUFFER_SIZE(BUFFER_SIZE),
+      threadPool(nThread),
       HEART_BEAT_INTERVAL(HEART_BEAT_INTERVAL), BLOCK_REPORT_INTERVAL(BLOCK_REPORT_INTERVAL),
       BLK_TASK_STARTUP_INTERVAL(BLK_TASK_STARTUP_INTERVAL){
 }
@@ -117,9 +119,8 @@ void DFSChunkserver::dataService() {
       cerr << "[DFSChunkserver] "  << "Failed to accept socket " << strerror(errno) << std::endl;
       continue;
     }
-    /// TODO: xiw, use thread pool maybe?
-    std::thread handleThread(&DFSChunkserver::handleBlockRequest, this, connfd);
-    handleThread.detach();
+    std::function<void()> f = std::bind(&DFSChunkserver::handleBlockRequest, this, connfd);
+    threadPool.enqueue(f);
   }
 }
 

@@ -169,8 +169,9 @@ class DFSMaster: public ClientProtocol, public ChunkserverProtocol{
   /// \param serverPort Master's serving port
   /// \param maxConns maximum number of connections
   /// \param replicationFactor number of replicas for every block
+  /// \param nThread number of threads in the thread pool
   DFSMaster(const string& nameSysFile, const string& editLogFile,
-            int serverPort, int maxConns, int replicationFactor);
+            int serverPort, int maxConns, int replicationFactor, size_t nThread);
 
   ~DFSMaster();
 

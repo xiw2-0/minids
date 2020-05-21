@@ -132,15 +132,15 @@ class DFSChunkserver {
   void handleBlockRequest(int connfd);
 
   /// \brief Receive a block from client/chunkserver and forward it to other chunkservers
-  /// if necessary.
+  /// if necessary. The chunkserver will response with the number of successful writes.
   ///
   /// Block writing request format:
   /// OP_WRITE : len(LocatedBlock) : LocatedBlock : len(data) : data
   /// 1 byte   : 2 bytes           : n bytes      : 8 bytes   : n bytes
   ///
   /// Response format:
-  /// OpCode   :
-  /// 1 byte   :
+  /// num(success):
+  /// 1 byte      :
   ///
   /// \param connfd the received socket fd
   /// \return return 0 on success, -1 for errors
@@ -171,8 +171,8 @@ class DFSChunkserver {
   /// 1 byte   : 2 bytes           : n bytes      : 8 bytes   : n bytes
   ///
   /// Response format:
-  /// OpCode   :
-  /// 1 byte   :
+  /// num(success):
+  /// 1 byte      :
   ///
   /// \param locatedB contains info about the block and remote chunkserver
   /// \return return 0 on success, -1 for errors

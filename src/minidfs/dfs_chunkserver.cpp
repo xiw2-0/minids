@@ -391,13 +391,14 @@ int DFSChunkserver::replicateBlock(const LocatedBlock& locatedB) {
   /// send block data
   if ( sendBlkData(sockfd, bID) == -1) {
     cerr << "[DFSChunkserver] " << "Failed sending block: " << bID << std::endl;
+    ::close(sockfd);
     return -1;
   }
 
   /// response
-  char opRet = 0;
-  recv(sockfd, &opRet, 1, 0);
-  if (opRet == OpCode::OP_SUCCESS) {
+  char ret = 0;
+  recv(sockfd, &ret, 1, 0);
+  if (ret == locatedB.chunkserverinfos_size()) {
     return 0;
   } else {
     return -1;

@@ -219,6 +219,12 @@ class DFSChunkserver {
   /// \param serverPort remote chunkserver port
   /// \return return connected socket fd on success, -1 for errors.
   int connectRemote(string serverIP, int serverPort);
+
+  /// \brief Send the header of data writing request to the 1st remote Chunkserver
+  /// in LocatedBlock.
+  ///
+  /// \return return connected socket fd on success, -1 for errors.
+  int sendWriteHeader(const LocatedBlock& lb);
 };
 
 

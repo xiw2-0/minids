@@ -9,9 +9,8 @@
 
 
 namespace rpc {
-/// TODO: xiw, isSafe should be true. False here is used to test rpc b/w client and master.
 RPCServer::RPCServer(int serverPort, int maxConns, minidfs::DFSMaster* master, size_t nThread)
-    : serverPort(serverPort), maxConnections(maxConns), master(master), isSafeMode(false),
+    : serverPort(serverPort), maxConnections(maxConns), master(master), isSafeMode(true),
       threadPool(nThread) {
 }
 

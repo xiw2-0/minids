@@ -29,13 +29,13 @@ void ThreadPool::work() {
     std::function<void()> task;
     {
       std::unique_lock<std::mutex> lockTasks(mutexTasks);
-      if (tasks.empty() == false) {
+      if (tasks.empty() == true) {
+        condition.wait(lockTasks, [this]{return this->tasks.empty() == false || this->running == false;});
+      } 
+      if (running) {
         /// fetch one task and remove it from the queue
-        /// TODO: Original one is wrong, why??? I have no idea.
         task = std::move(tasks.front());
         tasks.pop();
-      } else if (running) {
-        condition.wait(lockTasks);
       } else {
         /// this is stopped
         return;

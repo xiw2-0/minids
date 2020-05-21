@@ -202,23 +202,27 @@ int64_t RemoteWriter::writeBlk(std::ifstream& f, const LocatedBlock& lb) const {
   }
 
   /// wait for response from chunkserver
-  char retOp =0;
-  if (recv(sockfd, &retOp, 1, 0) == -1) {
+  char ret =0;
+  if (recv(sockfd, &ret, 1, 0) == -1) {
     close(sockfd);
     return -1;
   }
-  if (retOp != OpCode::OP_SUCCESS) {
-    cerr << "[RemoteWriter] "  << "Failed to write block " << lb.block().blockid() << std::endl
-         << "Error code: "  << retOp << std::endl;
+  if (ret == 0) {
+    cerr << "[RemoteWriter] "  << "Failed to write block " << lb.block().blockid() << std::endl;
     close(sockfd);
     return -1;
   }
 
   /// send ack to master
-  int opFromMaster = master->blockAck(lb);
+  LocatedBlock ackLB(lb);
+  ackLB.clear_chunkserverinfos();
+  for (int i = 0; i < ret; ++i) {
+    *ackLB.add_chunkserverinfos() = lb.chunkserverinfos(i);
+  }
+
+  int opFromMaster = master->blockAck(ackLB);
   if (opFromMaster != OpCode::OP_SUCCESS) {
-    cerr << "[RemoteWriter] "  << "Failed to send ack of block " << lb.block().blockid() << std::endl
-         << "Error code: "  << retOp << std::endl;
+    cerr << "[RemoteWriter] "  << "Failed to send ack of block " << ackLB.block().blockid() << std::endl;
     close(sockfd);
     return -1;
   }

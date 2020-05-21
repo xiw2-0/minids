@@ -202,6 +202,29 @@ int DFSChunkserver::recvBlock(int connfd) {
   lb.ParseFromArray(lbBuf.data(), len);
   cerr << "[DFSChunkserver] " << "Succeed recving lb: " << lb.DebugString() << std::endl;
 
+  /// forward the block to the next chunkserver if required
+  bool willForward = false;
+  LocatedBlock forwardLB;
+  if (lb.chunkserverinfos_size() > 1) {
+    *forwardLB.mutable_block() = lb.block();
+    for(int i = 1; i < lb.chunkserverinfos_size(); ++i) {
+      *forwardLB.add_chunkserverinfos() = lb.chunkserverinfos(i);
+    }
+    willForward = true;
+  }
+
+  /// forward header
+  int forwardSockfd = -1;
+  if (willForward == true) {
+    /// send block header
+    forwardSockfd = sendWriteHeader(forwardLB);
+    if (forwardSockfd == -1) {
+      cerr << "[DFSChunkserver] " << "Failed forwarding block header of " << lb.block().blockid() << std::endl;
+      willForward = false;
+    }
+  }
+
+
   //
   // read data from remote and write to local/another remote
   //
@@ -210,14 +233,29 @@ int DFSChunkserver::recvBlock(int connfd) {
   /// read the first half
   if (recv(connfd, &halfLen, 4, 0) < 0) {
     cerr << "[DFSChunkserver] " << "Failed recving " << (int)halfLen;
+    if (willForward == true) {
+      ::close(forwardSockfd);
+    }
     return -1;
   }
+  if (forwardSockfd != -1 && send(forwardSockfd, &halfLen, 4, 0) < 0) {
+    ::close(forwardSockfd);
+    willForward = false;
+  }
+
   dataLen = ntohl(halfLen);
   dataLen <<= 32;
   /// the second half
   if (recv(connfd, &halfLen, 4, 0) < 0) {
     cerr << "[DFSChunkserver] " << "Failed recving " << (int)halfLen;
+    if (willForward == true) {
+      ::close(forwardSockfd);
+    }
     return -1;
+  }
+  if (forwardSockfd != -1 && send(forwardSockfd, &halfLen, 4, 0) < 0) {
+    ::close(forwardSockfd);
+    willForward = false;
   }
   dataLen += ntohl(halfLen);
   cerr << "[DFSChunkserver] " << "Succeed recving data length: " << (int)dataLen << std::endl;
@@ -231,6 +269,9 @@ int DFSChunkserver::recvBlock(int connfd) {
     cerr << "[DFSChunkserver] " << "Failed to open " << folder+"/"+blkFileName << std::endl;
     fOut.clear();
     fOut.close();
+    if (willForward == true) {
+      ::close(forwardSockfd);
+    }
     return -1;
   }
 
@@ -243,12 +284,19 @@ int DFSChunkserver::recvBlock(int connfd) {
     if ((nRead = recv(connfd, dataBuffer.data(), nRead, 0)) == -1) {
       fOut.clear();
       fOut.close();
+      if (willForward == true) {
+        ::close(forwardSockfd);
+      }
       return -1;
     }
     /// write to file
     fOut.write(dataBuffer.data(), nRead);
-    /// TODO: xiw, forward the data to other chunkservers
 
+    /// forward to downstream
+    if (willForward == true && send(forwardSockfd, dataBuffer.data(), nRead, 0) < 0) {
+      ::close(forwardSockfd);
+      willForward = false;
+    }
     byteLeft -= nRead;
   }
   fOut.clear();
@@ -262,8 +310,15 @@ int DFSChunkserver::recvBlock(int connfd) {
     blksServed.emplace(bID);
     blksRecved.emplace(bID);
   }
+  /// recv response from downstream chunkserver
+  char nSuccess = 0;
+  if (willForward == true) {
+    ::recv(forwardSockfd, &nSuccess, 1, 0);
+    ::close(forwardSockfd);
+  }
+
   /// send response
-  char retOp = OpCode::OP_SUCCESS;
+  char retOp = nSuccess + 1;
   int ret = send(connfd, &retOp, 1, 0);
   cerr << "[DFSChunkserver] " << "Succeed recving block: " << bID << std::endl;
   return ret;
@@ -327,33 +382,10 @@ int DFSChunkserver::replicateBlock(const LocatedBlock& locatedB) {
   }
 
 
-  //
-  // connect target chunkserver
-  //
-  string serverIP = locatedB.chunkserverinfos(0).chunkserverip();
-  int serverPort = locatedB.chunkserverinfos(0).chunkserverport();
-
-  int sockfd = connectRemote(serverIP, serverPort);
+  /// send block header
+  int sockfd = sendWriteHeader(locatedB);
   if (sockfd == -1) {
-    return -1;
-  }
-  
-  //
-  // send data writing request
-  //
-  char op = OpCode::OP_WRITE;
-  /// send OpCode
-  send(sockfd, &op, 1, 0);
-  
-  string locatedBStr = locatedB.SerializeAsString();
-  /// send the length of located block
-  uint16_t lbLen = locatedBStr.size();
-  lbLen = htons(lbLen);
-  if ( send(sockfd, &lbLen, 2, 0) == -1) {
-    return -1;
-  }
-  /// send located block
-  if ( send(sockfd, locatedBStr.c_str(), 2, 0) == -1) {
+    cerr << "[DFSChunkserver] " << "Failed sending block header of " << bID << std::endl;
     return -1;
   }
   /// send block data
@@ -521,6 +553,41 @@ int DFSChunkserver::recvedBlks() {
     blksRecved.clear();  
   }
   return opRet;
+}
+
+int DFSChunkserver::sendWriteHeader(const LocatedBlock& lb) {
+  //
+  // connect target chunkserver
+  //
+  string serverIP = lb.chunkserverinfos(0).chunkserverip();
+  int serverPort = lb.chunkserverinfos(0).chunkserverport();
+
+  int sockfd = connectRemote(serverIP, serverPort);
+  if (sockfd == -1) {
+    return -1;
+  }
+  
+  //
+  // send data writing request
+  //
+  char op = OpCode::OP_WRITE;
+  /// send OpCode
+  send(sockfd, &op, 1, 0);
+  
+  string locatedBStr = lb.SerializeAsString();
+  /// send the length of located block
+  uint16_t lbLen = locatedBStr.size();
+  lbLen = htons(lbLen);
+  if ( send(sockfd, &lbLen, 2, 0) == -1) {
+    ::close(sockfd);
+    return -1;
+  }
+  /// send located block
+  if ( send(sockfd, locatedBStr.c_str(), 2, 0) == -1) {
+    ::close(sockfd);
+    return -1;
+  }
+  return sockfd;
 }
 
 } // namespace minidfs

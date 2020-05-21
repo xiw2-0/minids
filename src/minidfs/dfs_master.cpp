@@ -434,7 +434,7 @@ int DFSMaster::makeDir(const string& dirName) {
   EditLog editlog;
   editlog.set_op(OpCode::OP_MKDIR);
   editlog.set_src(dirName);
-  editlog.set_dfid(dirID);
+  editlog.set_dfid(newDfID);
   if (-1 == logEdit(editlog.SerializeAsString())) {
     cerr << "[DFSMaster] " << "Failed to mkdir " << dirName << std::endl;
     return OpCode::OP_LOG_FAILURE;
@@ -459,7 +459,7 @@ int DFSMaster::listDir(const string& dirName, FileInfos& items) {
   for (int f : fileVec) {
     auto finfo = items.add_fileinfos();
     string name = dfNames[f];
-    name = name.substr(name.find_last_of('/'));
+    name = name.substr(name.find_last_of('/')+1);
     finfo->set_name(name);
     
     int isDir = 0;
@@ -597,6 +597,7 @@ int DFSMaster::serializeNameSystem() {
     /// dir
     if (inodes.find(dfid) == inodes.end()) {
       inode->set_isdir(true);
+      continue;
     }
 
     inode->set_isdir(false);
@@ -672,10 +673,10 @@ int DFSMaster::parseNameSystem() {
   /// DENTRY SECTION
   for (int i = 0; i < dentrySection.dentries_size(); ++i) {
     const auto dentry = dentrySection.dentries(i);
-    dentries[dentry.id()] = std::vector<int>();
+    dentries[dentry.id()].clear();
     /// dentries
     for (int j = 0; j < dentry.subdentries_size(); ++j) {
-      dentries[j].push_back(dentry.subdentries(j));
+      dentries[dentry.id()].push_back(dentry.subdentries(j));
     }
   }
 
@@ -713,6 +714,11 @@ int DFSMaster::initMater() {
 }
 
 void DFSMaster::splitPath(const string& path, string& dir) {
+  if(path == "/") {
+    dir = "";
+    return;
+  }
+
   int index = path.find_last_of('/');
   if (index == -1) {
     dir = "/home";

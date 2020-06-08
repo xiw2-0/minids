@@ -6,7 +6,7 @@
 
 #include <rpc/rpc_server.hpp>
 #include <minidfs/dfs_master.hpp>
-
+#include "logging/logger.h"
 
 namespace rpc {
 RPCServer::RPCServer(int serverPort, int maxConns, minidfs::DFSMaster* master, size_t nThread)
@@ -19,11 +19,11 @@ RPCServer::~RPCServer() {
 
 int RPCServer::init() {
   if (bindRPCCalls() < 0) {
-    cerr << "[RPCServer] "  << "Failed to bind RPC calls\n";
+    LOG_FATAL  << "Failed to bind RPC calls";
     return -1;
   }
   if (initServer() < 0) {
-    cerr << "[RPCServer] "  << "Failed to init server\n";
+    LOG_FATAL  << "Failed to init server";
     return -1;
   }
   return 0;
@@ -35,7 +35,7 @@ void RPCServer::run() {
     socklen_t clientAddrSize = sizeof(clientAddr);
     int connfd = accept(listenSockfd, (struct sockaddr*)&clientAddr, &clientAddrSize);
     if (connfd == -1) {
-      cerr << "[RPCServer] "  << "Failed to accept socket " << strerror(errno) << std::endl;
+      LOG_ERROR  << "Failed to accept socket " << strerror(errno);
       continue;
     }
     std::function<void()> func = std::bind(&RPCServer::handleRequest, this, connfd);
@@ -46,7 +46,7 @@ void RPCServer::run() {
 int RPCServer::initServer() {
   listenSockfd = socket(AF_INET, SOCK_STREAM, 0);
   if (listenSockfd == -1) {
-    cerr << "[RPCServer] "  << "Failed to create a socket: " << strerror(errno) << std::endl;
+    LOG_FATAL  << "Failed to create a socket: " << strerror(errno);
     return -1;
   }
 
@@ -56,15 +56,15 @@ int RPCServer::initServer() {
   serverAddr.sin_port = htons(serverPort);
 
   if (bind(listenSockfd, (struct sockaddr*)&serverAddr, sizeof(serverAddr)) == -1) {
-    cerr << "[RPCServer] "  << "Failed to bind the socket: " << strerror(errno) << std::endl;
+    LOG_FATAL  << "Failed to bind the socket: " << strerror(errno);
     return -1;
   }
 
   if (listen(listenSockfd, maxConnections) == -1) {
-    cerr << "[RPCServer] "  << "Failed to listen to the socket: " << strerror(errno) << std::endl;
+    LOG_FATAL  << "Failed to listen to the socket: " << strerror(errno);
     return -1;
   }
-  std::cout << "Start listening: \n";
+  LOG_INFO << "Start listening...";
   return 0;
 }
 
@@ -97,6 +97,7 @@ void RPCServer::handleRequest(int connfd) {
   int methodID = -1;
   string request;
   if (recvRequest(connfd, methodID, request) == -1) {
+    LOG_ERROR  << "Failed to recv request";
     close(connfd);
     return;
   }
@@ -107,7 +108,7 @@ void RPCServer::handleRequest(int connfd) {
     string response;
     sendResponse(connfd, status, response);
 
-    cerr << "[RPCServer] "  << "In safe mode\n";
+    LOG_INFO  << "In safe mode";
     close(connfd);
     
     isSafeMode = !master->isSafe();
@@ -116,11 +117,11 @@ void RPCServer::handleRequest(int connfd) {
 
   auto func = rpcBindings[methodID];
   if (func(connfd, request) < 0) {
-    cerr << "[RPCServer] "  << "Failed to send response to " << connfd << std::endl;
+    LOG_ERROR  << "Failed to send response to request: " << request;
     close(connfd);
     return;
   }
-  //cerr << "[RPCServer] "  << "Succeed to process one request\n";
+  LOG_DEBUG  << "Succeeded to process one request";
   /// close client sock
   close(connfd);
 }
@@ -259,6 +260,7 @@ int RPCServer::recvRequest(int connfd, int& methodID, string& request) {
     return -1;
   }
   len = ntohl(len);
+  LOG_DEBUG << "Recved request length: " << len;
 
   /// read methodID
   char mID = methodID;
@@ -266,16 +268,16 @@ int RPCServer::recvRequest(int connfd, int& methodID, string& request) {
     return -1;
   }
   methodID = mID;
+  LOG_DEBUG << "Recved request method id: " << mID;
 
   /// recv request
   std::vector<char> buf(len-5);
   int ret = recv(connfd, buf.data(), buf.size(), 0);
   if (ret == -1) {
-    cerr << "[RPCServer] " << "Failed to recv request\n";
     return -1;
   }
   request = string(buf.begin(), buf.end());
-  //cerr << "[RPCServer] " << "Succeed to recv request\n";
+  LOG_DEBUG << "Succeed to recv request: " << request;
   return 0;
 }
 
@@ -285,18 +287,20 @@ int RPCServer::sendResponse(int connfd, int status, const string& response) {
   if (send(connfd, &len, 4, 0) == -1) {
     return -1;
   }
+  LOG_DEBUG << "Send response length: " << len;
 
   /// send the status
   char statusCh = status;
   if (send(connfd, &statusCh, 1, 0) < 0) {
     return -1;
   }
+  LOG_DEBUG << "Send response status: " << status;
   
   /// send response
   if (send(connfd, response.data(), response.size(), 0) < 0) {
     return -1;
   }
-  //cerr << "[RPCServer] " << "Succeed to send response\n";
+  LOG_DEBUG << "Succeed to send response" << response;
   return 0;
 }
 

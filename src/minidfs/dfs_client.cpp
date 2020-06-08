@@ -5,6 +5,7 @@
 /// \brief Implentation of class DFSClient.
 
 #include <minidfs/dfs_client.hpp>
+#include "logging/logger.h"
 
 namespace minidfs {
 
@@ -26,7 +27,7 @@ int DFSClient::putFile(const string& src, const string& dst) {
   }
   std::ifstream f(src, std::ios::in | std::ios::binary);
   if (f.is_open() == false) {
-    cerr << "[DFSClient] " << "Failed to open " << src << std::endl;
+    LOG_ERROR << "Failed to open " << src;
     f.clear();
     f.close();
     return -1;
@@ -52,7 +53,7 @@ int DFSClient::getFile(const string& src, const string& dst) {
 
   std::ofstream f(dst, std::ios::out | std::ios::binary | std::ios::trunc);
   if (f.is_open() == false) {
-    cerr << "[DFSClient] " << "Failed to open " << dst << std::endl;
+    LOG_ERROR << "Failed to open " << dst;
     f.clear();
     f.close();
     return -1;
@@ -80,8 +81,8 @@ RemoteWriter DFSClient::getWriter(const string& dst) {
 int DFSClient::remove(const string& filename) {
   int retOp =  master->remove(filename);
   if (retOp != OpCode::OP_SUCCESS) {
-    cerr << "[DFSClient] "  << "Failed to remove " << filename << std::endl
-         << "Error code "  << retOp << std::endl;
+    LOG_ERROR  << "Failed to remove " << filename
+         << "Error code "  << retOp;
     return -1;
   }
   return 0;
@@ -90,13 +91,13 @@ int DFSClient::remove(const string& filename) {
 int DFSClient::exists(const string& file) {
   int retOp =  master->exists(file);
   if (retOp == OpCode::OP_FAILURE) {
-    cerr << "[DFSClient] "  << "Failed to query " << file << std::endl;
+    LOG_ERROR  << "Failed to query " << file;
     return -1;
   }
   if (retOp == OpCode::OP_EXIST) {
-    cerr << "[DFSClient] "  << file << " exists" << std::endl;
+    LOG_INFO  << file << " exists";
   } else {
-    cerr << "[DFSClient] "  << file << " doesn't exist" << std::endl;
+    LOG_INFO  << file << " doesn't exist";
   }
   
   return 0;
@@ -105,8 +106,8 @@ int DFSClient::exists(const string& file) {
 int DFSClient::mkdir(const string& dirname) {
   int retOp =  master->makeDir(dirname);
   if (retOp != OpCode::OP_SUCCESS) {
-    cerr << "[DFSClient] "  << "Failed to create " << dirname << std::endl
-         << "Error code "  << retOp << std::endl;
+    LOG_ERROR  << "Failed to create " << dirname
+         << "Error code "  << retOp;
     return -1;
   }
   return 0;
@@ -116,8 +117,8 @@ int DFSClient::ls(const string& dirname, std::vector<FileInfo>& items) {
   FileInfos infos;
   int retOp = master->listDir(dirname, infos);
   if (retOp != OpCode::OP_SUCCESS) {
-    cerr << "[DFSClient] "  << "Failed to ls " << dirname << std::endl
-         << "Error code "  << retOp << std::endl;
+    LOG_ERROR  << "Failed to ls " << dirname
+         << "Error code "  << retOp;
     return -1;
   }
 

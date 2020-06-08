@@ -5,6 +5,7 @@
 
 
 #include <minidfs/remote_writer.hpp>
+#include "logging/logger.h"
 
 namespace minidfs {
 
@@ -36,8 +37,8 @@ RemoteWriter::~RemoteWriter() {
 int RemoteWriter::open() {
   int retOp = master->create(filename, &currentLB);
   if (retOp != OpCode::OP_SUCCESS) {
-    cerr << "[RemoteWriter] "  << "Failed to create " << filename << std::endl
-         << "Error code: "  << retOp << std::endl;
+    LOG_ERROR << "Failed to create file: " << filename << '\t'
+              << "Error code: "  << retOp;
     return -1;
   }
   pos = 0;
@@ -56,7 +57,7 @@ int64_t RemoteWriter::write(const void* buffer, uint64_t size) {
 
       std::ifstream fIn(bufferBlkName, std::ios::in | std::ios::binary);
       if (fIn.is_open() == false) {
-        cerr << "[RemoteWriter] " << "Failed to open " << bufferBlkName << std::endl;
+        LOG_ERROR << "Failed to open " << bufferBlkName;
         fIn.clear();
         fIn.close();
         return -1;
@@ -83,7 +84,7 @@ int64_t RemoteWriter::write(const void* buffer, uint64_t size) {
     long long nWrite = std::min(byteLeft, (long long)BLOCK_SIZE - blockPos);
     std::ofstream fOut(bufferBlkName, std::ios::out | std::ios::binary | std::ios::trunc);
     if (fOut.is_open() == false) {
-      cerr << "[RemoteWriter] " << "Failed to open " << bufferBlkName << std::endl;
+      LOG_ERROR << "Failed to open " << bufferBlkName;
       fOut.clear();
       fOut.close();
       return -1;
@@ -138,11 +139,11 @@ int RemoteWriter::remoteClose() {
 
   int retOp = master->complete(filename);
   if (retOp != OpCode::OP_SUCCESS) {
-    cerr << "[RemoteWriter] "  << "Failed to complete " << filename << std::endl
-         << "Error code: "  << retOp << std::endl;
+    LOG_ERROR << "Failed to complete file:" << filename << '\t'
+              << "Error code: "  << retOp;
     return -1;
   }
-  cerr << "[RemoteWriter] "  << "Succeed to write " << filename << std::endl;
+  LOG_INFO << "Succeed to write and close " << filename;
   return 0;
 }
 
@@ -158,7 +159,7 @@ int64_t RemoteWriter::writeBlk(std::ifstream& f, const LocatedBlock& lb) const {
 
   /// send write request
   if (-1 == blkWriteRequest(sockfd, lb)) {
-    cerr << "[RemoteWriter] " << "Failed to send block writing request\n";
+    LOG_ERROR << "Failed to send block writing request";
     close(sockfd);
     return -1;
   }
@@ -174,7 +175,7 @@ int64_t RemoteWriter::writeBlk(std::ifstream& f, const LocatedBlock& lb) const {
   /// send the first half
   halfLen = htonl(halfLen);
   if (send(sockfd, &halfLen, 4, 0) < 0) {
-    cerr << "[DFSChunkserver] " << "Failed recving " << (int)halfLen;
+    LOG_ERROR << "Recved: " << halfLen;
     close(sockfd);
     return -1;
   }
@@ -182,11 +183,11 @@ int64_t RemoteWriter::writeBlk(std::ifstream& f, const LocatedBlock& lb) const {
   halfLen = htonl(halfLen);
   /// the second half
   if (send(sockfd, &halfLen, 4, 0) < 0) {
-    cerr << "[DFSChunkserver] " << "Failed recving " << (int)halfLen;
+    LOG_ERROR << "Recved: " << halfLen;
     close(sockfd);
     return -1;
   }
-  cerr << "[RemoteWriter] " << "Succeed to send block writing request and block len\n";
+  LOG_INFO << "Succeed to send block writing request and block len";
   /// send data
   std::vector<char> dataBuffer(BUFFER_SIZE);
   long long byteLeft = dataLen;
@@ -208,7 +209,7 @@ int64_t RemoteWriter::writeBlk(std::ifstream& f, const LocatedBlock& lb) const {
     return -1;
   }
   if (ret == 0) {
-    cerr << "[RemoteWriter] "  << "Failed to write block " << lb.block().blockid() << std::endl;
+    LOG_ERROR << "Failed to write block " << lb.DebugString();
     close(sockfd);
     return -1;
   }
@@ -222,13 +223,12 @@ int64_t RemoteWriter::writeBlk(std::ifstream& f, const LocatedBlock& lb) const {
 
   int opFromMaster = master->blockAck(ackLB);
   if (opFromMaster != OpCode::OP_SUCCESS) {
-    cerr << "[RemoteWriter] "  << "Failed to send ack of block " << ackLB.block().blockid() << std::endl;
+    LOG_ERROR << "Failed to send ack of block " << ackLB.DebugString();
     close(sockfd);
     return -1;
   }
 
-
-  cerr << "[RemoteWriter] "  << "Succeed sending block: " << lb.block().blockid() << std::endl;
+  LOG_INFO << "Succeed sending block: " << lb.DebugString();
   close(sockfd);
   return dataLen;
 }
@@ -245,24 +245,24 @@ int RemoteWriter::connChunkserver(const ChunkserverInfo& cs) const {
   serverAddr.sin_family = AF_INET;
   serverAddr.sin_port = htons(serverPort);
   if (inet_pton(AF_INET, serverIP.c_str(), &serverAddr.sin_addr) < 0) {
-    cerr << "[RemoteWriter] "  << "inet_pton() error for: " << serverIP << std::endl;
+    LOG_ERROR << "inet_pton() error for chunkserver: " << serverIP;
     return -1;
   }
 
   int sockfd = socket(AF_INET, SOCK_STREAM, 0);
   if (sockfd < 0) {
-    cerr << "[RemoteWriter] "  << "Failed to create socket\n" << strerror(errno) << " errno: " << errno << std::endl; 
+    LOG_ERROR << "Failed to create socket\t" << strerror(errno) << " errno: " << errno; 
     return -1;
   }
 
   int i = 0;
   for (i = 0; i < nTrial; ++i) {
     if (connect(sockfd, (sockaddr*)&serverAddr, sizeof(serverAddr)) < 0) {
-      cerr << "[RemoteWriter] "  << "Cannot connect to " << serverIP << std::endl;
+      LOG_WARN << "Cannot connect to chunkserver:" << serverIP;
       std::this_thread::sleep_for(std::chrono::seconds(2));
       continue;
     }
-    cerr << "[RemoteWriter] "  << "Succeed to connect chunkserver:\n" << serverIP << ":" << serverPort << std::endl;
+    LOG_INFO << "Succeed to connect chunkserver: " << serverIP << ":" << serverPort;
     break;
   }
 
@@ -293,15 +293,15 @@ int RemoteWriter::blkWriteRequest(int sockfd, const LocatedBlock& lb) const {
     return -1;
   }
 
-  cerr << "[RemoteWriter] " << "Succeed to send request\n";
+  LOG_INFO << "Succeed to send request of block: " << lb.DebugString();
   return 0;
 }
 
 int RemoteWriter::addBlk() {
   int retOp = master->addBlock(filename, &currentLB);
   if (retOp != OpCode::OP_SUCCESS) {
-    cerr << "[RemoteWriter] "  << "Failed to add a new block to " << filename << std::endl
-         << "Error code: "  << retOp << std::endl;
+    LOG_ERROR << "Failed to add a new block to " << filename << '\t'
+              << "Error code: "  << retOp;
     return -1;
   }
   blockStart += blockPos;
@@ -318,7 +318,7 @@ int RemoteWriter::remoteFlush() {
 
   std::ifstream fIn(bufferBlkName, std::ios::in | std::ios::binary);
   if (fIn.is_open() == false) {
-    cerr << "[RemoteWriter] " << "Failed to open " << bufferBlkName << std::endl;
+    LOG_ERROR << "Failed to open " << bufferBlkName;
     fIn.clear();
     fIn.close();
     return -1;

@@ -19,8 +19,6 @@
 #include <string>
 #include <proto/minidfs.pb.h>
 
-using std::cout;
-using std::cerr;
 using std::string;
 
 namespace rpc {

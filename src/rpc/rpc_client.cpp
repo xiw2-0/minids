@@ -4,6 +4,7 @@
 /// \author Wang Xi
 
 #include <rpc/rpc_client.hpp>
+#include "logging/logger.h"
 
 namespace rpc {
 
@@ -22,21 +23,21 @@ int RPCClient::connectMaster() {
   serverAddr.sin_family = AF_INET;
   serverAddr.sin_port = htons(serverPort);
   if (inet_pton(AF_INET, serverIP.c_str(), &serverAddr.sin_addr) < 0) {
-    cerr << "[RPCClient] "  << "inet_pton() error for: " << serverIP << std::endl;
+    LOG_ERROR  << "inet_pton() error for: " << serverIP;
     return -1;
   }
 
   sockfd = socket(AF_INET, SOCK_STREAM, 0);
   if (sockfd < 0) {
-    cerr << "[RPCClient] "  << "Failed to create socket\n" << strerror(errno) << " errno: " << errno << std::endl; 
+    LOG_ERROR << "Failed to create socket " << strerror(errno) << " errno: " << errno; 
     return -1;
   }
 
   if (connect(sockfd, (sockaddr*)&serverAddr, sizeof(serverAddr)) < 0) {
-    cerr << "[RPCClient] "  << "Cannot connect to " << serverIP << std::endl;
+    LOG_ERROR  << "Cannot connect to " << serverIP;
     return -1;
   }
-  //cerr << "[RPCClient] "  << "Succeed to connect Master:\n" << serverIP << ":" << serverPort << std::endl;
+  LOG_DEBUG  << "Succeed to connect Master: " << serverIP << ":" << serverPort;
   return 0;
 }
 
@@ -50,17 +51,19 @@ int RPCClient::sendRequest(int methodID, const string& request) {
   if (send(sockfd, &len, 4, 0) == -1) {
     return -1;
   }
+  LOG_DEBUG << "Send request length: " << len;
 
   /// Send methodID
   char mID = methodID;
   if (send(sockfd, &mID, 1, 0) == -1) {
     return -1;
   }
+  LOG_DEBUG << "Send request method id: " << mID;
 
   /// Send request
   int ret = send(sockfd, request.c_str(), request.size(), 0);
   if (ret == 0) {
-    //cerr << "[RPCClient] " << "Succeed to send request\n";
+    LOG_DEBUG << "Succeed to send request";
   }
   return ret;
 }
@@ -72,6 +75,7 @@ int RPCClient::recvResponse(int* status, string* response) {
     return -1;
   }
   len = ntohl(len);
+  LOG_DEBUG << "Recv response length: " << len;
 
   /// read the status
   char statusCh = 0;
@@ -79,6 +83,7 @@ int RPCClient::recvResponse(int* status, string* response) {
     return -1;
   }
   *status = statusCh;
+  LOG_DEBUG << "Recv response status: " << *status;
   
   /// read response
   std::vector<char> buf(len-5);
@@ -87,6 +92,7 @@ int RPCClient::recvResponse(int* status, string* response) {
     return -1;
   }
   *response = string(buf.begin(), buf.end());
+  LOG_DEBUG << "Recv response: " << *response;
 
   return 0;
 }

@@ -4,7 +4,7 @@
 /// \author Wang Xi
 
 #include <rpc/chunkserver_protocol_proxy.hpp>
-
+#include "logging/logger.h"
 
 
 namespace rpc {
@@ -17,13 +17,13 @@ ChunkserverProtocolProxy::ChunkserverProtocolProxy(const string& serverIP, int s
 int ChunkserverProtocolProxy::heartBeat(const minidfs::ChunkserverInfo& chunkserverInfo){
   /// connect Master
   if (client.connectMaster() < 0) {
-    cerr << "[ChunkserverProtocolProxy] "  << "Connection failed\n";
+    LOG_ERROR  << "Connection to master failed";
     return OpCode::OP_FAILURE;
   }
 
   /// send the request
   if (client.sendRequest(101, chunkserverInfo.SerializeAsString()) < 0) {
-    cerr << "[ChunkserverProtocolProxy] "  << "Failed to send request\n";
+    LOG_ERROR  << "Failed to send heart beat";
     return OpCode::OP_FAILURE;
   }
 
@@ -35,13 +35,14 @@ int ChunkserverProtocolProxy::heartBeat(const minidfs::ChunkserverInfo& chunkser
   /// close the connection
   client.closeConnection();
 
+  LOG_DEBUG << "Send heartbeat rpc successfully";
   return status;
 }
 
 int ChunkserverProtocolProxy::blkReport(const minidfs::ChunkserverInfo& chunkserverInfo, const std::vector<int>& blkIDs, std::vector<int>& deletedBlks) {
   /// connect Master
   if (client.connectMaster() < 0) {
-    cerr << "[ChunkserverProtocolProxy] "  << "Connection failed\n";
+    LOG_ERROR  << "Connection to master failed";
     return OpCode::OP_FAILURE;
   }
 
@@ -54,7 +55,7 @@ int ChunkserverProtocolProxy::blkReport(const minidfs::ChunkserverInfo& chunkser
 
   /// send the request
   if (client.sendRequest(102, blkReport.SerializeAsString()) < 0) {
-    cerr << "[ChunkserverProtocolProxy] "  << "Failed to send request\n";
+    LOG_ERROR  << "Failed to send blk report";
     return OpCode::OP_FAILURE;
   }
 
@@ -73,19 +74,20 @@ int ChunkserverProtocolProxy::blkReport(const minidfs::ChunkserverInfo& chunkser
   /// close the connection
   client.closeConnection();
 
+  LOG_DEBUG << "Send blk report rpc successfully";
   return status;
 }
 
 int ChunkserverProtocolProxy::getBlkTask(const minidfs::ChunkserverInfo& chunkserverInfo, minidfs::BlockTasks* blkTasks) {
   /// connect Master
   if (client.connectMaster() < 0) {
-    cerr << "[ChunkserverProtocolProxy] "  << "Connection failed\n";
+    LOG_ERROR << "Connection to master failed";
     return OpCode::OP_FAILURE;
   }
 
   /// send the request
   if (client.sendRequest(101, chunkserverInfo.SerializeAsString()) < 0) {
-    cerr << "[ChunkserverProtocolProxy] "  << "Failed to send request\n";
+    LOG_ERROR << "Failed to send get blk task request";
     return OpCode::OP_FAILURE;
   }
 
@@ -98,13 +100,14 @@ int ChunkserverProtocolProxy::getBlkTask(const minidfs::ChunkserverInfo& chunkse
   /// close the connection
   client.closeConnection();
 
+  LOG_DEBUG << "Send get blk task rpc successfully";
   return status;
 }
 
 int ChunkserverProtocolProxy::recvedBlks(const minidfs::ChunkserverInfo& chunkserverInfo, const std::vector<int>& blkIDs) {
   /// connect Master
   if (client.connectMaster() < 0) {
-    cerr << "[ChunkserverProtocolProxy] "  << "Connection failed\n";
+    LOG_ERROR << "Connection to master failed";
     return OpCode::OP_FAILURE;
   }
 
@@ -117,7 +120,7 @@ int ChunkserverProtocolProxy::recvedBlks(const minidfs::ChunkserverInfo& chunkse
 
   /// send the request
   if (client.sendRequest(102, blkReport.SerializeAsString()) < 0) {
-    cerr << "[ChunkserverProtocolProxy] "  << "Failed to send request\n";
+    LOG_ERROR << "Failed to send recvedBlks rpc request";
     return OpCode::OP_FAILURE;
   }
 
@@ -129,6 +132,7 @@ int ChunkserverProtocolProxy::recvedBlks(const minidfs::ChunkserverInfo& chunkse
   /// close the connection
   client.closeConnection();
 
+  LOG_DEBUG << "Send recved blks rpc successfully";
   return status;
 }
 

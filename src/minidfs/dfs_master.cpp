@@ -6,6 +6,7 @@
 
 
 #include <minidfs/dfs_master.hpp>
+#include "logging/logger.h"
 
 namespace minidfs {
 
@@ -48,7 +49,7 @@ int DFSMaster::format() {
     editlogID = 0;
     std::ofstream f(editLogFile, std::ios::trunc | std::ios::out | std::ios::binary);
     if (f.is_open() == false){
-      cerr << "[DFSMaster] " << "Failed to open edit log!\n";
+      LOG_FATAL << "Failed to open edit log!";
       return -1;
     }
     f.clear();
@@ -57,20 +58,20 @@ int DFSMaster::format() {
 
 
   if (serializeNameSystem() == -1) {
-    cerr << "[DFSMaster] " << "Failed to format name system!\n";
+    LOG_FATAL << "Failed to format name system!";
     return -1;
   }
-  cerr << "[DFSMaster] "  << "Formated!\n";
+  LOG_INFO  << "Formated!";
   return 0;
 }
 
 void DFSMaster::startRun() {
   if (initMater() < 0) {
-    cerr << "[DFSMaster] "  << "Init master failure\n";
+    LOG_FATAL  << "Init master failure";
     return;
   }
   if (server.init() == -1) {
-    cerr << "[DFSMaster] "  << "Init server of master failure\n";
+    LOG_FATAL  << "Init server of master failure";
     return;
   }
   std::thread checkerThread(&DFSMaster::statusChecker, this);
@@ -112,7 +113,7 @@ void DFSMaster::statusChecker() {
       lastCheck = std::chrono::system_clock::now();
       /// check whether a chunkserver is still alive
       {
-        cerr << "[DFSMaster] " << "Checking active chunkservers\n";
+        LOG_INFO << "Checking active chunkservers";
         std::unique_lock<std::recursive_mutex> lockChunkserverBlock(mutexChunkserverBlock);
         for (auto i = aliveChunkservers.begin(); i != aliveChunkservers.end();) {
           if (i->second == true) {
@@ -127,12 +128,12 @@ void DFSMaster::statusChecker() {
 
       /// check the edit log size
       {
-        cerr << "[DFSMaster] " << "Checking edit log length " << editlogID << " " << maxEditLogEntry << std::endl;
+        LOG_INFO << "Checking edit log length " << editlogID << " " << maxEditLogEntry;
         if (editlogID > maxEditLogEntry) {
           if (-1 == checkpoint()){
-            cerr << "[DFSMaster] " << "Failed to take a checkpoint\n";
+            LOG_ERROR << "Failed to take a checkpoint";
           } else {
-            cerr << "[DFSMaster] " << "Succeeded to take a checkpoint\n";
+            LOG_INFO << "Succeeded to take a checkpoint";
           }
         }
       }
@@ -150,13 +151,13 @@ int DFSMaster::getBlockLocations(const string& file, minidfs::LocatedBlocks* loc
   std::lock(lockMemoryNameSys, lockChunkserverBlock);
 
   if (dfIDs.find(file) == dfIDs.end()) {
-    cerr << "[DFSMaster] "  << "No such a file/dir\n";
+    LOG_INFO  << "No such a file/dir";
     return OpCode::OP_NO_SUCH_FILE;
   }
 
   int dfid = dfIDs[file];
   if (inodes.find(dfid) == inodes.end()) {
-    cerr << "[DFSMaster] "  << "No such a file\n";
+    LOG_INFO  << "No such a file";
     return OpCode::OP_NO_SUCH_FILE;
   }
 
@@ -183,7 +184,7 @@ int DFSMaster::create(const string& file, LocatedBlock* locatedBlk) {
 
   std::lock(lockMemoryNameSys, lockChunkserverBlock, lockInCreating);
   if (dfIDs.find(file) != dfIDs.end()) {
-    cerr << "[DFSMaster] "  << file << " existed!\n";
+    LOG_INFO  << file << " existed!";
     return OpCode::OP_FILE_ALREADY_EXISTED;
   }
 
@@ -191,13 +192,13 @@ int DFSMaster::create(const string& file, LocatedBlock* locatedBlk) {
   splitPath(file, dir);
 
   if (dfIDs.find(dir) == dfIDs.end()) {
-    cerr << "[DFSMaster] "  << "Dir " << dir << " does not exist!\n";
+    LOG_INFO  << "Dir " << dir << " does not exist!";
     return OpCode::OP_NO_SUCH_FILE;
   }
 
   /// if some other client is creating a file with the same name
   if (filesInCreating.find(file) != filesInCreating.end()) {
-    cerr << "[DFSMaster] "  << "File is in creating\n";
+    LOG_INFO  << "File is in creating";
     return OpCode::OP_FILE_IN_CREATING;
   }
 
@@ -216,7 +217,7 @@ int DFSMaster::create(const string& file, LocatedBlock* locatedBlk) {
 
   std::vector<ChunkserverInfo> allocatedCS;
   if (-1 == allocateChunkservers(allocatedCS)) {
-    cerr << "[DFSMaster] "  << "Chunkservers alive are fewer than replication factor\n";
+    LOG_INFO  << "Chunkservers alive are fewer than replication factor";
     return OpCode::OP_FAILURE;
   }
 
@@ -224,7 +225,7 @@ int DFSMaster::create(const string& file, LocatedBlock* locatedBlk) {
     *locatedBlk->add_chunkserverinfos() = cs;
   }
 
-  cerr << "[DFSMaster] "  << "A file is in creating\n";
+  LOG_INFO  << "A file is in creating";
   return OpCode::OP_SUCCESS;
 }
 
@@ -236,7 +237,7 @@ int DFSMaster::addBlock(const string& file, LocatedBlock* locatedBlk) {
 
   /// if the file isn't in creating process
   if (filesInCreating.find(file) == filesInCreating.end()) {
-    cerr << "[DFSMaster] "  << file << " isn't in creating\n";
+    LOG_INFO  << file << " isn't in creating";
     return OpCode::OP_NO_SUCH_FILE;
   }
   
@@ -249,7 +250,7 @@ int DFSMaster::addBlock(const string& file, LocatedBlock* locatedBlk) {
 
   std::vector<ChunkserverInfo> allocatedCS;
   if (-1 == allocateChunkservers(allocatedCS)) {
-    cerr << "[DFSMaster] "  << "Chunkservers alive are fewer than replication factor\n";
+    LOG_INFO  << "Chunkservers alive are fewer than replication factor";
     return OpCode::OP_FAILURE;
   }
 
@@ -257,7 +258,7 @@ int DFSMaster::addBlock(const string& file, LocatedBlock* locatedBlk) {
     *locatedBlk->add_chunkserverinfos() = cs;
   }
 
-  cerr << "[DFSMaster] "  << "A block is to be added to " << file << std::endl;
+  LOG_INFO  << "A block is to be added to " << file;
   return OpCode::OP_SUCCESS;
 }
 
@@ -281,7 +282,7 @@ int DFSMaster::complete(const string& file) {
   std::lock(lockFileNameSys, lockMemoryNameSys, lockChunkserverBlock, lockInCreating);
   /// if the file isn't in creating process
   if (filesInCreating.find(file) == filesInCreating.end()) {
-    cerr << "[DFSMaster] "  << file << " isn't in creating\n";
+    LOG_INFO  << file << " isn't in creating";
     return OpCode::OP_NO_SUCH_FILE;
   }
 
@@ -329,11 +330,11 @@ int DFSMaster::complete(const string& file) {
     *editlog.add_blks() = blks[b];
   }
   if (-1 == logEdit(editlog.SerializeAsString())) {
-    cerr << "[DFSMaster] " << "Failed to create " << file << std::endl;
+    LOG_INFO << "Failed to create " << file;
     return OpCode::OP_LOG_FAILURE;
   }
   editlogID++;
-  cerr << "[DFSMaster] "  << file << " created\n";
+  LOG_INFO  << file << " created";
   return OpCode::OP_SUCCESS;
 }
 
@@ -341,7 +342,7 @@ int DFSMaster::remove(const string& file) {
   std::unique_lock<std::recursive_mutex> lockMemoryNameSys(mutexMemoryNameSys);
 
   if (dfIDs.find(file) == dfIDs.end()) {
-    cerr << "[DFSMaster] "  << file << " doesn't exist!\n";
+    LOG_INFO  << file << " doesn't exist!";
     return OpCode::OP_NO_SUCH_FILE;
   }
 
@@ -351,7 +352,7 @@ int DFSMaster::remove(const string& file) {
   /// check whether it is a file or dir
   /// currently, minidfs doesn't support remove a directory.
   if (dentries.find(dfid) != dentries.end()) {
-    cerr << "[DFSMaster] "  << file << " is a directory!\n";
+    LOG_INFO  << file << " is a directory!";
     return OpCode::OP_FAILURE;
   }
 
@@ -386,7 +387,7 @@ int DFSMaster::remove(const string& file) {
   editlog.set_dfid(dirID);
 
   if (-1 == logEdit(editlog.SerializeAsString())) {
-    cerr << "[DFSMaster] " << "Failed to remove " << file << std::endl;
+    LOG_INFO << "Failed to remove " << file;
     return OpCode::OP_LOG_FAILURE;
   }
   editlogID++;
@@ -397,7 +398,7 @@ int DFSMaster::exists(const string& file) {
   std::unique_lock<std::recursive_mutex> lockMemoryNameSys(mutexMemoryNameSys);
 
   if (dfIDs.find(file) == dfIDs.end()) {
-    cerr << "[DFSMaster] "  << file << " doesn't exist!\n";
+    LOG_INFO  << file << " doesn't exist!";
     return OpCode::OP_NOT_EXIST;
   }
   return OpCode::OP_EXIST;
@@ -407,7 +408,7 @@ int DFSMaster::makeDir(const string& dirName) {
   std::unique_lock<std::recursive_mutex> lockMemoryNameSys(mutexMemoryNameSys);
 
   if (dfIDs.find(dirName) != dfIDs.end()) {
-    cerr << "[DFSMaster] "  << dirName << " existed!\n";
+    LOG_INFO  << dirName << " existed!";
     return OpCode::OP_FILE_ALREADY_EXISTED;
   }
 
@@ -415,7 +416,7 @@ int DFSMaster::makeDir(const string& dirName) {
   splitPath(dirName, dir);
 
   if (dfIDs.find(dir) == dfIDs.end()) {
-    cerr << "[DFSMaster] "  << "Dir " << dir << " does not exist!\n";
+    LOG_INFO  << "Dir " << dir << " does not exist!";
     return OpCode::OP_NO_SUCH_FILE;
   }
   
@@ -436,7 +437,7 @@ int DFSMaster::makeDir(const string& dirName) {
   editlog.set_src(dirName);
   editlog.set_dfid(newDfID);
   if (-1 == logEdit(editlog.SerializeAsString())) {
-    cerr << "[DFSMaster] " << "Failed to mkdir " << dirName << std::endl;
+    LOG_INFO << "Failed to mkdir " << dirName;
     return OpCode::OP_LOG_FAILURE;
   }
   editlogID++;
@@ -447,12 +448,12 @@ int DFSMaster::listDir(const string& dirName, FileInfos& items) {
   std::unique_lock<std::recursive_mutex> lockMemoryNameSys(mutexMemoryNameSys);
 
   if (dfIDs.find(dirName) == dfIDs.end()) {
-    cerr << "[DFSMaster] "  << dirName << " doesn't exist!\n";
+    LOG_INFO  << dirName << " doesn't exist!";
     return OpCode::OP_NO_SUCH_FILE;
   }
   int id = dfIDs[dirName];
   if (dentries.find(id) == dentries.end()) {
-    cerr << "[DFSMaster] "  << dirName << " isn't a directory!\n";
+    LOG_INFO  << dirName << " isn't a directory!";
     return OpCode::OP_NO_SUCH_FILE;
   }
   const auto& fileVec = dentries[id];
@@ -547,7 +548,7 @@ int DFSMaster::recvedBlks(const ChunkserverInfo& chunkserverInfo, const std::vec
   for (int blockid : blkIDs) {
     /// all valid blocks should appear in blks
     if (blks.find(blockid) == blks.end()) {
-      cerr << "[DFSMaster] " << chunkserverInfo.chunkserverip() << " received invalid block " << blockid << std::endl;
+      LOG_INFO << chunkserverInfo.chunkserverip() << " received invalid block " << blockid;
       continue;
     }
     if (blkLocs.find(blockid) == blkLocs.end()) {
@@ -574,7 +575,7 @@ int DFSMaster::serializeNameSystem() {
 
   std::ofstream fs(nameSysFile, std::ios::out|std::ios::binary);
   if (!fs.is_open()) {
-    cerr << "[DFSMaster] "  << "Failed to open Name system file: " << nameSysFile << std::endl;
+    LOG_INFO  << "Failed to open Name system file: " << nameSysFile;
     return -1;
   }
 
@@ -621,7 +622,7 @@ int DFSMaster::serializeNameSystem() {
   namesys.SerializePartialToOstream(&fs);
   fs.clear();
   fs.close();
-  cerr << "[DFSMaster] "  << "Succeed to serialize the name system to file: " << nameSysFile << std::endl;
+  LOG_INFO  << "Succeed to serialize the name system to file: " << nameSysFile;
   return 0;
 }
 
@@ -633,7 +634,7 @@ int DFSMaster::parseNameSystem() {
 
   std::ifstream fs(nameSysFile, std::ios::in|std::ios::binary);
   if (!fs.is_open()) {
-    cerr << "[DFSMaster] "  << "Failed to open Name system file: " << nameSysFile << std::endl;
+    LOG_INFO  << "Failed to open Name system file: " << nameSysFile;
     return -1;
   }
 
@@ -682,7 +683,7 @@ int DFSMaster::parseNameSystem() {
 
   fs.clear();
   fs.close();
-  cerr << "[DFSMaster] "  << "Succeed to parse the name system from file: " << nameSysFile << std::endl;
+  LOG_INFO  << "Succeed to parse the name system from file: " << nameSysFile;
   return 0;
 }
 
@@ -789,8 +790,8 @@ void DFSMaster::distributeBlkTask(int blockID, int repFactor, BlockTask* blkTask
     }
   }
   if (numFound < repFactor) {
-    cerr << "[DFSMaster] " << "Required " << repFactor << "repair nodes; "
-         << "only " << numFound << " found\n";
+    LOG_INFO << "Required " << repFactor << "repair nodes; "
+         << "only " << numFound << " found";
   }
   blksToBeReplicated.erase(blockID);
 }
@@ -831,11 +832,11 @@ long long DFSMaster::getFileLength(int fileID) {
 }
 
 int DFSMaster::logEdit(const string& editString) {
-  cerr << "[DFSMaster] " << editString << std::endl;
+  LOG_INFO << editString;
   std::unique_lock<std::recursive_mutex> lockEdit(mutexFileNameSys);
   int fd = ::open(editLogFile.c_str(), O_WRONLY | O_APPEND);
   if (fd < 0) {
-    cerr << "[DFSMaster] " << "Failed to open editlog file\n";
+    LOG_INFO << "Failed to open editlog file";
     return -1;
   }
   {
@@ -848,7 +849,7 @@ int DFSMaster::logEdit(const string& editString) {
   }
   
   ::close(fd);
-  cerr << "[DFSMaster] " << "Succeeded to append to editlog file\n";
+  LOG_INFO << "Succeeded to append to editlog file";
   return 0;
 }
 
@@ -859,7 +860,7 @@ int DFSMaster::replayEditLog(){
 
   int fd = ::open(editLogFile.c_str(), O_RDONLY);
   if (fd < 0) {
-    cerr << "[DFSMaster] " << "Failed to open editlog file\n";
+    LOG_INFO << "Failed to open editlog file";
     return -1;
   }
   {
@@ -871,13 +872,13 @@ int DFSMaster::replayEditLog(){
     uint len = 0;
     while (true == inCoded.ReadLittleEndian32(&magic) && magic == editlogMagicCode) {
       if (false == inCoded.ReadVarint32(&len)){
-        cerr << "[DFSMaster] " << "Failed to read editlog file\n";
+        LOG_INFO << "Failed to read editlog file";
         ::close(fd);
         return -1;
       }
       std::vector<char> buf(len, 0);
       if (false == inCoded.ReadRaw(buf.data(), len)) {
-        cerr << "[DFSMaster] " << "Failed to read editlog file\n";
+        LOG_INFO << "Failed to read editlog file";
         ::close(fd);
         return -1;
       }
@@ -964,7 +965,7 @@ int DFSMaster::replayEditLog(){
         }
         inodes.erase(dfid);
       } else{
-        cerr << "[DFSMaster] " << "Invalid opcode in editlog file\n";
+        LOG_INFO << "Invalid opcode in editlog file";
         ::close(fd);
         return -1;
       }

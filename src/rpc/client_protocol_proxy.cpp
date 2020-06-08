@@ -4,6 +4,7 @@
 /// \author Wang Xi
 
 #include <rpc/client_protocol_proxy.hpp>
+#include "logging/logger.h"
 
 namespace rpc {
 
@@ -184,13 +185,13 @@ int ClientProtocolProxy::listDir(const string& dirName, minidfs::FileInfos& item
 int ClientProtocolProxy::connectAndRequest(const string& requst, int methodID) {
   /// connect Master
   if (client.connectMaster() < 0) {
-    cerr << "[ClientProtocolProxy] "  << "Connection failed\n";
+    LOG_ERROR  << "Connection to master failed";
     return OpCode::OP_FAILURE;
   }
 
   /// send the request
   if (client.sendRequest(methodID, requst) < 0) {
-    cerr << "[ClientProtocolProxy] "  << "Failed to send request\n";
+    LOG_ERROR  << "Failed to send request to master";
     return OpCode::OP_FAILURE;
   }
   return OpCode::OP_SUCCESS;

@@ -5,10 +5,10 @@
 
 
 #include <minidfs/remote_reader.hpp>
+#include "logging/logger.h"
+
 
 namespace minidfs {
-
-
 
 RemoteReader::RemoteReader(const string& serverIP, int serverPort, const string& file, 
                            int bufferSize, const string& bufferBlkName)
@@ -38,8 +38,8 @@ int RemoteReader::open() {
   int retOp = master->getBlockLocations(filename, &lbs);
 
   if (retOp != OpCode::OP_SUCCESS) {
-    cerr << "[RemoteReader] "  << "Failed to open " << filename << std::endl
-         << "Error code "  << retOp << std::endl;
+    LOG_ERROR << "Failed to open " << filename << '\t'
+              << "Error code "  << retOp;
     return -1;
   }
   return remoteSeek(pos);
@@ -59,7 +59,7 @@ int64_t RemoteReader::read(void* buffer, uint64_t size) {
     
     std::ifstream fIn(bufferBlkName, std::ios::in | std::ios::binary);
     if (fIn.is_open() == false) {
-      cerr << "[RemoteReader] " << "Failed to open " << bufferBlkName << std::endl;
+      LOG_ERROR << "Failed to open " << bufferBlkName;
       fIn.clear();
       fIn.close();
       return -1;
@@ -104,7 +104,7 @@ int RemoteReader::remoteSeek(uint64_t offset) {
 int RemoteReader::bufferOneBlk(const LocatedBlock& lb) {
   std::ofstream f(bufferBlkName, std::ios::out | std::ios::binary | std::ios::trunc);
   if (f.is_open() == false) {
-    cerr << "[RemoteReader] " << "Failed to open " << bufferBlkName << std::endl;
+    LOG_ERROR << "Failed to open " << bufferBlkName;
     f.clear();
     f.close();
     return -1;
@@ -130,14 +130,14 @@ int64_t RemoteReader::readBlk(std::ofstream& f, const LocatedBlock& lb) const {
   int sockfd = connChunkserver(lb);
 
   if (sockfd == -1) {
-    cerr << "[RemoteReader] " << "Failed to get block\n";
+    LOG_ERROR << "Failed to connect to chunkservers " << lb.DebugString();
     close(sockfd);
     return -1;
   }
 
   /// send read request
   if (-1 == blkReadRequest(sockfd, lb.block())) {
-    cerr << "[RemoteReader] " << "Failed to send block reading request\n";
+    LOG_ERROR << "Failed to send block reading request";
     close(sockfd);
     return -1;
   }
@@ -150,8 +150,8 @@ int64_t RemoteReader::readBlk(std::ofstream& f, const LocatedBlock& lb) const {
   }
 
   if (opRet != OpCode::OP_SUCCESS) {
-    cerr << "[RemoteReader] "  << "Failed to open " << filename << std::endl
-         << "Error code "  << opRet << std::endl;
+    LOG_ERROR << "Failed to open " << filename << ' '
+              << "Error code "  << opRet;
     close(sockfd);
     return -1;
   }
@@ -212,19 +212,19 @@ int RemoteReader::connChunkserver(const LocatedBlock& lb) const {
     serverAddr.sin_family = AF_INET;
     serverAddr.sin_port = htons(serverPort);
     if (inet_pton(AF_INET, serverIP.c_str(), &serverAddr.sin_addr) < 0) {
-      cerr << "[RemoteReader] "  << "inet_pton() error for: " << serverIP << std::endl;
+      LOG_ERROR << "inet_pton() error for: " << serverIP;
       continue;
     }
     sockfd = socket(AF_INET, SOCK_STREAM, 0);
     if (sockfd < 0) {
-      cerr << "[RemoteReader] "  << "Failed to create socket\n" << strerror(errno) << " errno: " << errno << std::endl; 
+      LOG_ERROR << "Failed to create socket: " << strerror(errno) << " errno: " << errno; 
       continue;
     }
     if (connect(sockfd, (sockaddr*)&serverAddr, sizeof(serverAddr)) < 0) {
-      cerr << "[RemoteReader] "  << "Cannot connect to " << serverIP << std::endl;
+      LOG_ERROR << "Cannot connect to " << serverIP;
       continue;
     }
-    cerr << "[RemoteReader] "  << "Succeed to connect chunkserver:\n" << serverIP << ":" << serverPort << std::endl;
+    LOG_INFO << "Succeed to connect chunkserver: " << serverIP << ":" << serverPort;
     break;
   }
 
@@ -255,7 +255,7 @@ int RemoteReader::blkReadRequest(int sockfd, const Block& blk) const {
     return -1;
   }
 
-  cerr << "[RemoteReader] " << "Succeed to send request\n";
+  LOG_INFO << "Succeed to send request";
   return 0;
 }
 

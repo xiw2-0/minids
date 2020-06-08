@@ -53,7 +53,8 @@
     "typeinfo": "cpp",
     "functional": "cpp",
     "numeric": "cpp",
-    "random": "cpp"
+    "random": "cpp",
+    "future": "cpp"
   },
   "cSpell.words": [
     "blkid",

@@ -9,6 +9,7 @@
 #include <string>
 
 #include <minidfs/dfs_client.hpp>
+#include "logging/logger.h"
 
 using std::string;
 using std::cout;
@@ -35,9 +36,11 @@ void usage() {
 
 
 int main(int argc, char const *argv[]) {
+  logging::Logger::set_log_level(logging::INFO);
+
   minidfs::DFSClient client(masterIP, masterPort, bufferSize, bufferBlkName, blockSize);
   if (argc < 3 || argc > 4) {
-    cout << "[DFSShell] " << "Wrong number of arguments.\n";
+     LOG_ERROR << "Wrong number of arguments.";
     usage();
   }
   if (strcmp("-ls", argv[1]) == 0) {
@@ -52,51 +55,51 @@ int main(int argc, char const *argv[]) {
     }
   } else if (strcmp("-put", argv[1]) == 0) {
     if (argc != 4) {
-      cout << "[DFSShell] " << "Wrong number of arguments.\n";
+       LOG_ERROR << "Wrong number of arguments.";
       usage();
       return 0;
     }
     string src(argv[2]), dst(argv[3]);
     if (-1 == client.putFile(src, dst)) {
-      cout << "[DFSShell] " << "Failed to put a file\n";
+       LOG_ERROR << "Failed to put a file";
       return 0;
     }
-    cout << "[DFSShell] " << "Succeed to put a file\n";
+     LOG_INFO << "Succeed to put a file";
   } else if (strcmp("-get", argv[1]) == 0) {
     if (argc != 4) {
-      cout << "[DFSShell] " << "Wrong number of arguments.\n";
+       LOG_ERROR << "Wrong number of arguments.";
       usage();
       return 0;
     }
     string src(argv[2]), dst(argv[3]);
     if (-1 == client.getFile(src, dst)) {
-      cout << "[DFSShell] " << "Failed to get a file\n";
+       LOG_ERROR << "Failed to get a file";
       return 0;
     }
-    cout << "[DFSShell] " << "Succeed to get a file\n";
+     LOG_INFO << "Succeed to get a file";
   } else if (strcmp("-rm", argv[1]) == 0) {
     string filename(argv[2]);
     if (-1 == client.remove(filename)) {
-      cout << "[DFSShell] " << "Failed to remove a file\n";
+       LOG_ERROR << "Failed to remove a file";
       return 0;
     }
-    cout << "[DFSShell] " << "Succeed to remove a file\n";
+     LOG_INFO << "Succeed to remove a file";
   } else if (strcmp("-exists", argv[1]) == 0) {
     string file(argv[2]);
     if (-1 == client.exists(file)) {
-      cout << "[DFSShell] " << "Failed to query a file\n";
+       LOG_ERROR << "Failed to query a file";
       return 0;
     }
-    cout << "[DFSShell] " << "Succeed to query a file\n";
+     LOG_INFO << "Succeed to query a file";
   } else if (strcmp("-mkdir", argv[1]) == 0) {
     string path(argv[2]);
     if (-1 == client.mkdir(path)) {
-      cout << "[DFSShell] " << "Failed to make a directory\n";
+       LOG_ERROR << "Failed to make a directory";
       return 0;
     }
-    cout << "[DFSShell] " << "Succeed to make a directory\n";
+     LOG_INFO << "Succeed to make a directory";
   } else {
-    cout << "[DFSShell] " << "Wrong arguments.\n";
+     LOG_ERROR << "Wrong arguments.";
     usage();
   }
   return 0;

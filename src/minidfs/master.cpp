@@ -6,6 +6,7 @@
 
 #include <iostream>
 #include <minidfs/dfs_master.hpp>
+#include "logging/logger.h"
 
 const string nameSysFile("./data/namesys");
 const string editLogFile("./data/editlog");
@@ -17,7 +18,8 @@ const int nThread = 2;
 /// Start Master and provide services endlessly.
 int main(int argc, char const *argv[])
 {
-  std::cout << "Start Master...\n";
+  logging::Logger::set_log_level(logging::INFO);
+  LOG_INFO << "Start Master...";
   minidfs::DFSMaster master(nameSysFile, editLogFile,serverPort, maxConn, replicationFactor, nThread);
   
   if (argc == 2 && 0 == strcmp(argv[1], "-format")) {

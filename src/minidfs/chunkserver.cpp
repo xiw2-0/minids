@@ -6,6 +6,7 @@
 
 #include <iostream>
 #include <minidfs/dfs_chunkserver.hpp>
+#include "logging/logger.h"
 
 /// the port where master serves
 const int masterPort = 12345;
@@ -43,7 +44,8 @@ const long long BLK_TASK_STARTUP_INTERVAL = 13000;
 /// Start Chunkserver and provide services endlessly.
 int main(int argc, char const *argv[])
 {
-  std::cout << "Start Chunkserver...\n";
+  logging::Logger::set_log_level(logging::INFO);
+  LOG_INFO << "Start Chunkserver...";
   minidfs::DFSChunkserver chunkserver(masterIP, masterPort, serverIP, serverPort,
                                         dataDir, blockSize, maxConnections, BUFFER_SIZE,
                                         nThread,

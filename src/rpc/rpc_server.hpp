@@ -23,7 +23,6 @@
 #include <threadpool/thread_pool.hpp>
 
 using std::string;
-using std::cerr;
 using minidfs::OpCode;
 
 namespace minidfs {

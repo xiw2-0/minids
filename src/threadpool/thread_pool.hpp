@@ -19,6 +19,8 @@
 #include <iostream>
 #include <memory>
 
+#include "logging/logger.h"
+
 namespace minidfs {
 
 class ThreadPool {
@@ -79,7 +81,7 @@ auto ThreadPool::enqueue(F&& fn, Args&&... args) -> std::future<typename std::re
   {
     std::unique_lock<std::mutex> lockTasks(mutexTasks);
     tasks.emplace([task](){(*task)();});
-    std::cerr << "[ThreadPool] " << "Number of tasks: " << tasks.size() << std::endl;
+    LOG_DEBUG << "Number of tasks: " << tasks.size();
   }
   condition.notify_one();
   return res;    

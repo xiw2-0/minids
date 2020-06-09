@@ -1,0 +1,33 @@
+# the port where master serves
+masterPort = 12346
+
+# the IP where master serves
+masterIP = 127.0.0.1
+
+# the port where chunkserver serves
+serverPort = 90908
+
+# the IP where chunkserver serves
+serverIP = 127.0.0.1
+
+maxConnections = 5
+
+# folder that stores the blocks
+dataDir = ./data/chunkserver
+
+# block size, 2M
+blockSize = 2097152
+
+const size_t nThread = 2
+
+# data sending/recving buffer size
+BUFFER_SIZE = 2048
+
+# heart beat interval, in ms
+HEART_BEAT_INTERVAL = 3000
+
+# block report interval, in ms
+BLOCK_REPORT_INTERVAL = 7000
+
+# at the startup, don't retrieve block tasks from master, in ms
+BLK_TASK_STARTUP_INTERVAL = 13000

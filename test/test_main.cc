@@ -8,6 +8,7 @@
 
 extern void TestLogStream();
 extern void TestLogger();
+extern void TestConfig();
 
 
 int main(int argc, char const *argv[]) {
@@ -15,6 +16,7 @@ int main(int argc, char const *argv[]) {
 
   TestLogStream();
   TestLogger();
+  TestConfig();
   
   printf("=================Test ends=================\n");
   return 0;

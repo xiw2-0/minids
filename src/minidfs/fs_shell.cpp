@@ -10,18 +10,30 @@
 
 #include <minidfs/dfs_client.hpp>
 #include "logging/logger.h"
+#include "config/config.h"
 
 using std::string;
 using std::cout;
 using std::cin;
 
-const string masterIP = "127.0.0.1";
-const int masterPort = 12345;
-const int bufferSize = 2 * 1024;
-const string bufferBlkName = "/tmp/dfs_client_buf";
-const long long blockSize = 2 * 1024 * 1024;
+const char* config_file = "./config/shell.txt";
 
+string masterIP;
+int masterPort;
+int bufferSize;
+string bufferBlkName;
+long long blockSize;
 
+void configure() {
+  config::Config c(config_file);
+  c.parse();
+
+  c.get("masterIP", &masterIP);
+  c.get("masterPort", &masterPort);
+  c.get("bufferSize", &bufferSize);
+  c.get("bufferBlkName", &bufferBlkName);
+  c.get("blockSize", &blockSize);
+}
 
 void usage() {
   cout << "Usage: ./bin/dfs_shell"
@@ -38,6 +50,7 @@ void usage() {
 int main(int argc, char const *argv[]) {
   logging::Logger::set_log_level(logging::INFO);
 
+  configure();
   minidfs::DFSClient client(masterIP, masterPort, bufferSize, bufferBlkName, blockSize);
   if (argc < 3 || argc > 4) {
      LOG_ERROR << "Wrong number of arguments.";

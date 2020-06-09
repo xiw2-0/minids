@@ -1,0 +1,15 @@
+# location of name system file
+nameSysFile = ./data/namesys
+
+# location of edit log file
+editLogFile =./data/editlog
+
+# master serving port
+serverPort = 12346
+
+maxConn = 3
+
+# replication factor 
+replicationFactor = 1
+
+nThread = 2

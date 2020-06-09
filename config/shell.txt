@@ -1,0 +1,11 @@
+# master information
+masterIP = 127.0.0.1 
+masterPort = 12346
+
+# buffer size of block data sending/receiving
+bufferSize = 2048 
+
+bufferBlkName = /tmp/dfs_client_buf
+
+# block size: 2M
+blockSize = 2097152

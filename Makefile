@@ -9,7 +9,8 @@ cppsrc = ${wildcard ${SRC_DIR}/minidfs/*.cpp} \
 				 ${wildcard ${SRC_DIR}/rpc/*.cpp} \
 				 ${wildcard ${SRC_DIR}/threadpool/*.cpp}
 ccsrc = ${wildcard ${SRC_DIR}/proto/*.cc} \
-				${wildcard ${SRC_DIR}/logging/*.cc}
+				${wildcard ${SRC_DIR}/logging/*.cc} \
+				${wildcard ${SRC_DIR}/config/*.cc}
 				
 
 

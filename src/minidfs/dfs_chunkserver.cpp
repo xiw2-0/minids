@@ -238,13 +238,14 @@ int DFSChunkserver::recvBlock(int connfd) {
     }
     return -1;
   }
+  dataLen = ntohl(halfLen);
+  dataLen <<= 32;
+
   if (forwardSockfd != -1 && send(forwardSockfd, &halfLen, 4, 0) < 0) {
     ::close(forwardSockfd);
     willForward = false;
   }
 
-  dataLen = ntohl(halfLen);
-  dataLen <<= 32;
   /// the second half
   if (recv(connfd, &halfLen, 4, 0) < 0) {
     LOG_ERROR << "Failed recving " << (int)halfLen;
@@ -253,12 +254,13 @@ int DFSChunkserver::recvBlock(int connfd) {
     }
     return -1;
   }
+  dataLen += ntohl(halfLen);
+  LOG_INFO << "Succeed recving data length: " << (int)dataLen;
   if (forwardSockfd != -1 && send(forwardSockfd, &halfLen, 4, 0) < 0) {
     ::close(forwardSockfd);
     willForward = false;
   }
-  dataLen += ntohl(halfLen);
-  LOG_INFO << "Succeed recving data length: " << (int)dataLen;
+  
 
   string folder("/tmp");
   string blkFileName("blk_");
@@ -583,7 +585,7 @@ int DFSChunkserver::sendWriteHeader(const LocatedBlock& lb) {
     return -1;
   }
   /// send located block
-  if ( send(sockfd, locatedBStr.c_str(), 2, 0) == -1) {
+  if ( send(sockfd, locatedBStr.c_str(), locatedBStr.size(), 0) == -1) {
     ::close(sockfd);
     return -1;
   }

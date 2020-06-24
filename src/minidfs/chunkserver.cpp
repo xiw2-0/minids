@@ -47,7 +47,7 @@ void configure() {
 int main(int argc, char const *argv[])
 {
   configure();
-  logging::Logger::set_log_level(logging::INFO);
+  logging::Logger::set_log_level(logging::DEBUG);
   LOG_INFO << "Start Chunkserver...";
   minidfs::DFSChunkserver chunkserver(masterIP, masterPort, serverIP, serverPort,
                                         dataDir, blockSize, maxConnections, BUFFER_SIZE,

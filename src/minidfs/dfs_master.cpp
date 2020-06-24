@@ -113,17 +113,21 @@ void DFSMaster::statusChecker() {
       lastCheck = std::chrono::system_clock::now();
       /// check whether a chunkserver is still alive
       {
-        LOG_INFO << "Checking active chunkservers";
+        
+        int numAliveChunkservers = 0;
         std::unique_lock<std::recursive_mutex> lockChunkserverBlock(mutexChunkserverBlock);
         for (auto i = aliveChunkservers.begin(); i != aliveChunkservers.end();) {
           if (i->second == true) {
+            ++numAliveChunkservers;
             i->second = false;
             ++i;
           } else {
+            LOG_WARN << "Lost connection with " << i->first.chunkserverip();
             findBlksToBeReplicated(i->first);
             i = aliveChunkservers.erase(i);
           }
         }
+        LOG_INFO << numAliveChunkservers << " chunkservers alive";
       }
 
       /// check the edit log size
@@ -476,6 +480,7 @@ int DFSMaster::listDir(const string& dirName, FileInfos& items) {
 }
 
 int DFSMaster::heartBeat(const ChunkserverInfo& chunkserverInfo) {
+  LOG_INFO << "Heartbeat from: " << chunkserverInfo.DebugString();
   std::unique_lock<std::recursive_mutex> lockChunkserverBlock(mutexChunkserverBlock);
   //int id = getChunkserverID(chunkserverInfo);
 
@@ -520,19 +525,29 @@ int DFSMaster::blkReport(const ChunkserverInfo& chunkserverInfo, const std::vect
 }
 
 int DFSMaster::getBlkTask(const ChunkserverInfo& chunkserverInfo, BlockTasks* blkTasks) {
+  LOG_INFO << "Get block tasks from " << chunkserverInfo.DebugString();
   std::unique_lock<std::recursive_mutex> lockChunkserverBlock(mutexChunkserverBlock);
   //int id = getChunkserverID(chunkserverInfo);
   auto csEqualTo = ChunkserverInfoEqualTo();
   bool hasTask = false;
-  for (auto& b : blksToBeReplicated) {
-    for (auto& node : blkLocs[b.first]) {
+  LOG_INFO << "Number of blks to be rep: " << blksToBeReplicated.size();
+  for (auto b = blksToBeReplicated.begin(); b != blksToBeReplicated.end();) {
+    bool assignmentStatus = false;
+    for (auto& node : blkLocs[b->first]) {
       if ( csEqualTo(node, chunkserverInfo) ) {
-        distributeBlkTask(b.first, b.second, blkTasks->add_blktasks());
+        distributeBlkTask(b->first, b->second, blkTasks->add_blktasks());
+        b = blksToBeReplicated.erase(b);
+        assignmentStatus = true;
         hasTask = true;
         break;
       }
     }
+    if (assignmentStatus == false) {
+      ++b;
+    }
   }
+  if (hasTask)
+    LOG_INFO << "Master assign block task: " << blkTasks->DebugString();
   return hasTask ? OpCode::OP_SUCCESS : OpCode::OP_NO_BLK_TASK;
 }
 
@@ -780,8 +795,8 @@ void DFSMaster::distributeBlkTask(int blockID, int repFactor, BlockTask* blkTask
         break;
       }
     }
-    /// don't contain the target block and is alive
-    if (contained == false && i.second == true) {
+    /// don't contain the target block
+    if (contained == false) {
       *locatedBlk->add_chunkserverinfos() = i.first;
       ++numFound;
     }
@@ -790,10 +805,10 @@ void DFSMaster::distributeBlkTask(int blockID, int repFactor, BlockTask* blkTask
     }
   }
   if (numFound < repFactor) {
-    LOG_INFO << "Required " << repFactor << "repair nodes; "
-         << "only " << numFound << " found";
+    LOG_ERROR << "Required " << repFactor << " repair nodes; "
+         << "but only " << numFound << " found";
   }
-  blksToBeReplicated.erase(blockID);
+  LOG_INFO << "Assigned block task: " << locatedBlk->DebugString();
 }
 
 int DFSMaster::allocateChunkservers(std::vector<ChunkserverInfo>& cs) {

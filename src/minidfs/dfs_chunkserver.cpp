@@ -522,10 +522,11 @@ int DFSChunkserver::blkReport() {
 }
 
 int DFSChunkserver::getBlkTask() {
-  LOG_INFO << "Getting block tasks ";
   BlockTasks blockTasks;
   int opRet = master->getBlkTask(chunkserverInfo, &blockTasks);
-  if (opRet == OpCode::OP_FAILURE) {
+  LOG_INFO << "Getting block tasks: " << blockTasks.DebugString();
+  
+  if (opRet == OpCode::OP_FAILURE || opRet == OpCode::OP_NO_BLK_TASK) {
     return opRet;
   }
 

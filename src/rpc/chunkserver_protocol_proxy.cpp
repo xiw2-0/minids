@@ -86,7 +86,7 @@ int ChunkserverProtocolProxy::getBlkTask(const minidfs::ChunkserverInfo& chunkse
   }
 
   /// send the request
-  if (client.sendRequest(101, chunkserverInfo.SerializeAsString()) < 0) {
+  if (client.sendRequest(103, chunkserverInfo.SerializeAsString()) < 0) {
     LOG_ERROR << "Failed to send get blk task request";
     return OpCode::OP_FAILURE;
   }
@@ -119,7 +119,7 @@ int ChunkserverProtocolProxy::recvedBlks(const minidfs::ChunkserverInfo& chunkse
   }
 
   /// send the request
-  if (client.sendRequest(102, blkReport.SerializeAsString()) < 0) {
+  if (client.sendRequest(104, blkReport.SerializeAsString()) < 0) {
     LOG_ERROR << "Failed to send recvedBlks rpc request";
     return OpCode::OP_FAILURE;
   }
